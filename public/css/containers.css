@@ -1,0 +1,15 @@
+/* =========================================================
+   Containers — page-specific styles
+   ========================================================= */
+
+/* ISO code highlight on hover */
+.page-containers table.data tr:hover code {
+  background: var(--orange-50);
+  color: var(--orange-700);
+}
+
+/* Container thumbnail square */
+.page-containers table.data .asset-thumb {
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--surface-line);
+}

@@ -1,0 +1,11 @@
+/* =========================================================
+   Trips — page-specific styles
+   ========================================================= */
+
+/* Accent the route arrow in trip rows */
+.page-trips table.data tr:hover svg[stroke="#FF6B1A"] path {
+  stroke-width: 2.5;
+}
+
+/* Trip ID emphasis */
+.page-trips table.data .asset-name { color: var(--orange-700); }

@@ -1,0 +1,14 @@
+/* =========================================================
+   Dashboard — page-specific styles
+   ========================================================= */
+
+/* Greeting header */
+.dash-greeting h1 { display: flex; align-items: center; gap: 8px; }
+
+/* Dashboard print */
+@media print {
+  .sidebar, .topbar, .upgrade-card, .page-head__actions { display: none !important; }
+  .page { padding: 0 !important; }
+  .card { break-inside: avoid; border: 1px solid #ddd !important; box-shadow: none !important; }
+  .map-wrap, .chart-wrap { height: auto !important; }
+}

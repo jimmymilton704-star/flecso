@@ -1,0 +1,115 @@
+/* =========================================================
+   SOS Alerts — list + detail
+   ========================================================= */
+
+/* Live pulsing dot next to the H1 on the SOS page */
+.sos-live-pulse {
+  display: inline-block;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--danger-500);
+  margin-left: 10px;
+  box-shadow: 0 0 0 4px rgba(239,68,68,.2);
+  animation: pulse 1.6s infinite;
+  vertical-align: middle;
+}
+
+/* Severity & status pill colours for SOS rows */
+.page-sos .sev-critical { background: var(--danger-50); color: var(--danger-700); }
+.page-sos .sev-warning  { background: var(--warn-50);   color: #8A5100; }
+.page-sos .sev-info     { background: var(--info-50);   color: #1E4FC7; }
+
+/* SOS incident type strip (dashboard card on /sos) */
+.sos-type {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--surface-line);
+}
+.sos-type:last-child { border-bottom: none; }
+.sos-type__dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.sos-type__label { font-size: 13px; font-weight: 500; color: var(--ink-700); flex: 1; }
+.sos-type__count { font-family: var(--font-display); font-weight: 700; font-size: 14px; }
+.sos-type__bar {
+  width: 120px; height: 6px; background: var(--ink-100);
+  border-radius: 999px; overflow: hidden;
+}
+.sos-type__bar > span { display: block; height: 100%; background: var(--orange-grad); }
+
+/* SOS map marker pulse */
+.sos-marker {
+  width: 28px; height: 28px; position: relative;
+}
+.sos-marker::before {
+  content: ""; position: absolute; inset: 0;
+  border-radius: 50%; background: var(--danger-500);
+  box-shadow: 0 0 0 3px rgba(239,68,68,.25);
+}
+.sos-marker::after {
+  content: ""; position: absolute; inset: -8px;
+  border-radius: 50%; border: 2px solid rgba(239,68,68,.4);
+  animation: ping 2s infinite;
+}
+.sos-marker.warn::before { background: var(--warn-500); box-shadow: 0 0 0 3px rgba(245,158,11,.25); }
+.sos-marker.warn::after  { border-color: rgba(245,158,11,.4); }
+.sos-marker.info::before { background: var(--info-500); box-shadow: 0 0 0 3px rgba(59,130,246,.25); }
+.sos-marker.info::after  { border-color: rgba(59,130,246,.4); }
+.sos-marker svg {
+  position: absolute; inset: 0; margin: auto; color: #fff;
+  width: 14px; height: 14px;
+}
+
+/* Detail page: banner ribbon for severity */
+.sos-banner {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px;
+  background: var(--danger-50); color: var(--danger-700);
+  border-radius: var(--r-md);
+  border: 1px solid rgba(239,68,68,.2);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.sos-banner.warn   { background: var(--warn-50);   color: #8A5100;          border-color: rgba(245,158,11,.25); }
+.sos-banner.info   { background: var(--info-50);   color: #1E4FC7;          border-color: rgba(59,130,246,.2); }
+.sos-banner.resolved { background: var(--success-50); color: var(--success-700); border-color: rgba(16,185,129,.2); }
+.sos-banner__icon {
+  width: 32px; height: 32px; border-radius: 10px;
+  display: grid; place-items: center; flex: none;
+  background: #fff;
+}
+.sos-banner__eta { margin-left: auto; font-family: var(--font-display); font-weight: 700; }
+
+/* Notes / chat block on detail */
+.sos-notes { display: flex; flex-direction: column; gap: 10px; }
+.sos-note {
+  display: grid; grid-template-columns: 32px 1fr; gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+.sos-note img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.sos-note__head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.sos-note__head strong { font-size: 13px; }
+.sos-note__head span   { font-size: 11.5px; color: var(--ink-400); }
+.sos-note p { font-size: 13px; color: var(--ink-700); margin-top: 4px; line-height: 1.5; }
+
+/* Respond action bar at the top of detail */
+.sos-respond-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #FFF3E0 0%, #FFEAD1 100%);
+  border: 1px solid rgba(255,107,26,.2);
+  border-radius: var(--r-md);
+  margin-bottom: 16px;
+}
+.sos-respond-bar__msg {
+  flex: 1; min-width: 200px;
+  font-size: 13px; font-weight: 500; color: var(--ink-700);
+}
+.sos-respond-bar__msg strong { color: var(--ink-900); }
+
+@media (max-width: 600px) {
+  .sos-banner { flex-wrap: wrap; }
+  .sos-banner__eta { margin-left: 0; width: 100%; }
+  .sos-type__bar { width: 80px; }
+}

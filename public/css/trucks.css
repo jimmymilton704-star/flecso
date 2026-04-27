@@ -1,0 +1,15 @@
+/* =========================================================
+   Trucks — page-specific styles
+   ========================================================= */
+
+/* Truck QR mini-button accent on hover */
+.page-trucks .mini-btn--qr:hover {
+  color: var(--orange-700);
+  border-color: var(--orange-300);
+  background: var(--orange-50);
+}
+
+/* Truck thumbnail slight ring */
+.page-trucks table.data .asset-thumb {
+  box-shadow: 0 0 0 1px var(--surface-line);
+}

@@ -1,0 +1,15 @@
+/* =========================================================
+   Settings — page-specific styles
+   ========================================================= */
+
+/* Slight emphasis on active settings tab */
+.page-settings .tab-item.active { font-weight: 600; }
+
+/* Section separators inside panels */
+.page-settings .tab-panel .form-section + .form-section { margin-top: 0; }
+
+/* Plan featured hover lift */
+.page-settings .plan.featured:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px -20px rgba(255,107,26,.35);
+}
