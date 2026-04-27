@@ -132,7 +132,6 @@ class AuthController extends Controller
     public function completeProfileStep1(Request $request)
     {
         $request->validate([
-            'admin_id'          => 'required|exists:users,id',
             'company_legal_name' => 'required|string',
             'company_type'       => 'required|string',
             'vat_number'         => 'required|digits:11',
@@ -170,7 +169,6 @@ class AuthController extends Controller
     public function completeProfileStep2(Request $request)
     {
         $request->validate([
-            'admin_id'          => 'required|exists:users,id',
             'pec_email'          => 'required|email',
             'sdi_code'           => 'required|string|size:7',
             'registered_address' => 'required|string',
@@ -204,7 +202,6 @@ class AuthController extends Controller
     public function completeProfileStep3(Request $request)
     {
         $request->validate([
-            'admin_id'          => 'required|exists:users,id',
             'ren_number'           => 'required|string',
             'eu_license_number'    => 'nullable|string',
             'fleet_trucks'         => 'required|integer|min:0',
@@ -237,7 +234,6 @@ class AuthController extends Controller
     public function completeProfileStep4(Request $request)
     {
         $request->validate([
-            'admin_id'          => 'required|exists:users,id',
             'rep_full_name'    => 'required|string',
             'rep_position'     => 'required|string',
             'rep_fiscal_code'  => 'required|string|size:16',
@@ -285,7 +281,7 @@ class AuthController extends Controller
      */
     public function profile(Request $request)
     {
-        $user = User::findOrFail($request->admin_id);
+        $user = User::findOrFail($request->user()->id);
 
         $currentStep = 1;
 
@@ -336,6 +332,162 @@ class AuthController extends Controller
             'profile_completed' => (bool) $user->profile_completed,
             'current_step' => $currentStep,
 
+            'data' => $user
+        ]);
+    }
+
+
+    public function updateFullProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+
+            // BASIC
+            'name'   => 'nullable|string|max:255',
+            'email'  => 'nullable|email|unique:users,email,' . $user->id,
+            'phone'  => 'nullable|string|max:20',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            // STEP 1
+            'company_legal_name' => 'nullable|string',
+            'company_type'       => 'nullable|string',
+            'vat_number'         => 'nullable|digits:11',
+            'fiscal_code'        => 'nullable|string',
+            'rea_number'         => 'nullable|string',
+
+            // STEP 2
+            'pec_email'          => 'nullable|email',
+            'sdi_code'           => 'nullable|string|size:7',
+            'registered_address' => 'nullable|string',
+            'city'               => 'nullable|string',
+            'province'           => 'nullable|string|size:2',
+            'zip_code'           => 'nullable|string',
+
+            // STEP 3
+            'ren_number'            => 'nullable|string',
+            'eu_license_number'     => 'nullable|string',
+            'fleet_trucks'          => 'nullable|integer|min:0',
+            'fleet_vans'            => 'nullable|integer|min:0',
+            'fleet_containers'      => 'nullable|integer|min:0',
+            'insurance_policy_number'=> 'nullable|string',
+
+            // STEP 4
+            'rep_full_name'    => 'nullable|string',
+            'rep_position'     => 'nullable|string',
+            'rep_fiscal_code'  => 'nullable|string|size:16',
+            'rep_document'     => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+
+            // PASSWORD (optional)
+            'password' => 'nullable|min:8|confirmed',
+        ]);
+
+        $data = $request->except(['avatar', 'rep_document', 'password']);
+
+        /*
+        |-----------------------------------------
+        | PASSWORD UPDATE
+        |-----------------------------------------
+        */
+        if ($request->filled('password')) {
+            $data['password'] = \Hash::make($request->password);
+        }
+
+        /*
+        |-----------------------------------------
+        | AVATAR UPLOAD
+        |-----------------------------------------
+        */
+        if ($request->hasFile('avatar')) {
+
+            if ($user->avatar && file_exists(public_path($user->avatar))) {
+                unlink(public_path($user->avatar));
+            }
+
+            $file = $request->file('avatar');
+            $name = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+
+            $path = public_path('uploads/users');
+
+            if (!file_exists($path)) {
+                mkdir($path, 0755, true);
+            }
+
+            $file->move($path, $name);
+
+            $data['avatar'] = 'uploads/users/'.$name;
+        }
+
+        /*
+        |-----------------------------------------
+        | REPRESENTATIVE DOCUMENT UPLOAD
+        |-----------------------------------------
+        */
+        if ($request->hasFile('rep_document')) {
+
+            if ($user->rep_document && file_exists(public_path($user->rep_document))) {
+                unlink(public_path($user->rep_document));
+            }
+
+            $file = $request->file('rep_document');
+            $name = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+
+            $path = public_path('uploads/documents');
+
+            if (!file_exists($path)) {
+                mkdir($path, 0755, true);
+            }
+
+            $file->move($path, $name);
+
+            $data['rep_document'] = 'uploads/documents/'.$name;
+        }
+
+        /*
+        |-----------------------------------------
+        | UPDATE USER
+        |-----------------------------------------
+        */
+        $user->update($data);
+
+        /*
+        |-----------------------------------------
+        | AUTO PROFILE COMPLETION CHECK
+        |-----------------------------------------
+        */
+        $isComplete =
+            $user->company_legal_name &&
+            $user->company_type &&
+            $user->vat_number &&
+            $user->fiscal_code &&
+            $user->rea_number &&
+
+            $user->pec_email &&
+            $user->sdi_code &&
+            $user->registered_address &&
+            $user->city &&
+            $user->province &&
+            $user->zip_code &&
+
+            $user->ren_number &&
+            $user->fleet_trucks !== null &&
+            $user->fleet_vans !== null &&
+            $user->fleet_containers !== null &&
+            $user->insurance_policy_number &&
+
+            $user->rep_full_name &&
+            $user->rep_position &&
+            $user->rep_fiscal_code &&
+            $user->rep_document;
+
+        if ($isComplete) {
+            $user->update(['profile_completed' => true]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Profile updated successfully',
+            'profile_completed' => (bool) $user->profile_completed,
             'data' => $user
         ]);
     }
@@ -455,9 +607,15 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
+        $user = $request->user();
+
         return response()->json([
             'status' => true,
-            'data'   => $request->user()
+            'message' => 'User fetched successfully',
+
+            'profile_completed' => (bool) $user->profile_completed,
+
+            'data' => $user->toArray(), 
         ]);
     }
 }

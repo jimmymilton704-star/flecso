@@ -60,6 +60,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     });
 
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::post('/profile/update', [AuthController::class, 'updateFullProfile']);
 
     // Drivers
     Route::post('/driver/register', [AuthController::class, 'registerDriver']);

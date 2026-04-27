@@ -79,6 +79,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'profile_completed' => 'boolean', // ✅ ADD THIS
     ];
 
     protected $appends = ['avatar_url'];
@@ -93,10 +94,10 @@ class User extends Authenticatable
         return $this->hasOne(Subscription::class);
     }
 
-    public function getAvatarUrlAttribute()
+   public function getAvatarUrlAttribute()
     {
         return $this->avatar
-            ? asset('uploads/images/' . $this->avatar)
+            ? asset($this->avatar) // ✅ FIXED
             : null;
     }
 }
