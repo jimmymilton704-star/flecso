@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SosAlertController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,12 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+
+    Route::get('/sos-alerts', [SosAlertController::class, 'index'])->name('sos.index');
+
+    Route::get('/sos-alerts/{id}', [SosAlertController::class, 'show'])->name('sos.show');
+
+    Route::post('/sos-alerts/resolve', [SosAlertController::class, 'resolve'])->name('sos.resolve');
 
     // Logout
     Route::get('/logout', [AuthController::class, 'logout'])
