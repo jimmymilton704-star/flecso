@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SosAlertController;
+use App\Http\Controllers\TruckController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +64,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/sos-alerts/{id}', [SosAlertController::class, 'show'])->name('sos.show');
 
     Route::post('/sos-alerts/resolve', [SosAlertController::class, 'resolve'])->name('sos.resolve');
+
+    // Trucks
+     Route::prefix('trucks')->name('trucks.')->group(function () {
+
+        Route::get('/', [TruckController::class, 'index'])->name('index');
+        Route::get('/create', [TruckController::class, 'create'])->name('create');
+        Route::post('/store', [TruckController::class, 'store'])->name('store');
+
+        Route::get('/{id}', [TruckController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [TruckController::class, 'edit'])->name('edit');
+        Route::post('/{id}/update', [TruckController::class, 'update'])->name('update');
+        Route::delete('/{id}/delete', [TruckController::class, 'destroy'])->name('destroy');
+
+        Route::post('/assign-driver', [TruckController::class, 'assignDriver'])->name('assignDriver');
+    });
 
     // Logout
     Route::get('/logout', [AuthController::class, 'logout'])

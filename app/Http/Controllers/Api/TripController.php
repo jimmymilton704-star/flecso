@@ -42,6 +42,10 @@ class TripController extends Controller
             'trip_type'         => 'required|string',
             'pickup_location'   => 'required|string',
             'delivery_location' => 'required|string',
+            'pickup_lat'    => 'nullable|numeric|between:-90,90',
+            'pickup_lng'    => 'nullable|numeric|between:-180,180',
+            'delivery_lat'  => 'nullable|numeric|between:-90,90',
+            'delivery_lng'  => 'nullable|numeric|between:-180,180',
             'distance_km'       => 'nullable|numeric',
             'eta_mins'          => 'nullable|integer',
             'schedule_datetime' => 'nullable|date',
@@ -49,7 +53,7 @@ class TripController extends Controller
             'trip_status'       => 'required|string',
 
             // Relations
-            'driver_id'    => 'nullable|exists:users,id',
+            'driver_id'    => 'nullable|exists:drivers,id',
             'truck_id'     => 'nullable|exists:trucks,id',
             'container_id' => 'nullable|exists:containers,id',
 

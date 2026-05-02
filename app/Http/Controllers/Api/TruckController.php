@@ -201,7 +201,7 @@ class TruckController extends Controller
         $request->validate([
             'admin_id' => 'required|exists:users,id',
             'truck_id' => 'required|exists:trucks,id',
-            'driver_id'=> 'required|exists:users,id',
+          'driver_id'=> 'required|exists:drivers,id',
         ]);
 
         $truck = Truck::where('id', $request->truck_id)
