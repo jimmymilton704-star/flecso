@@ -37,7 +37,7 @@
             </svg>
             <span>SOS Alerts</span><span class="nav-badge nav-badge--danger">3</span>
         </a>
-        <a href="trucks.html" class="nav-link">
+        <a href="{{ route('trucks.index') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 7h10v10H3z" />
                 <path d="M13 10h5l3 3v4h-8" />
