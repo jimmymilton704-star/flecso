@@ -618,4 +618,14 @@ class AuthController extends Controller
             'data' => $user->toArray(), 
         ]);
     }
+
+    public function meDriver(Request $request)
+    {
+        $driver = auth('driver')->user();
+
+        return response()->json([
+            'status' => true,
+            'data'   => $driver
+        ]);
+    }
 }

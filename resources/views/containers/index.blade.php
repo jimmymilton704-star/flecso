@@ -1,0 +1,271 @@
+@extends('layouts.app')
+
+@section('title', 'Containers')
+@section('body-class', 'page-dashboard')
+
+@section('content')
+
+    <section class="page">
+        <div class="page-head">
+            <div>
+                <div class="breadcrumb">Operations <span>/ Containers</span></div>
+                <h1>Containers</h1>
+                <div class="page-head__sub">Track ISO 6346 compliant containers across all depots and shipments.</div>
+            </div>
+            <div class="page-head__actions">
+                <a href="{{ route('containers.create') }}" class="btn btn--primary">
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M12 5v14M5 12h14"></path>
+                    </svg>
+                    Add New Container
+                </a>
+            </div>
+        </div>
+
+        {{-- STATS --}}
+        <div class="stats-grid">
+            <div class="stat">
+                <div class="stat__label">Total Containers</div>
+                <div class="stat__value">{{ $containers->count() }}</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat__label">Active</div>
+                <div class="stat__value">{{ $containers->where('status', 'active')->count() }}</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat__label">Maintenance</div>
+                <div class="stat__value">{{ $containers->where('status', 'maintenance')->count() }}</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat__label">Inactive</div>
+                <div class="stat__value">{{ $containers->where('status', 'inactive')->count() }}</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card__head">
+                <div class="toolbar" style="flex:1">
+                    <div class="search">
+                        <input type="text" placeholder="Search container...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="data">
+                    <thead>
+                        <tr>
+                            <th>Container</th>
+                            <th>Type</th>
+                            <th>ISO Code</th>
+                            <th>Owner</th>
+                            <th>Weight</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse($containers as $container)
+                            <tr>
+                                <td>
+                                    <div class="cell-asset">
+                                        <img class="asset-thumb"
+                                            src="{{ $container->image ? asset($container->image) : 'https://via.placeholder.com/60' }}"
+                                            alt="">
+
+                                        <div>
+                                            <div class="asset-name">{{ $container->container_id }}</div>
+                                            <div class="asset-sub">
+                                                SN {{ $container->serial_number }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>{{ $container->container_type }}</td>
+
+                                <td>
+                                    <code style="font-size:12px;background:var(--ink-50);padding:2px 8px;border-radius:6px">
+                                                            {{ $container->iso_type_size_code }}
+                                                        </code>
+                                </td>
+
+                                <td>{{ $container->owner_code }}</td>
+
+                                <td>
+                                    <strong>{{ $container->weight_capacity }}</strong>
+                                    <span class="muted">kg</span>
+                                </td>
+
+                                <td>
+                                    @if($container->status == 'active')
+                                        <span class="badge badge--success">
+                                            <span class="badge-dot"></span>Active
+                                        </span>
+                                    @elseif($container->status == 'maintenance')
+                                        <span class="badge badge--warn">
+                                            <span class="badge-dot"></span>Maintenance
+                                        </span>
+                                    @else
+                                        <span class="badge badge--info">
+                                            <span class="badge-dot"></span>Inactive
+                                        </span>
+                                    @endif
+                                </td>
+
+                                <td>
+                                    <div class="row-actions">
+
+                                        {{-- QR BUTTON (we will implement later) --}}
+                                        <button class="mini-btn mini-btn--qr"
+                                            onclick="showQR('{{ $container->container_id }}')">
+                                            QR
+                                        </button>
+
+                                        <a class="mini-btn" title="View" href="{{ route('containers.show', $container->id) }}">
+                                            <svg viewBox="0 0 24 24" width="14" height="14"
+                                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </a>
+
+                                        {{-- EDIT --}}
+                                        <a href="{{ route('containers.edit', $container->id) }}" class="mini-btn">
+                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                                stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
+                                            </svg>
+                                        </a>
+
+                                        {{-- DELETE --}}
+                                        <form action="{{ route('containers.destroy', $container->id) }}" method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button class="mini-btn mini-btn--danger"
+                                                onclick="return confirm('Delete this container?')">
+                                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path
+                                                        d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" />
+                                                </svg>
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" style="text-align:center;">
+                                    No containers found
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- QR MODAL -->
+    <div id="qrModal" class="qr-modal">
+        <div class="qr-modal-content">
+            <span class="qr-close" onclick="closeQR()">&times;</span>
+
+            <h3 id="qrTitle">Container QR</h3>
+
+            <div id="qrcode"></div>
+
+            <button class="btn btn--primary" onclick="downloadQR()">Download QR Code</button>
+        </div>
+    </div>
+
+    <!-- QRCode Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        let qr;
+
+        function showQR(containerId) {
+            document.getElementById("qrModal").style.display = "flex";
+
+            document.getElementById("qrTitle").innerText = "Container: " + containerId;
+
+            let qrDiv = document.getElementById("qrcode");
+            qrDiv.innerHTML = ""; // clear old QR
+
+            qr = new QRCode(qrDiv, {
+                text: containerId,
+                width: 200,
+                height: 200
+            });
+        }
+
+        function closeQR() {
+            document.getElementById("qrModal").style.display = "none";
+        }
+
+        function downloadQR() {
+            let canvas = document.querySelector("#qrcode canvas");
+
+            if (!canvas) return;
+
+            let link = document.createElement("a");
+            link.download = "container-qr.png";
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // close on outside click
+        window.onclick = function (e) {
+            let modal = document.getElementById("qrModal");
+            if (e.target === modal) {
+                closeQR();
+            }
+        }
+    </script>
+
+    <style>
+        .qr-modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .qr-modal-content {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            width: 300px;
+            position: relative;
+        }
+
+        .qr-close {
+            position: absolute;
+            right: 12px;
+            top: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #qrcode canvas {
+            margin: 15px auto;
+        }
+    </style>
+
+@endsection

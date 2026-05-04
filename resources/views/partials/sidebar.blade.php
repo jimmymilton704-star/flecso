@@ -46,7 +46,7 @@
             </svg>
             <span>Trucks</span><span class="nav-badge">128</span>
         </a>
-        <a href="containers.html" class="nav-link">
+        <a href="{{ route('containers.index') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="7" width="18" height="11" rx="1.5" />
                 <path d="M7 7v11M12 7v11M17 7v11" />

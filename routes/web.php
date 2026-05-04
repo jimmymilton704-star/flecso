@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SosAlertController;
 use App\Http\Controllers\TruckController;
+use App\Http\Controllers\ContainerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +79,20 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}/delete', [TruckController::class, 'destroy'])->name('destroy');
 
         Route::post('/assign-driver', [TruckController::class, 'assignDriver'])->name('assignDriver');
+    });
+
+    Route::prefix('containers')->name('containers.')->group(function () {
+
+        Route::get('/', [ContainerController::class, 'index'])->name('index');
+        Route::get('/create', [ContainerController::class, 'create'])->name('create');
+        Route::post('/store', [ContainerController::class, 'store'])->name('store');
+
+        Route::get('/{id}/show', [ContainerController::class, 'show'])->name('show');
+
+        Route::get('/{id}/edit', [ContainerController::class, 'edit'])->name('edit');
+        Route::post('/{id}/update', [ContainerController::class, 'update'])->name('update');
+
+        Route::post('/{id}/delete', [ContainerController::class, 'destroy'])->name('destroy');
     });
 
     // Logout

@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContainerController;
-use App\Http\Controllers\Api\Driver\DashboardController;
+use App\Http\Controllers\Api\Driver\DashboardController as DriverDashboardController;
 use App\Http\Controllers\Api\Driver\LocationController;
 use App\Http\Controllers\Api\Driver\TripController as DriverTripController;
 use App\Http\Controllers\Api\Driver\SosAlertController as DriverSosAlertController;
@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\StripeWebhookController;
 use App\Http\Controllers\Api\LiveTrackingController;
 use App\Http\Controllers\Api\ChatController;
-use App\Http\Controllers\DashbaordController;
+use App\Http\Controllers\Api\DashboardController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -111,7 +111,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('/subscription/subscription-status', [SubscriptionController::class, 'getActiveSubscription']);
 
     // Dashboard
-    Route::get('/dashboard', [DashbaordController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // SOS
     Route::get('/sos', [SosAlertController::class, 'index']);
@@ -133,8 +133,9 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 Route::middleware('auth:driver')->prefix('driver')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'meDriver']);
 
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DriverDashboardController::class, 'index']);
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'show']);

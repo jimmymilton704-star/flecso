@@ -60,6 +60,7 @@ class SosAlertController extends Controller
         }
 
         $data['status'] = 'pending';
+        
 
         $sos = SosAlert::create($data);
 
