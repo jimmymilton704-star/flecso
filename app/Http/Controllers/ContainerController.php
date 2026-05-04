@@ -38,7 +38,8 @@ class ContainerController extends Controller
     */
     public function store(Request $request)
     {
-        $request->validate([
+        // dd($request->all());
+         $validation = $request->validate([
             // Basic
             'container_id'             => 'required|string',
             'container_license_number' => 'required|string',
@@ -68,9 +69,11 @@ class ContainerController extends Controller
             'owner_lessor'     => 'nullable|string',
         ]);
 
+        // dd($validation);
         $data = $request->all();
+        
         $data['admin_id'] = auth()->id();
-
+        
         /*
         | IMAGE UPLOAD
         */
@@ -84,6 +87,7 @@ class ContainerController extends Controller
             $file->move($path, $fileName);
             $data['image'] = 'uploads/containers/'.$fileName;
         }
+        
 
         Container::create($data);
 

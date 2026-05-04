@@ -49,7 +49,7 @@
 
     <form action="{{ route('containers.update', $container->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
-        @method('PUT')
+        
 
         <div class="card">
 
