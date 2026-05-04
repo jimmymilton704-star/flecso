@@ -111,8 +111,10 @@ class TruckController extends Controller
     public function show($id)
     {
         $truck = Truck::where('admin_id', auth()->id())->findOrFail($id);
+        $driver = Driver::where('admin_id', auth()->id())->get();
 
-        return view('trucks.show', compact('truck'));
+
+        return view('trucks.show', compact('truck', 'driver'));
     }
 
     /*
@@ -135,6 +137,7 @@ class TruckController extends Controller
     */
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $truck = Truck::where('admin_id', auth()->id())->findOrFail($id);
 
         $data = $request->all();

@@ -103,8 +103,8 @@
   function showQR(title, data) {
     $("#qrTitle").textContent = title;
     $("#qrSubtitle").textContent = "Scan to access asset details";
-    const payload = `flecso://asset/${String(data).replace(/\s+/g,"-")}`;
-    $("#qrData").textContent = payload;
+    const payload = `${String(data).replace(/\s+/g,"-")}`;
+    // $("#qrData").textContent = payload;
     const host = $("#qrCanvas");
     host.innerHTML = "";
     if (window.QRCode) {

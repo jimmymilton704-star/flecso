@@ -16,6 +16,7 @@ class Truck extends Model
         // =========================
         'admin_id',
         'truck_number',
+        'driver_id',
         'truck_license_number',
         'capacity_tons',
         'truck_type_category',
@@ -37,9 +38,11 @@ class Truck extends Model
         // =========================
         'vehicle_category',
         'gross_vehicle_weight',
+        'gvw_kg',
+        'payload_capacity_kg',
         'payload_capacity',
         'number_of_axles',
-        'engine_type',
+        'engine_class',
         'fuel_type',
 
         // =========================
@@ -47,9 +50,9 @@ class Truck extends Model
         // =========================
         'next_inspection_date',
         'insurance_policy_number',
-        'insurance_expiry',
-        'tachograph_expiry',
-        'bollo_expiry',
+        'insurance_expiry_date',
+        'tachograph_calibration_expiry',
+        'bollo_expiry_date',
     ];
 
     protected $casts = [

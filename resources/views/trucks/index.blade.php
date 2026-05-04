@@ -153,10 +153,14 @@
                         @forelse($trucks as $truck)
                             <tr>
                                 <td>
-                                    <strong>{{ $truck->truck_number }}</strong><br>
-                                    <small>{{ $truck->truck_license_number }}</small>
+                                    <div class="cell-asset">
+                                        <img class="asset-thumb" src="{{ $truck->image }}" alt="">
+                                        <div>
+                                            <div class="asset-name">{{ $truck->license_plate_number }}</div>
+                                            <div class="asset-sub">{{ $truck->truck_license_number }}</div>
+                                        </div>
+                                    </div>
                                 </td>
-
                                 <td>{{ $truck->truck_type_category ?? '-' }}</td>
 
                                 <td>{{ $truck->capacity_tons ?? '-' }}</td>
@@ -173,7 +177,7 @@
                                     <div class="row-actions">
 
                                         <button class="mini-btn mini-btn--qr" title="QR Code"
-                                            onclick="showQR('Truck {{ $truck->truck_number }}', '{{ $truck->truck_license_number }}')">
+                                            onclick="showQR('Truck {{ $truck->license_plate_number }}', '{{ $truck->id }}')">
 
                                             <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                                                 stroke="currentColor" stroke-width="2">
@@ -188,27 +192,36 @@
                                         </button>
 
                                         <button class="mini-btn" title="View">
+                                            <a href="{{ route('trucks.show', $truck->id) }}">
+
                                             <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                                                 stroke="currentColor" stroke-width="2">
                                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z" />
                                                 <circle cx="12" cy="12" r="3" />
                                             </svg>
+                                            </a>
                                         </button>
 
                                         <button class="mini-btn" title="Edit">
+                                            <a href="{{ route('trucks.edit', $truck->id) }}">
+
                                             <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                                                 stroke="currentColor" stroke-width="2">
                                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                                 <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
                                             </svg>
+                                            </a>
                                         </button>
 
                                         <button class="mini-btn mini-btn--danger" title="Delete">
+                                            <a href="{{ route('trucks.destroy', $truck->id) }}">
+
                                             <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                                                 stroke="currentColor" stroke-width="2">
                                                 <path
                                                     d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" />
                                             </svg>
+                                            </a>
                                         </button>
 
                                     </div>
@@ -232,5 +245,7 @@
             </div>
         </div>
     </section>
-<script src="{{ asset('js/trucks.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script src="{{ asset('js/trucks.js') }}"></script>
 @endsection
