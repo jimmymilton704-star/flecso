@@ -1,7 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Container Details')
-@section('body-class', 'page-dashboard')
+@section('title', $container->id . ' · Container — Flecso')
+
+{{-- @push('styles') --}}
+<link rel="stylesheet" href="{{ asset('css/containers.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/detail.css') }}" />
 
 @section('content')
 
@@ -16,7 +19,7 @@
     <div class="detail-hero">
 
         <img class="detail-hero__img"
-            src="{{ $container->image ?? 'https://via.placeholder.com/200' }}" alt="">
+            src="{{ asset($container->image ?? 'https://via.placeholder.com/200') }}" alt="">
 
         <div class="detail-hero__body">
 
@@ -240,25 +243,67 @@
 
 </section>
 
-{{-- QR SCRIPT --}}
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const canvas = document.getElementById('sideQrCanvas');
+ <script src="{{ asset('js/trucks.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-        QRCode.toCanvas(canvas,
-            "container://{{ $container->container_number }}", {
-                width: 160
+            /* ── Tabs ──────────────────────────────────────── */
+            document.querySelectorAll('.detail-tabs button').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.detail-tabs button').forEach(function(b) {
+                        b.classList.remove('active');
+                    });
+                    btn.classList.add('active');
+                    document.querySelectorAll('.detail-pane').forEach(function(p) {
+                        p.classList.toggle('active', p.dataset.pane === btn.dataset.pane);
+                    });
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const QR_TEXT = '{{ $container->id }}';
+
+            /* ── Sidebar QR (small) ── */
+            if (document.getElementById('sideQr')) {
+                new QRCode(document.getElementById('sideQr'), {
+                    text: QR_TEXT,
+                    width: 140,
+                    height: 140,
+                });
             }
-        );
-    });
 
-    function downloadSideQR() {
-        const canvas = document.getElementById('sideQrCanvas');
-        const link = document.createElement('a');
-        link.download = "{{ $container->container_number }}.png";
-        link.href = canvas.toDataURL();
-        link.click();
-    }
-</script>
+            /* ── Modal QR (lazy load) ── */
+            let modalQrGenerated = false;
+
+            const qrModal = document.getElementById('qrModal');
+
+            qrModal.addEventListener('shown.bs.modal', function() {
+
+                if (!modalQrGenerated) {
+                    new QRCode(document.getElementById('qrCanvas'), {
+                        text: QR_TEXT,
+                        width: 240,
+                        height: 240,
+                    });
+
+                    modalQrGenerated = true;
+                }
+            });
+
+            /* ── Download QR ── */
+            document.getElementById('downloadQR')?.addEventListener('click', function() {
+                const canvas = document.querySelector('#qrCanvas canvas');
+                if (!canvas) return;
+
+                const link = document.createElement('a');
+                link.download = '{{ $container->id }}-qr.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+
+        });
+    </script>
 
 @endsection

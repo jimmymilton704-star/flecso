@@ -121,9 +121,21 @@
                                     <div class="row-actions">
 
                                         {{-- QR BUTTON (we will implement later) --}}
-                                        <button class="mini-btn mini-btn--qr"
-                                            onclick="showQR('{{ $container->container_id }}')">
-                                            QR
+                                       
+
+                                        <button class="mini-btn mini-btn--qr" title="QR Code"
+                                            onclick="showQR('Container {{ $container->serial_number  }}', '{{ $container->id }}')">
+
+                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <rect x="3" y="3" width="7" height="7" rx="1" />
+                                                <rect x="14" y="3" width="7" height="7" rx="1" />
+                                                <rect x="3" y="14" width="7" height="7" rx="1" />
+                                                <rect x="14" y="17" width="3" height="3" />
+                                                <rect x="18" y="14" width="3" height="3" />
+                                                <path d="M14 14h3v3M17 20h4M14 17v4" />
+                                            </svg>
+
                                         </button>
 
                                         <a class="mini-btn" title="View" href="{{ route('containers.show', $container->id) }}">
@@ -177,95 +189,6 @@
         </div>
     </section>
 
-    <!-- QR MODAL -->
-    <div id="qrModal" class="qr-modal">
-        <div class="qr-modal-content">
-            <span class="qr-close" onclick="closeQR()">&times;</span>
-
-            <h3 id="qrTitle">Container QR</h3>
-
-            <div id="qrcode"></div>
-
-            <button class="btn btn--primary" onclick="downloadQR()">Download QR Code</button>
-        </div>
-    </div>
-
-    <!-- QRCode Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-    <script>
-        let qr;
-
-        function showQR(containerId) {
-            document.getElementById("qrModal").style.display = "flex";
-
-            document.getElementById("qrTitle").innerText = "Container: " + containerId;
-
-            let qrDiv = document.getElementById("qrcode");
-            qrDiv.innerHTML = ""; // clear old QR
-
-            qr = new QRCode(qrDiv, {
-                text: containerId,
-                width: 200,
-                height: 200
-            });
-        }
-
-        function closeQR() {
-            document.getElementById("qrModal").style.display = "none";
-        }
-
-        function downloadQR() {
-            let canvas = document.querySelector("#qrcode canvas");
-
-            if (!canvas) return;
-
-            let link = document.createElement("a");
-            link.download = "container-qr.png";
-            link.href = canvas.toDataURL();
-            link.click();
-        }
-
-        // close on outside click
-        window.onclick = function (e) {
-            let modal = document.getElementById("qrModal");
-            if (e.target === modal) {
-                closeQR();
-            }
-        }
-    </script>
-
-    <style>
-        .qr-modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .qr-modal-content {
-            background: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            width: 300px;
-            position: relative;
-        }
-
-        .qr-close {
-            position: absolute;
-            right: 12px;
-            top: 10px;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        #qrcode canvas {
-            margin: 15px auto;
-        }
-    </style>
+   <script src="{{ asset('js/trucks.js') }}"></script>
 
 @endsection
