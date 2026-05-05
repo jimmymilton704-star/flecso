@@ -19,7 +19,7 @@ use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\DashboardController;
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Broadcast;
 /*
 |--------------------------------------------------------------------------
 | PUBLIC ROUTES
@@ -39,6 +39,8 @@ Route::get('/test-broadcast', function () {
 });
 
 
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 /*
 |--------------------------------------------------------------------------
@@ -169,10 +171,22 @@ Route::middleware('auth:driver')->prefix('driver')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
-    Route::post('/create', [ChatController::class, 'createOrGetChat']);
-    Route::post('/send', [ChatController::class, 'sendMessage']);
-    Route::get('/messages', [ChatController::class, 'messages']);
-    Route::post('/seen', [ChatController::class, 'markAsSeen']);
-    Route::get('/list', [ChatController::class, 'chatList']);
+Route::prefix('chat')->group(function () {
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/create', [ChatController::class, 'createOrGetChat']);
+        Route::post('/send', [ChatController::class, 'sendMessage']);
+        Route::get('/messages', [ChatController::class, 'messages']);
+        Route::post('/seen', [ChatController::class, 'markAsSeen']);
+        Route::get('/list', [ChatController::class, 'chatList']);
+    });
+
+    Route::middleware('auth:driver')->group(function () {
+        Route::post('/create', [ChatController::class, 'createOrGetChat']);
+        Route::post('/send', [ChatController::class, 'sendMessage']);
+        Route::get('/messages', [ChatController::class, 'messages']);
+        Route::post('/seen', [ChatController::class, 'markAsSeen']);
+        Route::get('/list', [ChatController::class, 'chatList']);
+    });
+
 });
