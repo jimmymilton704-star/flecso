@@ -142,8 +142,8 @@
                             <th>Category</th>
                             <th>Capacity</th>
                             <th>Assigned Driver</th>
-                            <th>Mileage</th>
-                            <th>Last Service</th>
+                            <th>No of Axles</th>
+                            <th>Next inspection data</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -166,13 +166,22 @@
 
                                 <td>{{ $truck->capacity_tons ?? '-' }}</td>
 
-                                <td>{{ $truck->driver->name ?? 'Not Assigned' }}</td>
+                                <td>{{ $truck->driver->full_name ?? 'Not Assigned' }}</td>
 
-                                <td>{{ $truck->mileage ?? '-' }}</td>
+                                <td>{{ $truck->number_of_axles ?? '-' }}</td>
 
-                                <td>{{ $truck->last_service_date ?? '-' }}</td>
+                                <td>{{ $truck->next_inspection_date ?? '-' }}</td>
 
-                                <td>{{ ucfirst($truck->status ?? '-') }}</td>
+                                <td>
+                                    <span
+                                        class="badge
+                                    @if ($truck->status == 'active') badge--success
+                                    @elseif($truck->status == 'Maintenance') badge--warning
+                                    @elseif($truck->status == 'idle') badge--neutral
+                                    @else badge--danger @endif">
+                                        {{ ucfirst(str_replace('_', ' ', $truck->status)) }}
+                                    </span>
+                                </td>
 
                                 <td>
                                     <div class="row-actions">

@@ -19,7 +19,7 @@
 
     <nav class="sidebar__nav" id="sidebarNav">
         <span class="nav-section-label">Overview</span>
-        <a href="{{ route('dashboard') }}" class="nav-link active">
+        <a href="{{ route('dashboard') }}" class="nav-link ">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="9" rx="1.5" />
                 <rect x="14" y="3" width="7" height="5" rx="1.5" />
@@ -35,7 +35,8 @@
                 <path
                     d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0ZM12 9v4M12 17h.01" />
             </svg>
-            <span>SOS Alerts</span><span class="nav-badge nav-badge--danger">3</span>
+            <span>SOS Alerts</span>
+            {{-- <span class="nav-badge nav-badge--danger">3</span> --}}
         </a>
         <a href="{{ route('trucks.index') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -44,28 +45,32 @@
                 <circle cx="7" cy="18" r="2" />
                 <circle cx="17" cy="18" r="2" />
             </svg>
-            <span>Trucks</span><span class="nav-badge">128</span>
+            <span>Trucks</span>
+            {{-- <span class="nav-badge">128</span> --}}
         </a>
         <a href="{{ route('containers.index') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="7" width="18" height="11" rx="1.5" />
                 <path d="M7 7v11M12 7v11M17 7v11" />
             </svg>
-            <span>Containers</span><span class="nav-badge">342</span>
+            <span>Containers</span>
+            {{-- <span class="nav-badge">342</span> --}}
         </a>
         <a href="{{ route('drivers.index') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="8" r="4" />
                 <path d="M4 21c0-4 4-7 8-7s8 3 8 7" />
             </svg>
-            <span>Drivers</span><span class="nav-badge">86</span>
+            <span>Drivers</span>
+            {{-- <span class="nav-badge">86</span> --}}
         </a>
         <a href="{{ route('trips.index') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 2v4M5 7l2.5 2.5M19 7l-2.5 2.5M12 22a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
                 <path d="m8 13 4-4 4 4-4 4z" />
             </svg>
-            <span>Trips</span><span class="nav-dot"></span>
+            <span>Trips</span>
+            {{-- <span class="nav-dot"></span> --}}
         </a>
 
         <span class="nav-section-label">System</span>

@@ -31,6 +31,18 @@
     phone: `<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/>`,
     route: `<circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M6 16V8a4 4 0 0 1 4-4h4M18 8v8a4 4 0 0 1-4 4h-4"/>`,
   };
+// Set active based on current URL
+document.addEventListener("DOMContentLoaded", () => {
+    const links = document.querySelectorAll("#sidebarNav .nav-link");
+
+    links.forEach(link => {
+      if (link.href === window.location.href) {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
+    });
+  });
   const icon = (name, size = 18) =>
     `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ""}</svg>`;
 
@@ -146,9 +158,9 @@
     setSidebar(!$("#sidebar").classList.contains("open"));
   });
   $("#sidebarBackdrop")?.addEventListener("click", () => setSidebar(false));
-  $("#sidebarNav")?.addEventListener("click", e => {
-    if (e.target.closest(".nav-link") && window.innerWidth <= 980) setSidebar(false);
-  });
+  // $("#sidebarNav")?.addEventListener("click", e => {
+  //   if (e.target.closest(".nav-link") && window.innerWidth <= 980) setSidebar(false);
+  // });
 
   /* ---------- Notifications popover ---------- */
   const notifications = [
@@ -372,7 +384,7 @@
     if (btn.closest(".notify-pop")) return;
     const reserved = ["menuToggle","notifyBtn","msgBtn","profileBtn","msgCompose","msgMarkAll","notifyMarkAll","drawerSubmit","qrDownload","qrPrint","addTruckBtn","addContainerBtn","addDriverBtn","addTripBtn"];
     if (btn.id && reserved.includes(btn.id)) return;
-    if (btn.classList.contains("nav-link") || btn.classList.contains("tab-item") || btn.classList.contains("delivery-opt") || btn.classList.contains("icon-btn") || btn.classList.contains("mini-btn")) return;
+    // if (btn.classList.contains("nav-link") || btn.classList.contains("tab-item") || btn.classList.contains("delivery-opt") || btn.classList.contains("icon-btn") || btn.classList.contains("mini-btn")) return;
     if (btn.hasAttribute("data-close")) return;
     if (btn.closest(".filters") || btn.closest(".pager")) return;
     if (btn.closest(".modal__footer") || btn.closest(".drawer__footer")) return;
