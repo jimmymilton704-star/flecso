@@ -72,4 +72,10 @@ class Truck extends Model
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class, 'driver_id');
+    }
+
+
 }
