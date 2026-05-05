@@ -53,7 +53,7 @@
             </svg>
             <span>Containers</span><span class="nav-badge">342</span>
         </a>
-        <a href="drivers.html" class="nav-link">
+        <a href="{{ route('drivers.index') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="8" r="4" />
                 <path d="M4 21c0-4 4-7 8-7s8 3 8 7" />
