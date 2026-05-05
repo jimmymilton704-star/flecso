@@ -45,7 +45,7 @@
 
         <form action="{{ route('trips.update', $trip->id) }}" method="POST">
             @csrf
-            @method('PUT')
+            
 
             <div class="card">
 

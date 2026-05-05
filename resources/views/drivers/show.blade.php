@@ -52,12 +52,12 @@
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                         <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"></path>
                     </svg>Edit</a>
-                <button class="btn btn--primary"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+                <a  class="btn btn--primary"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="6" cy="19" r="3"></circle>
                         <circle cx="18" cy="5" r="3"></circle>
                         <path d="M6 16V8a4 4 0 0 1 4-4h4M18 8v8a4 4 0 0 1-4 4h-4"></path>
-                    </svg>Assign Trip</button>
+                    </svg>Assign Trip</a>
             </div>
         </div>
 
@@ -214,14 +214,16 @@
             </div>
 
             {{-- ── Sidebar ─────────────────────────────────── --}}
+            
             <aside class="detail-side">
+                @if($truck)
                 <div class="card">
                     <div class="card__head">
                         <h3>Assigned Truck</h3>
                     </div>
                     <div class="card__body">
                         <div class="assignee" style="background:transparent;padding:0;margin-bottom:10px">
-                            <img class="glightbox" src="{{ asset($truck->image) }}" alt="Truck"
+                            <img class="glightbox" src="{{ asset($truck->image ? $truck->image : 'https://via.placeholder.com/40')  }}" alt="Truck"
                                 style="width:52px;height:52px;border-radius:10px;object-fit:cover; cursor:pointer;">
                             <div style="flex:1">
                                 <div class="assignee__name">{{ $truck->truck_number }}</div>
@@ -232,6 +234,7 @@
                             Truck</a>
                     </div>
                 </div>
+                @endif
 
                 <div class="card">
                     <div class="card__head">
