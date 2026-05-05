@@ -194,35 +194,37 @@
                                         <button class="mini-btn" title="View">
                                             <a href="{{ route('trucks.show', $truck->id) }}">
 
-                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z" />
-                                                <circle cx="12" cy="12" r="3" />
-                                            </svg>
+                                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z" />
+                                                    <circle cx="12" cy="12" r="3" />
+                                                </svg>
                                             </a>
                                         </button>
 
                                         <button class="mini-btn" title="Edit">
                                             <a href="{{ route('trucks.edit', $truck->id) }}">
 
-                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
-                                            </svg>
+                                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                    <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
+                                                </svg>
                                             </a>
                                         </button>
 
-                                        <button class="mini-btn mini-btn--danger" title="Delete">
-                                            <a href="{{ route('trucks.destroy', $truck->id) }}">
+                                        <form action="{{ route('trucks.destroy', $truck->id) }}" method="POST"style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
 
-                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path
-                                                    d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" />
-                                            </svg>
-                                            </a>
-                                        </button>
+                                            <button type="submit" class="mini-btn mini-btn--danger" title="Delete">
+                                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path
+                                                        d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" />
+                                                </svg>
+                                            </button>
+                                        </form>
 
                                     </div>
                                 </td>

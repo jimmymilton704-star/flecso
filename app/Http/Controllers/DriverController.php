@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Driver;
 use App\Models\Plan;
 use App\Models\Subscription;
+use App\Models\Truck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -179,6 +180,7 @@ class DriverController extends Controller
     public function show($id)
     {
         $driver = Driver::where('admin_id', auth()->id())->findOrFail($id);
-        return view('drivers.show', compact('driver'));
+        $truck = Truck::where('driver_id', $driver->id)->first();
+        return view('drivers.show', compact('driver', 'truck'));
     }
 }
