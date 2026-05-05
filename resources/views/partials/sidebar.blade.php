@@ -60,7 +60,7 @@
             </svg>
             <span>Drivers</span><span class="nav-badge">86</span>
         </a>
-        <a href="trips.html" class="nav-link">
+        <a href="{{ route('trips.index') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 2v4M5 7l2.5 2.5M19 7l-2.5 2.5M12 22a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
                 <path d="m8 13 4-4 4 4-4 4z" />

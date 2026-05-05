@@ -41,6 +41,7 @@ Route::get('/test-broadcast', function () {
 
 
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
+Broadcast::routes(['middleware' => ['auth:driver']]);
 
 /*
 |--------------------------------------------------------------------------
@@ -171,22 +172,10 @@ Route::middleware('auth:driver')->prefix('driver')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('chat')->group(function () {
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/create', [ChatController::class, 'createOrGetChat']);
-        Route::post('/send', [ChatController::class, 'sendMessage']);
-        Route::get('/messages', [ChatController::class, 'messages']);
-        Route::post('/seen', [ChatController::class, 'markAsSeen']);
-        Route::get('/list', [ChatController::class, 'chatList']);
-    });
-
-    Route::middleware('auth:driver')->group(function () {
-        Route::post('/create', [ChatController::class, 'createOrGetChat']);
-        Route::post('/send', [ChatController::class, 'sendMessage']);
-        Route::get('/messages', [ChatController::class, 'messages']);
-        Route::post('/seen', [ChatController::class, 'markAsSeen']);
-        Route::get('/list', [ChatController::class, 'chatList']);
-    });
-
+Route::middleware(['auth:sanctum,driver'])->prefix('chat')->group(function () {
+    Route::post('/create', [ChatController::class, 'createOrGetChat']);
+    Route::post('/send', [ChatController::class, 'sendMessage']);
+    Route::get('/messages', [ChatController::class, 'messages']);
+    Route::post('/seen', [ChatController::class, 'markAsSeen']);
+    Route::get('/list', [ChatController::class, 'chatList']); 
 });

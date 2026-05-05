@@ -25,23 +25,47 @@
         {{-- STATS --}}
         <div class="stats-grid">
             <div class="stat">
+                <div class="stat__icon stat__icon--green"><svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="7" width="18" height="11" rx="1.5"></rect>
+                        <path d="M7 7v11M12 7v11M17 7v11"></path>
+                    </svg></div>
                 <div class="stat__label">Total Containers</div>
                 <div class="stat__value">{{ $containers->count() }}</div>
+                <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34"><path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#10B981" stroke-width="2" fill="none" stroke-linecap="round"></path></svg>
             </div>
 
             <div class="stat">
+                <div class="stat__icon stat__icon--blue"><svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="7" width="18" height="11" rx="1.5"></rect>
+                        <path d="M7 7v11M12 7v11M17 7v11"></path>
+                    </svg></div>
                 <div class="stat__label">Active</div>
                 <div class="stat__value">{{ $containers->where('status', 'active')->count() }}</div>
+                <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34"><path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#3B82F6" stroke-width="2" fill="none" stroke-linecap="round"></path></svg>
             </div>
 
             <div class="stat">
+                <div class="stat__icon stat__icon--dark"><svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="7" width="18" height="11" rx="1.5"></rect>
+                        <path d="M7 7v11M12 7v11M17 7v11"></path>
+                    </svg></div>
                 <div class="stat__label">Maintenance</div>
                 <div class="stat__value">{{ $containers->where('status', 'maintenance')->count() }}</div>
+                <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34"><path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#111114" stroke-width="2" fill="none" stroke-linecap="round"></path></svg>
             </div>
 
             <div class="stat">
+                <div class="stat__icon stat__icon--orange"><svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="7" width="18" height="11" rx="1.5"></rect>
+                        <path d="M7 7v11M12 7v11M17 7v11"></path>
+                    </svg></div>
                 <div class="stat__label">Inactive</div>
                 <div class="stat__value">{{ $containers->where('status', 'inactive')->count() }}</div>
+                <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34"><path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#FF6B1A" stroke-width="2" fill="none" stroke-linecap="round"></path></svg>
             </div>
         </div>
 
@@ -51,6 +75,12 @@
                     <div class="search">
                         <input type="text" placeholder="Search container...">
                     </div>
+                    <div class="filters">
+                <button class="active" data-filter="all">All</button>
+                        <button data-filter="active">Active</button>
+                        <button data-filter="inactive">Inactive</button>
+                        <button data-filter="maintenance">Maintenance</button>
+              </div>
                 </div>
             </div>
 
@@ -90,8 +120,8 @@
 
                                 <td>
                                     <code style="font-size:12px;background:var(--ink-50);padding:2px 8px;border-radius:6px">
-                                                            {{ $container->iso_type_size_code }}
-                                                        </code>
+                                                                                    {{ $container->iso_type_size_code }}
+                                                                                </code>
                                 </td>
 
                                 <td>{{ $container->owner_code }}</td>
@@ -121,13 +151,13 @@
                                     <div class="row-actions">
 
                                         {{-- QR BUTTON (we will implement later) --}}
-                                       
+
 
                                         <button class="mini-btn mini-btn--qr" title="QR Code"
                                             onclick="showQR('Container {{ $container->serial_number  }}', '{{ $container->id }}')">
 
-                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
-                                                stroke="currentColor" stroke-width="2">
+                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                                stroke-width="2">
                                                 <rect x="3" y="3" width="7" height="7" rx="1" />
                                                 <rect x="14" y="3" width="7" height="7" rx="1" />
                                                 <rect x="3" y="14" width="7" height="7" rx="1" />
@@ -139,9 +169,8 @@
                                         </button>
 
                                         <a class="mini-btn" title="View" href="{{ route('containers.show', $container->id) }}">
-                                            <svg viewBox="0 0 24 24" width="14" height="14"
-                                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                stroke-linejoin="round">
+                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z"></path>
                                                 <circle cx="12" cy="12" r="3"></circle>
                                             </svg>
@@ -189,6 +218,35 @@
         </div>
     </section>
 
-   <script src="{{ asset('js/trucks.js') }}"></script>
+    <script src="{{ asset('js/trucks.js') }}"></script>
+
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.filters button');
+            const rows = document.querySelectorAll('table.data tbody tr');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+
+                    // active class handling
+                    buttons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filter = this.dataset.filter;
+
+                    rows.forEach(row => {
+                        const status = row.dataset.status;
+
+                        if (filter === 'all' || status === filter) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                });
+            });
+        });
+    </script>
 
 @endsection

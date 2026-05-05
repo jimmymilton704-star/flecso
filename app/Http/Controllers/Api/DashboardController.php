@@ -33,11 +33,11 @@ class DashboardController extends Controller
                 ->count();
 
             $driversOnDuty = Trip::where('admin_id', $adminId)
-                ->whereDate('date_time', now())
-                ->where('status', 'active')
+                ->whereDate('schedule_datetime', now())
+                ->where('trip_status', 'active')
                 ->distinct('driver_id')
                 ->count('driver_id');
-
+    
             /*
             |------------------------------------------------------------------
             | ACTIVE TRIPS
@@ -50,8 +50,8 @@ class DashboardController extends Controller
                     'container'
                 ])
                 ->where('admin_id', $adminId)
-                ->whereDate('date_time', now())
-                ->where('status', 'active');
+                ->whereDate('schedule_datetime', now())
+                ->where('trip_status', 'active');
 
             $activeTrips = (clone $activeTripsQuery)
                 ->latest()

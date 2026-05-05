@@ -7,6 +7,7 @@ use App\Http\Controllers\SosAlertController;
 use App\Http\Controllers\TruckController;
 use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\TripController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,6 +109,21 @@ Route::middleware('auth')->group(function () {
         Route::delete('/delete/{id}', [DriverController::class, 'destroy'])->name('delete');
         Route::post('/update-status', [DriverController::class, 'updateStatus'])->name('update.status');
     });
+
+   Route::prefix('trips')->name('trips.')->group(function () {
+
+        Route::get('/', [TripController::class, 'index'])->name('index');
+        Route::get('/create', [TripController::class, 'create'])->name('create');
+        Route::post('/store', [TripController::class, 'store'])->name('store');
+
+        Route::get('/{id}/show', [TripController::class, 'show'])->name('show');
+
+        Route::get('/{id}/edit', [TripController::class, 'edit'])->name('edit');
+        Route::post('/{id}/update', [TripController::class, 'update'])->name('update');
+
+        Route::post('/{id}/delete', [TripController::class, 'destroy'])->name('destroy');
+    });
+
 
     // Logout
     Route::get('/logout', [AuthController::class, 'logout'])
