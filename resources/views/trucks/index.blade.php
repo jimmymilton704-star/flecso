@@ -43,8 +43,8 @@
                     </svg>
                 </div>
                 <div class="stat__label">Active</div>
-                <div class="stat__value">92</div>
-                <div class="stat__trend trend-up">▲ 3.2% vs last month</div>
+                <div class="stat__value">{{ $trucks->where('status', 'active')->count() }}</div>
+                {{-- <div class="stat__trend trend-up">▲ 3.2% vs last month</div> --}}
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#FF6B1A" stroke-width="2"
                         fill="none" stroke-linecap="round" />
@@ -59,8 +59,8 @@
                     </svg>
                 </div>
                 <div class="stat__label">Maintenance</div>
-                <div class="stat__value">8</div>
-                <div class="stat__trend trend-down">▼ 1.5% vs last month</div>
+                <div class="stat__value"> {{ $trucks->where('status', 'maintenance')->count() }}</div>
+                {{-- <div class="stat__trend trend-down">▼ 1.5% vs last month</div> --}}
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#111114" stroke-width="2"
                         fill="none" stroke-linecap="round" />
@@ -78,8 +78,8 @@
                     </svg>
                 </div>
                 <div class="stat__label">Idle</div>
-                <div class="stat__value">18</div>
-                <div class="stat__trend trend-up">▲ 0.8% vs last month</div>
+                <div class="stat__value">{{ $trucks->where('status', 'idle')->count() }}</div>
+                {{-- <div class="stat__trend trend-up">▲ 0.8% vs last month</div> --}}
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#3B82F6" stroke-width="2"
                         fill="none" stroke-linecap="round" />
@@ -97,8 +97,8 @@
                     </svg>
                 </div>
                 <div class="stat__label">Inactive</div>
-                <div class="stat__value">10</div>
-                <div class="stat__trend trend-down">▼ 0.4% vs last month</div>
+                <div class="stat__value">{{ $trucks->where('status', 'inactive')->count() }}</div>
+                {{-- <div class="stat__trend trend-down">▼ 0.4% vs last month</div> --}}
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#10B981" stroke-width="2"
                         fill="none" stroke-linecap="round" />
@@ -115,14 +115,14 @@
                             <circle cx="11" cy="11" r="7" />
                             <path d="m20 20-3-3" />
                         </svg>
-                        <input type="text" placeholder="Search by truck ID, plate, or driver…" />
+                        <input type="text" id="truckSearch" placeholder="Search by truck ID, plate, or driver…" />
                     </div>
                     <div class="filters">
-                        <button class="active">All</button>
-                        <button>Active</button>
-                        <button>Maintenance</button>
-                        <button>Idle</button>
-                        <button>Inactive</button>
+                        <button class="active" data-filter="all">All</button>
+                        <button data-filter="active">Active</button>
+                        <button data-filter="maintenance">Maintenance</button>
+                        <button data-filter="idle">Idle</button>
+                        <button data-filter="inactive">Inactive</button>
                     </div>
                 </div>
                 <button class="btn btn--ghost btn--sm">
@@ -151,7 +151,8 @@
 
                     <tbody id="trucksBody">
                         @forelse($trucks as $truck)
-                            <tr>
+                            <tr data-status="{{ strtolower($truck->status) }}"
+                                data-search="{{ strtolower($truck->license_plate_number . ' ' . $truck->truck_license_number . ' ' . optional($truck->driver)->name .' ' . $truck->truck_type_category ) }}">
                                 <td>
                                     <div class="cell-asset">
                                         <img class="asset-thumb" src="{{ $truck->image }}" alt="">
@@ -213,7 +214,8 @@
                                             </a>
                                         </button>
 
-                                        <form action="{{ route('trucks.destroy', $truck->id) }}" method="POST"style="display:inline;">
+                                        <form action="{{ route('trucks.destroy', $truck->id) }}"
+                                            method="POST"style="display:inline;">
                                             @csrf
                                             @method('DELETE')
 
@@ -248,5 +250,57 @@
         </div>
     </section>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const buttons = document.querySelectorAll('.filters button');
+            const rows = document.querySelectorAll('#trucksBody tr');
+            const searchInput = document.getElementById('truckSearch');
+
+            let currentFilter = 'all';
+            let searchValue = '';
+
+            // FILTER BUTTONS
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+
+                    buttons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    currentFilter = this.dataset.filter;
+                    applyFilter();
+
+                });
+            });
+
+            // SEARCH INPUT
+            searchInput.addEventListener('input', function() {
+                searchValue = this.value.toLowerCase();
+                applyFilter();
+            });
+
+            // MAIN FILTER FUNCTION
+            function applyFilter() {
+
+                rows.forEach(row => {
+
+                    const status = (row.dataset.status || '').toLowerCase();
+                    const search = (row.dataset.search || '').toLowerCase();
+
+                    const matchFilter = (currentFilter === 'all' || status === currentFilter);
+                    const matchSearch = search.includes(searchValue);
+
+                    if (matchFilter && matchSearch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+
+                });
+
+            }
+
+        });
+    </script>
     <script src="{{ asset('js/trucks.js') }}"></script>
 @endsection

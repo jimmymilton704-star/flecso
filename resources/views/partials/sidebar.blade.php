@@ -19,7 +19,7 @@
 
     <nav class="sidebar__nav" id="sidebarNav">
         <span class="nav-section-label">Overview</span>
-        <a href="index.html" class="nav-link active">
+        <a href="{{ route('dashboard') }}" class="nav-link active">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="9" rx="1.5" />
                 <rect x="14" y="3" width="7" height="5" rx="1.5" />

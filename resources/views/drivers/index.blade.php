@@ -97,13 +97,14 @@
                             <circle cx="11" cy="11" r="7" />
                             <path d="m20 20-3-3" />
                         </svg>
-                        <input type="text" placeholder="Search by name, email or phone…" />
+                        <input type="text" id="driverSearch" placeholder="Search by name, email or phone…" />
                     </div>
 
                     <div class="filters">
                         <button class="active" data-filter="all">All</button>
                         <button data-filter="active">Active</button>
                         <button data-filter="inactive">Inactive</button>
+                        <button data-filter="on_leave">Leave</button>
                         <button data-filter="on_trip">On Trip</button>
                     </div>
 
@@ -127,7 +128,8 @@
                     <tbody>
 
                         @forelse($drivers as $driver)
-                            <tr  data-status="{{ $driver->status }}">
+                            <tr data-status="{{ $driver->status }}"
+                                data-search="{{ $driver->full_name . ' ' . $driver->email . ' ' . $driver->phone }}">
                                 <td>
                                     <div class="cell-asset">
                                         <img class="asset-thumb"
@@ -224,29 +226,40 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const buttons = document.querySelectorAll('.filters button');
-            const rows = document.querySelectorAll('table.data tbody tr');
+            const rows = document.querySelectorAll('tbody tr[data-status]');
+            const searchInput = document.getElementById('driverSearch');
+
+            let currentFilter = 'all';
+            let searchValue = '';
+
+            function applyFilter() {
+                rows.forEach(row => {
+                    const status = (row.dataset.status || '').toLowerCase();
+                    const search = (row.dataset.search || '').toLowerCase();
+
+                    const matchFilter = currentFilter === 'all' || status === currentFilter;
+                    const matchSearch = search.includes(searchValue);
+
+                    row.style.display = (matchFilter && matchSearch) ? '' : 'none';
+                });
+            }
 
             buttons.forEach(btn => {
                 btn.addEventListener('click', function() {
-
-                    // active class handling
                     buttons.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
 
-                    const filter = this.dataset.filter;
-
-                    rows.forEach(row => {
-                        const status = row.dataset.status;
-
-                        if (filter === 'all' || status === filter) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-
+                    currentFilter = this.dataset.filter;
+                    applyFilter();
                 });
             });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    searchValue = this.value.trim().toLowerCase();
+                    applyFilter();
+                });
+            }
         });
     </script>
 
