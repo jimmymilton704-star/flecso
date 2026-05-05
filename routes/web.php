@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SosAlertController;
 use App\Http\Controllers\TruckController;
 use App\Http\Controllers\ContainerController;
+use App\Http\Controllers\DriverController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,7 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/sos-alerts/resolve', [SosAlertController::class, 'resolve'])->name('sos.resolve');
 
     // Trucks
-     Route::prefix('trucks')->name('trucks.')->group(function () {
+    Route::prefix('trucks')->name('trucks.')->group(function () {
 
         Route::get('/', [TruckController::class, 'index'])->name('index');
         Route::get('/create', [TruckController::class, 'create'])->name('create');
@@ -93,6 +94,19 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/update', [ContainerController::class, 'update'])->name('update');
 
         Route::post('/{id}/delete', [ContainerController::class, 'destroy'])->name('destroy');
+    });
+
+
+
+    Route::prefix('drivers')->name('drivers.')->group(function () {
+        Route::get('/', [DriverController::class, 'index'])->name('index');
+        Route::get('/create', [DriverController::class, 'create'])->name('create');
+        Route::post('/store', [DriverController::class, 'store'])->name('store');
+        Route::get('/show/{id}', [DriverController::class, 'show'])->name('show');
+        Route::get('/edit/{id}', [DriverController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [DriverController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [DriverController::class, 'destroy'])->name('delete');
+        Route::post('/update-status', [DriverController::class, 'updateStatus'])->name('update.status');
     });
 
     // Logout
