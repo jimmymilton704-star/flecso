@@ -4,6 +4,11 @@
 @section('body-class', 'page-dashboard')
 
 @section('content')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         .upload-box {
             display: block;
@@ -17,9 +22,18 @@
         }
 
         .upload-box:hover {
-            border-color: #4f46e5;
-            background: #f5f7ff;
+            border-color: #ff8a2b;
+            background: #fff5ec;
+            color: #ff8a2b;
         }
+
+        .upload-box:hover .upload-content span {
+            color: #e08e4a;
+        }
+        .upload-box:hover .upload-content svg {
+            color: #c43e04;
+        }
+
 
         .upload-content svg {
             margin-bottom: 10px;
@@ -37,19 +51,18 @@
             color: #6b7280;
         }
 
-        .current-file {
-            margin-top: 8px;
-            font-size: 12px;
-            color: #374151;
+        h3 {
+            font-family: "Space Grotesk", "Inter", sans-serif;
         }
 
-        .current-file a {
-            color: #4f46e5;
-            text-decoration: none;
-        }
-
-        .current-file a:hover {
-            text-decoration: underline;
+        .count {
+            padding: 10px;
+            border-radius: 7px;
+            background: var(--orange-50);
+            color: var(--orange-700);
+            font-size: 11px;
+            font-weight: 700;
+            place-items: center;
         }
     </style>
 
@@ -70,7 +83,7 @@
 
                 {{-- 1. BASIC --}}
                 <div class="card__head">
-                    <h3>1. Basic Information</h3>
+                    <h3><span class="count">1.</span> Basic Information</h3>
                 </div>
                 <div class="card__body">
                     <div class="form-grid">
@@ -163,7 +176,7 @@
 
                 {{-- 2. IDENTITY --}}
                 <div class="card__head">
-                    <h3>2. Identity & Legal</h3>
+                    <h3><span class="count">2.</span> Identity & Legal</h3>
                 </div>
                 <div class="card__body">
                     <div class="form-grid">
@@ -235,7 +248,7 @@
 
                 {{-- 3. TECHNICAL --}}
                 <div class="card__head">
-                    <h3>3. Technical Specifications</h3>
+                    <h3><span class="count">3.</span> Technical Specifications</h3>
                 </div>
                 <div class="card__body">
                     <div class="form-grid">
@@ -287,7 +300,7 @@
 
                 {{-- 4. COMPLIANCE --}}
                 <div class="card__head">
-                    <h3>4. Compliance</h3>
+                    <h3><span class="count">4.</span> Compliance</h3>
                 </div>
                 <div class="card__body">
                     <div class="form-grid">
