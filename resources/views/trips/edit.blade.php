@@ -216,7 +216,7 @@
     {{-- GOOGLE MAPS --}}
       <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQqP59sFi_cXyk8Afq_AY4Dkg4DCf-xj0&libraries=places"></script>
-    <script>
+</script>
 
     <script>
         let map, pickupMarker, deliveryMarker, pickupAutocomplete, deliveryAutocomplete;
