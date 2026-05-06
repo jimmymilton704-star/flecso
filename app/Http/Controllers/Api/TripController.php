@@ -37,32 +37,30 @@ class TripController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // Basic
             'trip_id'           => 'required|string',
             'trip_type'         => 'required|string',
             'pickup_location'   => 'required|string',
             'delivery_location' => 'required|string',
+            'trip_status'       => 'required|string',
+
             'pickup_lat'        => 'nullable|numeric|between:-90,90',
             'pickup_lng'        => 'nullable|numeric|between:-180,180',
             'delivery_lat'      => 'nullable|numeric|between:-90,90',
-            'delivery_lng'   => 'nullable|numeric|between:-180,180',
+            'delivery_lng'      => 'nullable|numeric|between:-180,180',
+
             'distance_km'       => 'nullable|numeric',
             'eta_mins'          => 'nullable|integer',
             'schedule_datetime' => 'nullable|date',
             'payment_amount'    => 'nullable|numeric',
-            'trip_status'       => 'required|string',
 
-            // Relations
             'driver_id'    => 'nullable|exists:drivers,id',
             'truck_id'     => 'nullable|exists:trucks,id',
             'container_id' => 'nullable|exists:containers,id',
 
-            // Delivery
             'delivery_name'  => 'nullable|string',
             'delivery_phone' => 'nullable|string',
             'delivery_email' => 'nullable|email',
 
-            // Package
             'package_description' => 'nullable|string',
             'package_weight'      => 'nullable|numeric',
             'package_height'      => 'nullable|numeric',
