@@ -285,10 +285,10 @@ document.addEventListener("DOMContentLoaded", () => {
     $("#profilePop")?.classList.remove("open");
     const action = link.dataset.action;
     const goto = (hash) => location.href = hash;
-    if (action === "profile")      goto("settings.html#personal");
-    else if (action === "settings")goto("settings.html");
-    else if (action === "billing") goto("settings.html#subscription");
-    else if (action === "help")    goto("settings.html#support");
+    if (action === "profile")      goto("setting#personal");
+    else if (action === "settings")goto("setting");
+    else if (action === "billing") goto("setting#subscription");
+    else if (action === "help")    goto("setting#support");
     else if (action === "logout")  {
       toast("Signing out…");
       setTimeout(() => location.href = "login.html", 600);

@@ -146,7 +146,8 @@
                             <input type="password" name="password" autocomplete="current-password"
                                 placeholder="Enter your password" required />
 
-                            <button type="button" class="auth-input__btn" data-toggle-pw>
+                            <button type="button" class="auth-input__btn" data-toggle-pw
+                            onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'">
                                 👁
                             </button>
                         </div>

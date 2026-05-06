@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SosAlertController;
 use App\Http\Controllers\TruckController;
 use App\Http\Controllers\ContainerController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
 
@@ -123,11 +124,27 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/{id}/delete', [TripController::class, 'destroy'])->name('destroy');
     });
+    Route::prefix('users')->name('users.')->group(function () {
+
+        Route::post('/company/store', [UserController::class, 'companystore'])->name('company.store');
+        
+        Route::post('/profile/update', [UserController::class, 'profileUpdate'])->name('profile.update');
+
+        Route::get('/{id}/show', [UserController::class, 'show'])->name('show');
+
+        Route::get('/{id}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::post('/{id}/update', [UserController::class, 'update'])->name('update');
+
+        Route::post('/{id}/delete', [UserController::class, 'destroy'])->name('destroy');
+    });
 
 
     // Logout
     Route::get('/logout', [AuthController::class, 'logout'])
         ->name('logout');
+    Route::get('/setting',function(){
+        return view('settings.setting');
+    })->name('setting');
 });
 
 /*

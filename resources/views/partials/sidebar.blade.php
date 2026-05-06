@@ -74,7 +74,7 @@
         </a>
 
         <span class="nav-section-label">System</span>
-        <a href="settings.html" class="nav-link">
+        <a href="{{ route('setting') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3" />
                 <path
