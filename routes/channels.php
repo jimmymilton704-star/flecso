@@ -10,26 +10,19 @@ use App\Models\Trip;
 |--------------------------------------------------------------------------
 */
 
-Broadcast::channel('chat.{chatId}', function ($user = null, $chatId) {
+Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
 
-    // 🔹 Try ADMIN (users table)
-    if (auth()->check()) {
-        return Chat::where('id', $chatId)
-            ->where(function ($q) {
-                $q->where('admin_id', auth()->id());
-            })
-            ->exists();
-    }
+    if (!$user) return false;
 
-    // 🔹 Try DRIVER (drivers table)
-    if (auth('driver')->check()) {
-        return Chat::where('id', $chatId)
-            ->where('driver_id', auth('driver')->id())
-            ->exists();
-    }
-
-    return false;
+    return \App\Models\Chat::where('id', $chatId)
+        ->where(function ($q) use ($user) {
+            $q->where('admin_id', $user->id)
+              ->orWhere('driver_id', $user->id);
+        })
+        ->exists();
 });
+
+
 
 
 /*
