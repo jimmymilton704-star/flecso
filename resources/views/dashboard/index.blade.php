@@ -24,14 +24,11 @@
                         <rect x="3" y="4" width="18" height="18" rx="2" />
                         <path d="M16 2v4M8 2v4M3 10h18" />
                     </svg> Last 30 days</button>
-                <button class="btn btn--ghost"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+                <button class="btn btn--primary"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
                         stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
                     </svg> Export report</button>
-                <button class="btn btn--primary"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M12 5v14M5 12h14" />
-                    </svg> Quick add</button>
+               
             </div>
         </div>
 
@@ -128,7 +125,7 @@
                         </div>
                         <h3>SOS Alerts</h3>
                     </div>
-                    <button class="btn btn--sm btn--ghost">View all</button>
+                    <a class="btn btn--sm btn--primary" href="{{ route('sos.index') }}">View all</a>
                 </div>
                 <div class="card__body">
                     @forelse($sos_alerts as $sos)
@@ -214,7 +211,7 @@
                     <div class="card__title">
                         <h3>Recent Activity</h3>
                     </div>
-                    <button class="btn btn--sm btn--ghost">See all</button>
+                    <a class="btn btn--sm btn--primary" href="{{ route('trips.index') }}">See all</a>
                 </div>
                 <div class="card__body activity-list">
                     @forelse($recent_trips as $trip)
@@ -244,15 +241,10 @@
                     <h3>Upcoming & Recent Trips</h3>
                 </div>
                 <div class="flex gap-8">
-                    <button class="btn btn--sm btn--ghost"><svg viewBox="0 0 24 24" width="14" height="14" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" />
-                            <path d="M16 2v4M8 2v4M3 10h18" />
-                        </svg> Calendar view</button>
-                    <button class="btn btn--sm btn--primary"><svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+                    <a class="btn btn--sm btn--primary" href="{{ route('trips.create') }}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                             stroke="currentColor" stroke-width="2">
                             <path d="M12 5v14M5 12h14" />
-                        </svg> Schedule trip</button>
+                        </svg> Schedule trip</a>
                 </div>
             </div>
             <div class="card__body">
