@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'role',
         'parent_id',
+        'avatar',
 
         // Step 1 - Company Profile
         'company_legal_name',
@@ -32,6 +33,7 @@ class User extends Authenticatable
         'vat_number',
         'fiscal_code',
         'rea_number',
+        'company_name',
 
         // Step 2 - Billing
         'pec_email',
