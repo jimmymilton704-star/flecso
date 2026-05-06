@@ -1,3 +1,7 @@
+@php
+    $user = user();
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 

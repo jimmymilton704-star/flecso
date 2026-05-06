@@ -1,3 +1,4 @@
+
 <header class="topbar">
     <button class="icon-btn topbar__menu" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" width="20"
             height="20" fill="none" stroke="currentColor" stroke-width="2">
@@ -91,7 +92,7 @@
         <!-- Profile -->
         <div class="notify-wrap">
             <button class="topbar__profile" id="profileBtn" type="button">
-                <img src="https://i.pravatar.cc/80?img=47" alt="User" />
+                <img src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/80?img=47' }}" alt="User" />
                 <div class="profile-meta"><span class="profile-name">Marco Bianchi</span><span
                         class="profile-role">Admin · Milan HQ</span></div>
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
@@ -101,7 +102,7 @@
             </button>
             <div class="notify-pop profile-pop" id="profilePop" role="menu">
                 <header class="notify-pop__head" style="gap:12px">
-                    <img src="https://i.pravatar.cc/80?img=47"
+                    <img src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/80?img=47' }}"
                         style="width:44px;height:44px;border-radius:50%;object-fit:cover" alt="">
                     <div style="flex:1">
                         <h3 style="font-size:14px">Marco Bianchi</h3>
