@@ -9,7 +9,7 @@ use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
-
+use App\Http\Controllers\ActivityLogController;
 /*
 |--------------------------------------------------------------------------
 | ROOT
@@ -57,7 +57,7 @@ Route::middleware('guest')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'activity.log'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -146,6 +146,8 @@ Route::middleware('auth')->group(function () {
         return view('settings.setting');
     })->name('setting');
 });
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
+
 
 /*
 |--------------------------------------------------------------------------
