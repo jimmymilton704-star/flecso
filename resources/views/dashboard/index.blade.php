@@ -47,7 +47,6 @@
                     </svg></div>
                 <div class="stat__label">Total Trucks</div>
                 <div class="stat__value">{{ $total_trucks }}</div>
-                <div class="stat__trend trend-up">▲ 4.2% vs last month</div>
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#FF6B1A" stroke-width="2"
                         fill="none" stroke-linecap="round" />
@@ -63,7 +62,6 @@
                     </svg></div>
                 <div class="stat__label">Total Containers</div>
                 <div class="stat__value">{{ $total_containers }}</div>
-                <div class="stat__trend trend-up">▲ 1.8% vs last month</div>
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#111114" stroke-width="2"
                         fill="none" stroke-linecap="round" />
@@ -77,7 +75,6 @@
                     </svg></div>
                 <div class="stat__label">Total Drivers</div>
                 <div class="stat__value">{{ $total_drivers }}</div>
-                <div class="stat__trend trend-up">▲ 2.5% vs last month</div>
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#10B981" stroke-width="2"
                         fill="none" stroke-linecap="round" />
@@ -93,7 +90,6 @@
                     </svg></div>
                 <div class="stat__label">Active Trips</div>
                 <div class="stat__value">{{ $active_trips }}</div>
-                <div class="stat__trend trend-down">▼ 1.1% vs last month</div>
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#3B82F6" stroke-width="2"
                         fill="none" stroke-linecap="round" />
