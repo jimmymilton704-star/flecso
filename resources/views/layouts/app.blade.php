@@ -167,6 +167,25 @@
             combo.dispatchEvent(new Event("change"));
         }
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const lang = localStorage.getItem("lang") || "en";
+
+            document.querySelectorAll(".lang-switch").forEach(el => {
+                el.classList.remove("active");
+            });
+
+            const activeBtn = document.querySelector(`.lang-switch[data-lang="${lang}"]`);
+
+            if (activeBtn) {
+                activeBtn.classList.add("active");
+            }
+
+            setTimeout(() => {
+                setGoogleLanguage(lang);
+            }, 800);
+        });
+    </script>
 
 
     <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
