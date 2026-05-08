@@ -2,17 +2,19 @@
 
 @section('title', 'SOS Alert Details')
 @section('body-class', 'page-dashboard')
+<link rel="stylesheet" href="{{ asset('css/trips.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/detail.css') }}" />
 
 @section('content')
 
 @php
-    $driver = $sos->driver;
-    $trip   = $sos->trip;
+    $driver = $alert->driver;
+    $trip   = $alert->trip;
 
-    $severity = ucfirst($sos->emergency_type ?? 'warning');
-    $status   = ucfirst($sos->status ?? 'pending');
+    $severity = ucfirst($alert->emergency_type ?? 'warning');
+    $status   = ucfirst($alert->status ?? 'pending');
 
-    $raisedAt = \Carbon\Carbon::parse($sos->created_at);
+    $raisedAt = \Carbon\Carbon::parse($alert->created_at);
 @endphp
 
 <section class="page">
@@ -24,7 +26,7 @@
         <div class="sos-banner__icon">⚠</div>
         <div>
             <div>{{ $severity }}</div>
-            <div>{{ $sos->description ?? 'No description provided' }}</div>
+            <div>{{ $alert->description ?? 'No description provided' }}</div>
         </div>
         <div class="sos-banner__eta">
             {{ $raisedAt->diffForHumans() }}
@@ -34,12 +36,12 @@
     <!-- Actions -->
     <div class="sos-respond-bar">
         <div class="sos-respond-bar__msg">
-            <strong>{{ $driver->name ?? 'Driver' }}</strong> alert is active.
+            <strong>{{ $driver->full_name ?? 'Driver' }}</strong> alert is active.
         </div>
 
         <form method="POST" action="{{ route('sos.resolve') }}">
             @csrf
-            <input type="hidden" name="sos_id" value="{{ $sos->id }}">
+            <input type="hidden" name="sos_id" value="{{ $alert->id }}">
             <button class="btn btn--primary btn--sm">
                 Mark resolved
             </button>
@@ -55,12 +57,12 @@
                 <span class="badge badge--neutral">{{ $status }}</span>
             </div>
 
-            <h1>#{{ $sos->id }}</h1>
+            <h1>#{{ $alert->id }}</h1>
 
             <div class="detail-hero__sub">
                 <span>👤 {{ $driver->name ?? '-' }}</span>
                 <span>🚚 {{ $trip->truck->name ?? '-' }}</span>
-                <span>📍 {{ $sos->location ?? '-' }}</span>
+                <span>📍 {{ $alert->location ?? '-' }}</span>
                 <span>🕒 {{ $raisedAt->format('Y-m-d H:i') }}</span>
             </div>
         </div>
@@ -71,7 +73,7 @@
         <div class="qs">
             <div class="qs__label">Severity</div>
             <div class="qs__value">{{ $severity }}</div>
-            <div class="qs__sub">{{ $sos->emergency_type }}</div>
+            <div class="qs__sub">{{ $alert->emergency_type }}</div>
         </div>
 
         <div class="qs">
@@ -106,7 +108,7 @@
                     <h3>Incident Location</h3>
                 </div>
                 <div class="card__body">
-                    <p>{{ $sos->location ?? 'No location available' }}</p>
+                    <p>{{ $alert->location ?? 'No location available' }}</p>
                 </div>
             </div>
 
@@ -121,12 +123,12 @@
 
                         <div class="info-row">
                             <span class="info-row__key">Type</span>
-                            <span class="info-row__val">{{ $sos->emergency_type }}</span>
+                            <span class="info-row__val">{{ $alert->emergency_type }}</span>
                         </div>
 
                         <div class="info-row">
                             <span class="info-row__key">Driver</span>
-                            <span class="info-row__val">{{ $driver->name ?? '-' }}</span>
+                            <span class="info-row__val">{{ $driver->full_name ?? '-' }}</span>
                         </div>
 
                         <div class="info-row">
@@ -148,7 +150,7 @@
 
                     <div style="margin-top:14px">
                         <h5>Description</h5>
-                        <p>{{ $sos->description ?? 'No description provided' }}</p>
+                        <p>{{ $alert->description ?? 'No description provided' }}</p>
                     </div>
 
                 </div>
@@ -160,16 +162,31 @@
         <aside class="detail-side">
 
             <!-- Driver -->
-            <div class="card">
-                <div class="card__head">
-                    <h3>Driver</h3>
+            {{-- DRIVER --}}
+                <div class="card">
+                    <div class="card__head">
+                        <h3>Driver</h3>
+                    </div>
+                    <div class="card__body">
+
+                        @if ($trip->driver)
+                            <div class="assignee" style="background:transparent;padding:0;margin-bottom:10px">
+                                <img src="{{ asset($trip->driver->avatar ?? 'https://i.pravatar.cc/80') }}">
+                                <div>
+                                    <div class="assignee__name">{{ $trip->driver->full_name }}</div>
+                                    <div class="assignee__sub">{{ $trip->driver->phone }}</div>
+
+                                </div>
+
+                            </div>
+                            <a href="{{ route('drivers.show', $trip->driver->id) }}"
+                                class="btn btn--sm btn--ghost btn--block">View profile</a>
+                        @else
+                            <p>No driver assigned</p>
+                        @endif
+
+                    </div>
                 </div>
-                <div class="card__body">
-                    <strong>{{ $driver->name ?? '-' }}</strong>
-                    <br>
-                    {{ $driver->phone ?? '-' }}
-                </div>
-            </div>
 
             <!-- Trip -->
             <div class="card">
@@ -178,7 +195,11 @@
                 </div>
                 <div class="card__body">
                     ID: {{ $trip->id ?? '-' }}
+
+                        <a href="{{ route('trips.show', $trip->id) }}"
+                                class="btn btn--sm btn--ghost btn--block">View Trip</a>
                 </div>
+             
             </div>
 
         </aside>

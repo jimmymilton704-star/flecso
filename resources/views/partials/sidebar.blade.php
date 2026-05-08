@@ -1,20 +1,7 @@
 <aside class="sidebar" id="sidebar">
     <div class="sidebar__brand">
-        <div class="brand-mark">
-            <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
-                <path d="M6 8h20l-4 8h-12l-2 4h16" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <circle cx="11" cy="24" r="2.5" stroke="url(#g1)" stroke-width="2.5" />
-                <circle cx="22" cy="24" r="2.5" stroke="url(#g1)" stroke-width="2.5" />
-                <defs>
-                    <linearGradient id="g1" x1="0" y1="0" x2="32" y2="32">
-                        <stop offset="0%" stop-color="#FF7A1A" />
-                        <stop offset="100%" stop-color="#FF3D00" />
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
-        <div class="brand-text"><span class="brand-name">Flecso</span><span class="brand-tag">Logistics OS</span></div>
+
+        <div class="brand-text"><img src="{{ asset('images/logo.png') }}" alt="Flecso Logo" width="120px"></div>
     </div>
 
     <nav class="sidebar__nav" id="sidebarNav">
@@ -38,6 +25,14 @@
             <span>SOS Alerts</span>
             {{-- <span class="nav-badge nav-badge--danger">3</span> --}}
         </a>
+
+        <a href="{{ route('chat.index') }}" class="nav-link">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Inbox</span>
+        </a>
+
         <a href="{{ route('trucks.index') }}" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 7h10v10H3z" />

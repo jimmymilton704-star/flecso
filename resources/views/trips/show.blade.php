@@ -22,8 +22,7 @@
         <div class="detail-hero">
 
             <div class="detail-hero__icon">
-                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor"
-                    stroke-width="2">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="6" cy="19" r="3"></circle>
                     <circle cx="18" cy="5" r="3"></circle>
                     <path d="M6 16V8a4 4 0 0 1 4-4h4M18 8v8a4 4 0 0 1-4 4h-4"></path>
@@ -35,12 +34,11 @@
                 <div class="detail-hero__meta">
                     <span class="detail-hero__id">{{ $trip->trip_id }}</span>
 
-                    <span
-                        class="badge
-                    @if ($trip->trip_status == 'completed') badge--success
-                    @elseif($trip->trip_status == 'in_transit') badge--warning
-                    @elseif($trip->trip_status == 'cancelled') badge--danger
-                    @else badge--neutral @endif">
+                    <span class="badge
+                                            @if ($trip->trip_status == 'completed') badge--success
+                                            @elseif($trip->trip_status == 'in_transit') badge--warning
+                                            @elseif($trip->trip_status == 'cancelled') badge--danger
+                                            @else badge--neutral @endif">
                         {{ ucfirst(str_replace('_', ' ', $trip->trip_status)) }}
                     </span>
 
@@ -50,19 +48,19 @@
                 <h1>{{ $trip->pickup_location }} → {{ $trip->delivery_location }}</h1>
 
                 <div class="detail-hero__sub">
-                    <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="4" width="18" height="18" rx="2"></rect>
                             <path d="M16 2v4M8 2v4M3 10h18"></path>
                         </svg> {{ $trip->schedule_datetime ?? 'N/A' }}</span>
-                    <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="6" cy="19" r="3"></circle>
                             <circle cx="18" cy="5" r="3"></circle>
                             <path d="M6 16V8a4 4 0 0 1 4-4h4M18 8v8a4 4 0 0 1-4 4h-4"></path>
                         </svg> {{ $trip->distance_km ?? 0 }} km</span>
-                    <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="8" r="4"></circle>
                             <path d="M4 21c0-4 4-7 8-7s8 3 8 7"></path>
                         </svg> {{ $trip->payment_amount ?? 0 }}</span>
@@ -72,9 +70,9 @@
 
             <div class="detail-hero__actions">
 
-                <a href="{{ route('trips.edit', $trip->id) }}" class="btn btn--ghost"><svg viewBox="0 0 24 24"
-                        width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                <a href="{{ route('trips.edit', $trip->id) }}" class="btn btn--ghost"><svg viewBox="0 0 24 24" width="16"
+                        height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                         <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"></path>
                     </svg>Edit</a>
@@ -92,8 +90,8 @@
         <div class="detail-quickstats">
 
             <div class="qs">
-                <div class="qs__label"><svg viewBox="0 0 24 24" width="12" height="12" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="qs__label"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="6" cy="19" r="3"></circle>
                         <circle cx="18" cy="5" r="3"></circle>
                         <path d="M6 16V8a4 4 0 0 1 4-4h4M18 8v8a4 4 0 0 1-4 4h-4"></path>
@@ -102,8 +100,8 @@
             </div>
 
             <div class="qs">
-                <div class="qs__label"><svg viewBox="0 0 24 24" width="12" height="12" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="qs__label"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2"></rect>
                         <path d="M16 2v4M8 2v4M3 10h18"></path>
                     </svg>ETA</div>
@@ -111,16 +109,16 @@
             </div>
 
             <div class="qs">
-                <div class="qs__label"><svg viewBox="0 0 24 24" width="12" height="12" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="qs__label"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 6 9 17l-5-5"></path>
                     </svg>Payment</div>
                 <div class="qs__value">Rs {{ $trip->payment_amount ?? 0 }}</div>
             </div>
 
             <div class="qs">
-                <div class="qs__label"><svg viewBox="0 0 24 24" width="12" height="12" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="qs__label"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="7" width="18" height="11" rx="1.5"></rect>
                         <path d="M7 7v11M12 7v11M17 7v11"></path>
                     </svg>Trip Type</div>
@@ -275,7 +273,7 @@
                             <div class="assignee" style="background:transparent;padding:0;margin-bottom:10px">
                                 <img src="{{ asset($trip->driver->avatar ?? 'https://i.pravatar.cc/80') }}">
                                 <div>
-                                    <div class="assignee__name">{{ $trip->driver->name }}</div>
+                                    <div class="assignee__name">{{ $trip->driver->full_name }}</div>
                                     <div class="assignee__sub">{{ $trip->driver->phone }}</div>
 
                                 </div>
@@ -345,9 +343,15 @@
     {{-- GOOGLE MAPS --}}
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQqP59sFi_cXyk8Afq_AY4Dkg4DCf-xj0&libraries=places">
     </script>
-
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.15.0/echo.iife.js"></script>>
 
     <script>
+        Pusher.logToConsole = true;
+        let map;
+        let directionsRenderer;
+        let driverMarker = null;
+
         function initMap() {
 
             const pickup = {
@@ -356,46 +360,174 @@
             };
 
             const delivery = {
-                lat: parseFloat("{{ $trip->delivery_lat ?? 24.8607 }}"),
+                lat: parseFloat("{{ $trip->delivery_lat ?? 67.0011 }}"),
                 lng: parseFloat("{{ $trip->delivery_lng ?? 67.0011 }}")
             };
 
-            const map = new google.maps.Map(document.getElementById("map"), {
+            map = new google.maps.Map(document.getElementById("map"), {
                 center: pickup,
-                zoom: 6
+                zoom: 7
             });
 
+            /*
+            |--------------------------------------------------------------------------
+            | ROUTE LINE
+            |--------------------------------------------------------------------------
+            */
             const directionsService = new google.maps.DirectionsService();
-            const directionsRenderer = new google.maps.DirectionsRenderer({
-                map: map,
-                suppressMarkers: false
+
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                suppressMarkers: true,
+                polylineOptions: {
+                    strokeColor: "#4f46e5",
+                    strokeWeight: 5
+                }
             });
+
+            directionsRenderer.setMap(map);
 
             directionsService.route({
                 origin: pickup,
                 destination: delivery,
                 travelMode: "DRIVING"
-            }, function(response, status) {
+            }, function (response, status) {
+
                 if (status === "OK") {
                     directionsRenderer.setDirections(response);
                 }
             });
 
-            // DRIVER LIVE MARKER (optional future GPS)
-            @if ($trip->driver && $trip->driver->lat && $trip->driver->lng)
-                new google.maps.Marker({
-                    position: {
-                        lat: {{ $trip->driver->lat }},
-                        lng: {{ $trip->driver->lng }}
-                    },
-                    map: map,
-                    title: "Driver Location",
-                    icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-                });
-            @endif
-        }
+            /*
+            |--------------------------------------------------------------------------
+            | PICKUP MARKER
+            |--------------------------------------------------------------------------
+            */
+            const pickupMarker = new google.maps.Marker({
+                position: pickup,
+                map: map,
+                label: "P",
+                title: "Pickup Location"
+            });
 
-        window.onload = initMap;
+            const pickupInfo = new google.maps.InfoWindow({
+                content: `
+                            <div style="min-width:200px">
+                                <h4 style="margin-bottom:5px;">Pickup Location</h4>
+                                <p>{{ $trip->pickup_location }}</p>
+                            </div>
+                        `
+            });
+
+            pickupMarker.addListener("click", () => {
+                pickupInfo.open(map, pickupMarker);
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | DELIVERY MARKER
+            |--------------------------------------------------------------------------
+            */
+            const deliveryMarker = new google.maps.Marker({
+                position: delivery,
+                map: map,
+                label: "D",
+                title: "Delivery Location"
+            });
+
+            const deliveryInfo = new google.maps.InfoWindow({
+                content: `
+                            <div style="min-width:200px">
+                                <h4 style="margin-bottom:5px;">Delivery Location</h4>
+                                <p>{{ $trip->delivery_location }}</p>
+                            </div>
+                        `
+            });
+
+            deliveryMarker.addListener("click", () => {
+                deliveryInfo.open(map, deliveryMarker);
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | DRIVER LIVE MARKER
+            |--------------------------------------------------------------------------
+            */
+            @if($trip->driver && $trip->driver->location)
+
+                const driverPosition = {
+                    lat: parseFloat("{{ $trip->driver->location->latitude }}"),
+                    lng: parseFloat("{{ $trip->driver->location->longitude }}")
+                };
+
+                driverMarker = new google.maps.Marker({
+                    position: driverPosition,
+                    map: map,
+                    title: "Driver Live Location",
+                    icon: {
+                        url: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                    }
+                });
+
+                const driverInfo = new google.maps.InfoWindow({
+                    content: `
+                                                <div style="min-width:200px">
+                                                    <h4>Driver Live Location</h4>
+                                                    <p><strong>Driver:</strong> {{ $trip->driver->full_name }}</p>
+                                                    <p><strong>Speed:</strong> {{ $trip->driver->location->speed ?? 0 }} km/h</p>
+                                                    <p><strong>Updated:</strong> {{ $trip->driver->location->updated_at }}</p>
+                                                </div>
+                                            `
+                });
+
+                driverMarker.addListener("click", () => {
+                    driverInfo.open(map, driverMarker);
+                });
+
+            @endif
+                }
+
+        window.onload = function () {
+
+            initMap();
+
+            /*
+            |--------------------------------------------------------------------------
+            | REALTIME DRIVER TRACKING
+            |--------------------------------------------------------------------------
+            */
+
+            const echo = new Echo({
+                broadcaster: 'pusher',
+                key: "{{ env('PUSHER_APP_KEY') }}",
+                cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+                forceTLS: true,
+                authEndpoint: '/broadcasting/auth',
+                withCredentials: true,
+            });
+
+            echo.private('admin.' + {{ $trip->driver->admin_id }})
+                .listen('.driver.location.updated', (e) => {
+
+                    console.log("EVENT DATA:", e);
+
+                    const lat = e.location?.latitude ?? e.latitude;
+                    const lng = e.location?.longitude ?? e.longitude;
+
+                    if (!lat || !lng) return;
+
+                    const newPosition = {
+                        lat: parseFloat(lat),
+                        lng: parseFloat(lng)
+                    };
+
+                    if (driverMarker) {
+                        driverMarker.setPosition(newPosition);
+                        map.panTo(newPosition);
+                    }
+                });
+        };
     </script>
+
+
 
 @endsection

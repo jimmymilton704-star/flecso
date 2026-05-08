@@ -16,7 +16,7 @@ class SosAlertController extends Controller
     {
         $adminId = auth()->id();
 
-        $query = SosAlert::with(['driver:id,name', 'trip'])
+        $query = SosAlert::with(['driver:id,full_name', 'trip'])
             ->where('admin_id', $adminId)
             ->latest();
 

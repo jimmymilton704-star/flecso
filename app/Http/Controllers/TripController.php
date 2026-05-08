@@ -19,11 +19,10 @@ class TripController extends Controller
     {
         $adminId = auth()->id();
 
-      $trips = Trip::with(['driver:id,name', 'truck', 'container'])
+      $trips = Trip::with(['driver:id,full_name', 'truck', 'container'])
     ->where('admin_id', $adminId)
     ->latest()
     ->paginate(10); // 👈 instead of get()
-
         return view('trips.index', compact('trips'));
     }
 
@@ -99,7 +98,7 @@ class TripController extends Controller
     {
         $adminId = auth()->id();
 
-        $trip = Trip::with(['driver', 'truck', 'container'])
+        $trip = Trip::with(['driver.location', 'truck', 'container'])
             ->where('id', $id)
             ->where('admin_id', $adminId)
             ->firstOrFail();

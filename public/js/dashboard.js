@@ -80,15 +80,15 @@
   }
 
   /* ---------- Live fleet map ---------- */
-  const mapEl = document.getElementById("mapEl");
-  if (mapEl && window.L) {
-    const map = L.map(mapEl, { zoomControl: true, attributionControl: false }).setView([45.6, 10.5], 6);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19 }).addTo(map);
-    const iconHtml = `<div class="truck-marker">${icon("truck",16)}</div>`;
-    const divIcon = L.divIcon({ className: "", html: iconHtml, iconSize:[36,36], iconAnchor:[18,18] });
-    D.liveTrucks.forEach(t => {
-      L.marker([t.lat, t.lng], { icon: divIcon }).addTo(map)
-        .bindPopup(`<div style="font-family:Inter;font-size:12px"><strong style="font-family:'Space Grotesk';font-size:13px">${t.id}</strong><br>${t.name}<br><span style="color:#5B5B63">Speed: ${t.speed} km/h · ${t.heading}</span></div>`);
-    });
-  }
+  // const mapEl = document.getElementById("mapEl");
+  // if (mapEl && window.L) {
+  //   const map = L.map(mapEl, { zoomControl: true, attributionControl: false }).setView([45.6, 10.5], 6);
+  //   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19 }).addTo(map);
+  //   const iconHtml = `<div class="truck-marker">${icon("truck",16)}</div>`;
+  //   const divIcon = L.divIcon({ className: "", html: iconHtml, iconSize:[36,36], iconAnchor:[18,18] });
+  //   D.liveTrucks.forEach(t => {
+  //     L.marker([t.lat, t.lng], { icon: divIcon }).addTo(map)
+  //       .bindPopup(`<div style="font-family:Inter;font-size:12px"><strong style="font-family:'Space Grotesk';font-size:13px">${t.id}</strong><br>${t.name}<br><span style="color:#5B5B63">Speed: ${t.speed} km/h · ${t.heading}</span></div>`);
+  //   });
+  // }
 })();

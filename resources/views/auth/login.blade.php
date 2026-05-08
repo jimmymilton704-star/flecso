@@ -7,7 +7,7 @@
     <title>Login — Flecso</title>
     <meta name="description" content="Login to your Flecso logistics management account." />
     <meta name="theme-color" content="#FF6B1A" />
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/app_icon.png') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,22 +23,8 @@
         <!-- Left: Brand hero -->
         <aside class="auth-hero">
             <div class="auth-hero__top">
-                <div class="brand-mark">
-                    <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
-                        <path d="M6 8h20l-4 8h-12l-2 4h16" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                        <circle cx="11" cy="24" r="2.5" stroke="url(#g1)" stroke-width="2.5" />
-                        <circle cx="22" cy="24" r="2.5" stroke="url(#g1)" stroke-width="2.5" />
-                        <defs>
-                            <linearGradient id="g1" x1="0" y1="0" x2="32" y2="32">
-                                <stop offset="0%" stop-color="#FF7A1A" />
-                                <stop offset="100%" stop-color="#FF3D00" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <div class="brand-text"><span class="brand-name">Flecso</span><span class="brand-tag">Logistics
-                        OS</span></div>
+                
+                <div class="brand-text"><img src="{{ asset('images/logo.png') }}" alt="Flecso Logo" width="120px"></div>
             </div>
 
             <div class="auth-hero__body">

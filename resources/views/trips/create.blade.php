@@ -270,139 +270,186 @@
     </section>
 
     <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQqP59sFi_cXyk8Afq_AY4Dkg4DCf-xj0&libraries=places"></script>
-    <script>
-        let map;
-        let pickupMarker;
-        let deliveryMarker;
-        let pickupAutocomplete;
-        let deliveryAutocomplete;
-        let directionsService;
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQqP59sFi_cXyk8Afq_AY4Dkg4DCf-xj0&libraries=places"></script>
 
-        function initMap() {
-            const defaultCenter = { lat: 24.8607, lng: 67.0011 }; // Pakistan default
-            directionsService = new google.maps.DirectionsService();
+<script>
+    let map;
+    let pickupMarker;
+    let deliveryMarker;
+    let pickupAutocomplete;
+    let deliveryAutocomplete;
+    let directionsService;
+    let directionsRenderer;
 
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: defaultCenter,
-                zoom: 6,
-            });
+    function initMap() {
 
-            // ------------------------
-            // MARKERS
-            // ------------------------
-            pickupMarker = new google.maps.Marker({
-                map: map,
-                draggable: true,
-                label: "P"
-            });
+        const defaultCenter = {
+            lat: 24.8607,
+            lng: 67.0011
+        };
 
-            deliveryMarker = new google.maps.Marker({
-                map: map,
-                draggable: true,
-                label: "D"
-            });
+        // SERVICES
+        directionsService = new google.maps.DirectionsService();
 
-            // ------------------------
-            // AUTOCOMPLETE
-            // ------------------------
-            pickupAutocomplete = new google.maps.places.Autocomplete(
-                document.getElementById("pickup_input")
-            );
+        directionsRenderer = new google.maps.DirectionsRenderer({
+            suppressMarkers: true,
+            polylineOptions: {
+                strokeColor: "#FF6B1A",
+                strokeWeight: 6
+            }
+        });
 
-            deliveryAutocomplete = new google.maps.places.Autocomplete(
-                document.getElementById("delivery_input")
-            );
+        // MAP
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: defaultCenter,
+            zoom: 6,
+        });
 
-            // ------------------------
-            // PICKUP SELECT
-            // ------------------------
-            pickupAutocomplete.addListener("place_changed", function () {
-                const place = pickupAutocomplete.getPlace();
-                if (!place.geometry) return;
+        directionsRenderer.setMap(map);
 
-                const location = place.geometry.location;
+        // MARKERS
+        pickupMarker = new google.maps.Marker({
+            map: map,
+            draggable: true,
+            label: "P"
+        });
 
-                map.setCenter(location);
-                map.setZoom(12);
+        deliveryMarker = new google.maps.Marker({
+            map: map,
+            draggable: true,
+            label: "D"
+        });
 
-                pickupMarker.setPosition(location);
+        // AUTOCOMPLETE
+        pickupAutocomplete = new google.maps.places.Autocomplete(
+            document.getElementById("pickup_input")
+        );
 
-                document.getElementById("pickup_lat").value = location.lat();
-                document.getElementById("pickup_lng").value = location.lng();
+        deliveryAutocomplete = new google.maps.places.Autocomplete(
+            document.getElementById("delivery_input")
+        );
 
-                calculateRoute(); // ✅ ADD THIS
-            });
-            // ------------------------
-            // DELIVERY SELECT
-            // ------------------------
-            deliveryAutocomplete.addListener("place_changed", function () {
-                const place = deliveryAutocomplete.getPlace();
-                if (!place.geometry) return;
+        // ------------------------
+        // PICKUP SELECT
+        // ------------------------
+        pickupAutocomplete.addListener("place_changed", function () {
 
-                const location = place.geometry.location;
+            const place = pickupAutocomplete.getPlace();
 
-                map.setCenter(location);
-                map.setZoom(12);
+            if (!place.geometry) return;
 
-                deliveryMarker.setPosition(location);
+            const location = place.geometry.location;
 
-                document.getElementById("delivery_lat").value = location.lat();
-                document.getElementById("delivery_lng").value = location.lng();
+            pickupMarker.setPosition(location);
 
-                calculateRoute(); // ✅ ADD THIS
-            });
-            // ------------------------
-            // DRAG EVENTS
-            // ------------------------
-            pickupMarker.addListener("dragend", function () {
-                const pos = pickupMarker.getPosition();
-                document.getElementById("pickup_lat").value = pos.lat();
-                document.getElementById("pickup_lng").value = pos.lng();
+            document.getElementById("pickup_lat").value = location.lat();
+            document.getElementById("pickup_lng").value = location.lng();
 
-                calculateRoute(); // ✅
-            });
+            calculateRoute();
+        });
 
-            deliveryMarker.addListener("dragend", function () {
-                const pos = deliveryMarker.getPosition();
-                document.getElementById("delivery_lat").value = pos.lat();
-                document.getElementById("delivery_lng").value = pos.lng();
+        // ------------------------
+        // DELIVERY SELECT
+        // ------------------------
+        deliveryAutocomplete.addListener("place_changed", function () {
 
-                calculateRoute(); // ✅
-            });
-        }
+            const place = deliveryAutocomplete.getPlace();
 
-        function calculateRoute() {
+            if (!place.geometry) return;
 
-            const pickup = pickupMarker.getPosition();
-            const delivery = deliveryMarker.getPosition();
+            const location = place.geometry.location;
 
-            if (!pickup || !delivery) return;
+            deliveryMarker.setPosition(location);
 
-            directionsService.route({
+            document.getElementById("delivery_lat").value = location.lat();
+            document.getElementById("delivery_lng").value = location.lng();
+
+            calculateRoute();
+        });
+
+        // ------------------------
+        // DRAG PICKUP
+        // ------------------------
+        pickupMarker.addListener("dragend", function () {
+
+            const pos = pickupMarker.getPosition();
+
+            document.getElementById("pickup_lat").value = pos.lat();
+            document.getElementById("pickup_lng").value = pos.lng();
+
+            calculateRoute();
+        });
+
+        // ------------------------
+        // DRAG DELIVERY
+        // ------------------------
+        deliveryMarker.addListener("dragend", function () {
+
+            const pos = deliveryMarker.getPosition();
+
+            document.getElementById("delivery_lat").value = pos.lat();
+            document.getElementById("delivery_lng").value = pos.lng();
+
+            calculateRoute();
+        });
+    }
+
+    // =========================================
+    // CALCULATE ROUTE
+    // =========================================
+    function calculateRoute() {
+
+        const pickup = pickupMarker.getPosition();
+        const delivery = deliveryMarker.getPosition();
+
+        if (!pickup || !delivery) return;
+
+        directionsService.route({
                 origin: pickup,
                 destination: delivery,
-                travelMode: "DRIVING"
-            }, function (response, status) {
+                travelMode: google.maps.TravelMode.DRIVING
+            },
+            function(response, status) {
 
                 if (status === "OK") {
 
+                    // DRAW ROUTE
+                    directionsRenderer.setDirections(response);
+
+                    // ROUTE DATA
                     const route = response.routes[0].legs[0];
 
-                    // Distance in KM
-                    const distanceKm = (route.distance.value / 1000).toFixed(2);
+                    // DISTANCE KM
+                    const distanceKm = (
+                        route.distance.value / 1000
+                    ).toFixed(2);
 
-                    // Duration in minutes
-                    const durationMin = Math.round(route.duration.value / 60);
+                    // ETA MINUTES
+                    const durationMin = Math.round(
+                        route.duration.value / 60
+                    );
 
                     document.getElementById("distance_km").value = distanceKm;
+
                     document.getElementById("eta_mins").value = durationMin;
+
+                    // FIT MAP TO ROUTE
+                    const bounds = new google.maps.LatLngBounds();
+
+                    bounds.extend(pickup);
+                    bounds.extend(delivery);
+
+                    map.fitBounds(bounds);
+
+                } else {
+
+                    console.log("Directions request failed due to " + status);
 
                 }
             });
-        }
+    }
 
-        // init map
-        window.onload = initMap;
-    </script>
+    // INIT
+    window.onload = initMap;
+</script>
 @endsection

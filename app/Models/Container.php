@@ -65,4 +65,5 @@ class Container extends Model
             ? asset($this->image)
             : null;
     }
+    
 }

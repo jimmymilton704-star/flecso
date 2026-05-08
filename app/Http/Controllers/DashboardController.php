@@ -7,6 +7,7 @@ use App\Models\Trip;
 use App\Models\Truck;
 use App\Models\Driver;
 use App\Models\SosAlert;
+use App\Models\DriverLocation;
 use Illuminate\Http\Request;
 use App\Http\Resources\AdminActivityTripsResource;
 
@@ -46,7 +47,7 @@ class DashboardController extends Controller
                 ->count();
 
             $ongoingTrips = Trip::where('admin_id', $adminId)
-                ->where('trip_status', 'ongoing')
+                ->where('trip_status', 'in_transit')
                 ->count();
 
             $cancelledTrips = Trip::where('admin_id', $adminId)
@@ -59,7 +60,7 @@ class DashboardController extends Controller
             |------------------------------------------------------------------
             */
 
-            $sosAlerts = SosAlert::with(['driver:id,name', 'trip'])
+            $sosAlerts = SosAlert::with(['driver:id,full_name', 'trip'])
                 ->where('admin_id', $adminId)
                 ->latest()
                 ->limit(10) // limit for dashboard
@@ -74,7 +75,7 @@ class DashboardController extends Controller
             |------------------------------------------------------------------
             */
 
-            $recentTrips = Trip::with(['driver:id,name', 'truck', 'container'])
+            $recentTrips = Trip::with(['driver:id,full_name', 'truck', 'container'])
                 ->where('admin_id', $adminId)
                 ->latest()
                 ->limit(5)
@@ -87,12 +88,32 @@ class DashboardController extends Controller
             |------------------------------------------------------------------
             */
 
-            $allTrips = Trip::with(['driver:id,name', 'truck', 'container'])
+            $allTrips = Trip::with(['driver:id,full_name', 'truck', 'container'])
                 ->where('admin_id', $adminId)
                 ->latest()
                 ->limit(50) // prevent heavy load
                 ->get();
 
+
+
+                /*
+                |------------------------------------------------------------------
+                | LIVE DRIVER LOCATIONS
+                |------------------------------------------------------------------
+                */
+
+                $driverLocations = \App\Models\DriverLocation::with([
+                    'driver:id,full_name,admin_id'
+                ])
+                ->whereHas('driver', function ($q) use ($adminId) {
+                    $q->where('admin_id', $adminId);
+                })
+                ->latest()
+                ->get()
+                ->unique('driver_id')
+                ->values();
+                
+                
 
             /*
             |------------------------------------------------------------------
@@ -119,6 +140,7 @@ class DashboardController extends Controller
                 // Trips
                 'recent_trips'       => AdminActivityTripsResource::collection($recentTrips),
                 'all_trips'          => $allTrips,
+                'driver_locations' => $driverLocations,
             ]);
 
         } catch (\Exception $ex) {

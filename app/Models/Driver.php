@@ -75,4 +75,14 @@ class Driver extends Model
     {
         return $this->driver_photo ? asset($this->driver_photo) : null;
     }
+
+    public function location()
+    {
+        return $this->hasOne(\App\Models\DriverLocation::class);
+    }
+
+    public function truck() {
+        return $this->hasOne(Truck::class);
+    }
+
 }
