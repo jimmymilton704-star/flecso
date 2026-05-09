@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Trip;
 use App\Models\Driver;
+use App\Models\TruckHealthLog;
 use App\Models\Truck;
 use App\Models\Container;
 use Illuminate\Http\Request;
@@ -19,10 +20,10 @@ class TripController extends Controller
     {
         $adminId = auth()->id();
 
-      $trips = Trip::with(['driver:id,full_name', 'truck', 'container'])
-    ->where('admin_id', $adminId)
-    ->latest()
-    ->paginate(10); // 👈 instead of get()
+        $trips = Trip::with(['driver:id,full_name', 'truck', 'container'])
+            ->where('admin_id', $adminId)
+            ->latest()
+            ->paginate(10); // 👈 instead of get()
         return view('trips.index', compact('trips'));
     }
 
@@ -33,11 +34,11 @@ class TripController extends Controller
     */
     public function create()
     {
-       return view('trips.create', [
-        'drivers' => Driver::all(),
-        'trucks' => Truck::all(),
-        'containers' => Container::all(),
-    ]);
+        return view('trips.create', [
+            'drivers' => Driver::all(),
+            'trucks' => Truck::all(),
+            'containers' => Container::all(),
+        ]);
     }
 
     /*
@@ -79,9 +80,23 @@ class TripController extends Controller
             'package_width'       => 'nullable|numeric',
         ]);
 
-        Trip::create([
+        $trip = Trip::create([
             ...$request->all(),
             'admin_id' => auth()->id()
+        ]);
+
+        $latestHealth = TruckHealthLog::where('truck_id', $trip->truck_id)
+            ->latest('recorded_at')
+            ->first();
+
+        $previousKm = $latestHealth?->current_km ?? 0;
+
+        $newKm = $previousKm + ($trip->distance_km ?? 0);
+
+        TruckHealthLog::create([
+            'truck_id' => $trip->truck_id,
+            'current_km' => $newKm,
+            'recorded_at' => now(),
         ]);
 
         return redirect()
@@ -118,7 +133,7 @@ class TripController extends Controller
             ->where('admin_id', $adminId)
             ->firstOrFail();
 
-       return view('trips.edit', [
+        return view('trips.edit', [
             'trip' => $trip,
             'drivers' => Driver::all(),
             'trucks' => Truck::all(),
@@ -139,7 +154,24 @@ class TripController extends Controller
             ->where('admin_id', $adminId)
             ->firstOrFail();
 
-        $trip->update($request->all());
+        $healthLog = TruckHealthLog::where('truck_id', $trip->truck_id)
+            ->latest('recorded_at')
+            ->first();
+
+        if ($healthLog) {
+
+            $healthLog->update([
+                'current_km' => $healthLog->current_km + ($request->distance_km ?? 0),
+                'recorded_at' => now(),
+            ]);
+        } else {
+
+            TruckHealthLog::create([
+                'truck_id' => $trip->truck_id,
+                'current_km' => $request->distance_km ?? 0,
+                'recorded_at' => now(),
+            ]);
+        }
 
         return redirect()
             ->route('trips.index')

@@ -52,6 +52,15 @@
             @csrf
 
             <div class="card">
+                @if ($errors->any())
+                    <div class="alert alert--error">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 {{-- 1. BASIC INFORMATION & ACCOUNT --}}
                 <div class="card__head">
