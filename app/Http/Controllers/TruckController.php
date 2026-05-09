@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Truck;
 use App\Models\Driver;
+use App\Models\TruckHealthLog;
+use App\Models\TruckMaintenance;
 use Illuminate\Http\Request;
 
 class TruckController extends Controller
@@ -73,9 +75,11 @@ class TruckController extends Controller
             'insurance_expiry_date' => 'required|date',
             'tachograph_calibration_expiry' => 'required|date',
             'bollo_expiry_date' => 'required|date',
+            'current_km' => 'required',
+            'estimate_km' => 'required',
         ]);
 
-        $data = $request->all();
+        $data = $request->except(['current_km', 'estimate_km', 'last_maintenance_date']);
         $data['admin_id'] = $adminId;
 
         /*
@@ -98,7 +102,15 @@ class TruckController extends Controller
             $data['documento_unico'] = 'uploads/trucks/docs/'.$name;
         }
 
-        Truck::create($data);
+         $truck = Truck::create($data);
+
+        
+        TruckMaintenance::create([
+            'truck_id' => $truck->id,
+            'next_due_km' => $request->estimate_km,
+            'last_service_km' => $request->current_km,
+            'type' => 'general',
+        ]);
 
         return redirect()->route('trucks.index')->with('success', 'Truck created');
     }
@@ -140,7 +152,7 @@ class TruckController extends Controller
         // dd($request->all());
         $truck = Truck::where('admin_id', auth()->id())->findOrFail($id);
 
-        $data = $request->all();
+        $data = $request->except(['current_km', 'estimate_km', ]);
 
         if ($request->hasFile('image')) {
             if ($truck->image && file_exists(public_path($truck->image))) {
@@ -165,6 +177,16 @@ class TruckController extends Controller
         }
 
         $truck->update($data);
+       
+        TruckMaintenance::updateOrCreate([
+            'truck_id' => $truck->id,
+            'type' => 'general',
+        ], [
+            'next_due_km' => $request->estimate_km,
+            'last_service_km' => $request->current_km,
+            
+        ]);
+
 
         return redirect()->route('trucks.index')->with('success', 'Truck updated');
     }

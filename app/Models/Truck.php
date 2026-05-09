@@ -53,6 +53,7 @@ class Truck extends Model
         'insurance_expiry_date',
         'tachograph_calibration_expiry',
         'bollo_expiry_date',
+        'expected_kmpl',
     ];
 
     protected $casts = [
@@ -76,6 +77,15 @@ class Truck extends Model
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
+    public function health()
+    {
+        return $this->hasOne(TruckHealthLog::class);
+    }
+    public function maintenance()
+    {
+        return $this->hasone(TruckMaintenance::class);
+    }
+
 
 
 }

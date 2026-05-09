@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Admin\FuelAnalyticsController;
 use App\Http\Controllers\TripTrackingController;
 use App\Http\Controllers\ChatController;
 /*
@@ -187,6 +188,12 @@ Route::middleware(['auth', 'activity.log'])->group(function () {
     Route::get('/setting', function () {
         return view('settings.setting');
     })->name('setting');
+
+    Route::get('/fuel/dashboard', [FuelAnalyticsController::class, 'dashboard'])
+        ->name('fuel.dashboard');
+
+    Route::get('/fuel/alerts', [FuelAnalyticsController::class, 'alerts'])
+        ->name('fuel.alerts');
 });
 Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
 

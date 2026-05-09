@@ -31,6 +31,7 @@
         .upload-box:hover .upload-content span {
             color: #e08e4a;
         }
+
         .upload-box:hover .upload-content svg {
             color: #c43e04;
         }
@@ -79,7 +80,17 @@
         <form action="{{ route('trucks.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
+
             <div class="card">
+                @if ($errors->any())
+                    <div class="alert alert--danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 {{-- 1. BASIC --}}
                 <div class="card__head">
@@ -302,6 +313,24 @@
                             <input class="input" type="date" name="bollo_expiry_date" required>
                         </div>
 
+                    </div>
+                </div>
+
+                <div class="card__head">
+                    <h3><span class="count">4.</span> Health</h3>
+                </div>
+                <div class="card__body">
+                    <div class="form-grid">
+
+                        <div class="field">
+                            <label>Current Mileage*</label>
+                            <input class="input" type="number" name="current_km" required>
+                        </div>
+
+                        <div class="field">
+                            <label>Estimate Mileage*</label>
+                            <input class="input" type="number" name="estimate_km" required>
+                        </div>
                     </div>
                 </div>
 
