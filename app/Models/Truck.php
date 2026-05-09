@@ -53,6 +53,7 @@ class Truck extends Model
         'insurance_expiry_date',
         'tachograph_calibration_expiry',
         'bollo_expiry_date',
+        'expected_kmpl',
     ];
 
     protected $casts = [

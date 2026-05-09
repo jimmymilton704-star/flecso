@@ -3,17 +3,18 @@
 use App\Helpers\AppHelper;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\FuelAlert;
 
 
 
-    if (!function_exists('user')) {
+if (!function_exists('user')) {
     function user(): ?User
     {
         return Auth::user();
     }
-    }
+}
 
-    if (!function_exists('userWithRelations')) {
+if (!function_exists('userWithRelations')) {
     function userWithRelations(array $relations = []): ?User
     {
         $user = Auth::user();
@@ -24,4 +25,18 @@ use App\Models\User;
 
         return User::with($relations)->find($user->id);
     }
+}
+
+if (!function_exists('adminAlerts')) {
+    function adminAlerts()
+    {
+        $admin = Auth::user();
+
+        return FuelAlert::whereHas('driver', function ($q) use ($admin) {
+                $q->where('admin_id', $admin->id);
+            })
+            ->where('is_resolved', 0)
+            ->latest()
+            ->get();
     }
+}

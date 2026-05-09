@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\StripeWebhookController;
 use App\Http\Controllers\Api\LiveTrackingController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\Driver\FuelLogController;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
@@ -123,6 +124,8 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
     // Live Tracking
     Route::get('/live-drivers', [LiveTrackingController::class, 'liveDrivers']);
+
+    
 });
 
 
@@ -162,6 +165,10 @@ Route::middleware('auth:driver')->prefix('driver')->group(function () {
 
     // Location
     Route::post('/location', [LocationController::class, 'update']);
+
+    // Fuel Log
+    Route::post('/fuel-logs', [FuelLogController::class, 'store']);
+    Route::get('/trip/{trip}/fuel-logs', [FuelLogController::class, 'tripFuelLogs']);
 });
 
 
