@@ -77,6 +77,15 @@ class Truck extends Model
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
+    public function health()
+    {
+        return $this->hasOne(TruckHealthLog::class);
+    }
+    public function maintenance()
+    {
+        return $this->hasone(TruckMaintenance::class);
+    }
+
 
 
 }
