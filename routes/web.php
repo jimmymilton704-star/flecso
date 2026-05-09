@@ -39,7 +39,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
 
-    
+
 
     // Forgot password
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])
@@ -116,7 +116,7 @@ Route::middleware(['auth', 'activity.log'])->group(function () {
         Route::post('/update-status', [DriverController::class, 'updateStatus'])->name('update.status');
     });
 
-   Route::prefix('trips')->name('trips.')->group(function () {
+    Route::prefix('trips')->name('trips.')->group(function () {
 
         Route::get('/', [TripController::class, 'index'])->name('index');
         Route::get('/create', [TripController::class, 'create'])->name('create');
@@ -132,7 +132,7 @@ Route::middleware(['auth', 'activity.log'])->group(function () {
     Route::prefix('users')->name('users.')->group(function () {
 
         Route::post('/company/store', [UserController::class, 'companystore'])->name('company.store');
-        
+
         Route::post('/profile/update', [UserController::class, 'profileUpdate'])->name('profile.update');
 
         Route::get('/{id}/show', [UserController::class, 'show'])->name('show');
@@ -171,18 +171,24 @@ Route::middleware(['auth', 'activity.log'])->group(function () {
             ->name('seen');
 
         Route::post('/create-or-get', [ChatController::class, 'createOrGetChat'])
-            ->name('createOrGet');
+            ->name('create_or_get');
+
+        Route::get('/drivers', [ChatController::class, 'drivers'])
+            ->name('drivers');
+            
+        Route::post('/broadcast', [ChatController::class, 'broadcast'])
+            ->name('broadcast');
     });
 
 
     // Logout
     Route::get('/logout', [AuthController::class, 'logout'])
         ->name('logout');
-    Route::get('/setting',function(){
+    Route::get('/setting', function () {
         return view('settings.setting');
     })->name('setting');
 });
-    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
+Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
 
 
 /*

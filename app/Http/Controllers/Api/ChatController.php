@@ -49,75 +49,217 @@ class ChatController extends Controller
     | SEND MESSAGE
     |-----------------------------------------
     */
+    // public function sendMessage(Request $request)
+    // {
+    //     $auth = $this->getAuthUser();
+
+    //     $request->validate([
+    //         'chat_id' => 'required|exists:chats,id',
+    //         'message' => 'nullable|string',
+    //         'file' => 'nullable|file|max:10240',
+    //     ]);
+
+    //     $chat = Chat::find($request->chat_id);
+
+    //     //  SECURITY: Check user belongs to chat
+    //     if (
+    //         ($auth['type'] === 'admin' && $chat->admin_id != $auth['user']->id) ||
+    //         ($auth['type'] === 'driver' && $chat->driver_id != $auth['user']->id)
+    //     ) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Unauthorized chat access'
+    //         ], 403);
+    //     }
+
+    //     $data = [
+    //         'chat_id' => $request->chat_id,
+    //         'sender_type' => $auth['type'],
+    //         'sender_id' => $auth['user']->id,
+    //         'message' => $request->message,
+    //     ];
+
+    //     /*
+    //     |-----------------------------------------
+    //     | FILE UPLOAD
+    //     |-----------------------------------------
+    //     */
+    //     if ($request->hasFile('file')) {
+    //         $file = $request->file('file');
+    //         $name = time() . '_' . $file->getClientOriginalName();
+    //         $file->move(public_path('uploads/chat'), $name);
+
+    //         $data['file'] = 'uploads/chat/' . $name;
+
+    //         $mime = $file->getMimeType();
+
+    //         if (str_contains($mime, 'image')) {
+    //             $data['file_type'] = 'image';
+    //         } elseif (str_contains($mime, 'video')) {
+    //             $data['file_type'] = 'video';
+    //         } else {
+    //             $data['file_type'] = 'document';
+    //         }
+    //     }
+
+    //     $message = Message::create($data);
+
+    //     /*
+    //     |-----------------------------------------
+    //     | UPDATE CHAT LAST MESSAGE
+    //     |-----------------------------------------
+    //     */
+    //     $chat->update([
+    //         'last_message' => $request->message ?? 'File',
+    //         'last_message_at' => now()
+    //     ]);
+
+    //     /*
+    //     |-----------------------------------------
+    //     | 🔥 WEBSOCKET EVENT
+    //     |-----------------------------------------
+    //     */
+    //     event(new \App\Events\MessageSent($message));
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'data' => $message
+    //     ]);
+    // }
+
     public function sendMessage(Request $request)
     {
-        $auth = $this->getAuthUser();
-
         $request->validate([
             'chat_id' => 'required|exists:chats,id',
             'message' => 'nullable|string',
-            'file' => 'nullable|file|max:10240',
+            'file' => 'nullable|file|max:10240'
         ]);
 
-        $chat = Chat::find($request->chat_id);
+        $auth = $this->getAuthUser();
 
-        //  SECURITY: Check user belongs to chat
+        $chat = Chat::findOrFail($request->chat_id);
+
+        /*
+        |--------------------------------------------------------------------------
+        | SECURITY
+        |--------------------------------------------------------------------------
+        */
         if (
             ($auth['type'] === 'admin' && $chat->admin_id != $auth['user']->id) ||
             ($auth['type'] === 'driver' && $chat->driver_id != $auth['user']->id)
         ) {
+
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthorized chat access'
+                'message' => 'Unauthorized'
             ], 403);
         }
 
-        $data = [
-            'chat_id' => $request->chat_id,
-            'sender_type' => $auth['type'],
-            'sender_id' => $auth['user']->id,
-            'message' => $request->message,
-        ];
+        /*
+        |--------------------------------------------------------------------------
+        | REQUIRE MESSAGE OR FILE
+        |--------------------------------------------------------------------------
+        */
+        if (!$request->message && !$request->hasFile('file')) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Message or file required'
+            ], 422);
+        }
+
+        $filePath = null;
+        $fileType = null;
+        $fileName = null;
 
         /*
-        |-----------------------------------------
-        | FILE UPLOAD
-        |-----------------------------------------
+        |--------------------------------------------------------------------------
+        | UPLOAD FILE
+        |--------------------------------------------------------------------------
         */
         if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $name = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/chat'), $name);
 
-            $data['file'] = 'uploads/chat/' . $name;
+            $file = $request->file('file');
+
+            $filePath = $file->store('chat-files', 'public');
 
             $mime = $file->getMimeType();
 
+            /*
+            |--------------------------------------------------------------------------
+            | FILE TYPE
+            |--------------------------------------------------------------------------
+            */
             if (str_contains($mime, 'image')) {
-                $data['file_type'] = 'image';
+
+                $fileType = 'image';
+
             } elseif (str_contains($mime, 'video')) {
-                $data['file_type'] = 'video';
+
+                $fileType = 'video';
+
             } else {
-                $data['file_type'] = 'document';
+
+                $fileType = 'file';
+            }
+
+            $fileName = $file->getClientOriginalName();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CREATE MESSAGE
+        |--------------------------------------------------------------------------
+        */
+        $message = Message::create([
+            'chat_id' => $chat->id,
+            'sender_type' => $auth['type'],
+            'sender_id' => $auth['user']->id,
+            'message' => $request->message,
+            'file' => $filePath
+                ? asset('storage/' . $filePath)
+                : null,
+            'file_type' => $fileType,
+            'file_name' => $fileName,
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | LAST MESSAGE TEXT
+        |--------------------------------------------------------------------------
+        */
+        $lastMessage = $request->message;
+
+        if (!$lastMessage && $fileType) {
+
+            if ($fileType === 'image') {
+
+                $lastMessage = '📷 Image';
+
+            } elseif ($fileType === 'video') {
+
+                $lastMessage = '🎥 Video';
+
+            } else {
+
+                $lastMessage = '📎 File';
             }
         }
 
-        $message = Message::create($data);
-
         /*
-        |-----------------------------------------
-        | UPDATE CHAT LAST MESSAGE
-        |-----------------------------------------
+        |--------------------------------------------------------------------------
+        | UPDATE CHAT
+        |--------------------------------------------------------------------------
         */
         $chat->update([
-            'last_message' => $request->message ?? 'File',
+            'last_message' => $lastMessage,
             'last_message_at' => now()
         ]);
 
         /*
-        |-----------------------------------------
-        | 🔥 WEBSOCKET EVENT
-        |-----------------------------------------
+        |--------------------------------------------------------------------------
+        | WEBSOCKET EVENT
+        |--------------------------------------------------------------------------
         */
         event(new \App\Events\MessageSent($message));
 

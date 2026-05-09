@@ -26,6 +26,7 @@ return new class extends Migration
             // File support
             $table->string('file')->nullable(); // image, pdf, etc
             $table->string('file_type')->nullable(); // image, video, doc
+            $table->string('file_name')->nullable();
 
             // Seen / read
             $table->boolean('is_seen')->default(false);

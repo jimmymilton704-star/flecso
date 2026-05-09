@@ -82,93 +82,180 @@ class ChatController extends Controller
     | SEND MESSAGE
     |-----------------------------------------
     */
+    // public function sendMessage(Request $request)
+    // {
+    //     $auth = $this->getAuthUser();
+
+    //     $request->validate([
+    //         'chat_id' => 'required|exists:chats,id',
+    //         'message' => 'nullable|string',
+    //         'file' => 'nullable|file|max:10240',
+    //     ]);
+
+    //     $chat = Chat::find($request->chat_id);
+
+    //     /*
+    //     |-----------------------------------------
+    //     | SECURITY CHECK
+    //     |-----------------------------------------
+    //     */
+    //     if ($chat->admin_id != $auth['user']->id) {
+
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Unauthorized chat access'
+    //         ], 403);
+    //     }
+
+    //     $data = [
+    //         'chat_id' => $request->chat_id,
+    //         'sender_type' => 'admin',
+    //         'sender_id' => $auth['user']->id,
+    //         'message' => $request->message,
+    //     ];
+
+    //     /*
+    //     |-----------------------------------------
+    //     | FILE UPLOAD
+    //     |-----------------------------------------
+    //     */
+    //     if ($request->hasFile('file')) {
+
+    //         $file = $request->file('file');
+
+    //         $name = time() . '_' . $file->getClientOriginalName();
+
+    //         $file->move(public_path('uploads/chat'), $name);
+
+    //         $data['file'] = 'uploads/chat/' . $name;
+
+    //         $mime = $file->getMimeType();
+
+    //         if (str_contains($mime, 'image')) {
+
+    //             $data['file_type'] = 'image';
+
+    //         } elseif (str_contains($mime, 'video')) {
+
+    //             $data['file_type'] = 'video';
+
+    //         } else {
+
+    //             $data['file_type'] = 'document';
+    //         }
+    //     }
+
+    //     $message = Message::create($data);
+
+    //     /*
+    //     |-----------------------------------------
+    //     | UPDATE CHAT
+    //     |-----------------------------------------
+    //     */
+    //     $chat->update([
+    //         'last_message' => $request->message ?? 'File',
+    //         'last_message_at' => now()
+    //     ]);
+
+    //     /*
+    //     |-----------------------------------------
+    //     | LOAD RELATIONS
+    //     |-----------------------------------------
+    //     */
+    //     $message->load('chat.driver');
+
+    //     /*
+    //     |-----------------------------------------
+    //     | WEBSOCKET EVENT
+    //     |-----------------------------------------
+    //     */
+    //     event(new \App\Events\MessageSent($message));
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'data' => $message
+    //     ]);
+    // }
+
+
     public function sendMessage(Request $request)
     {
-        $auth = $this->getAuthUser();
-
         $request->validate([
             'chat_id' => 'required|exists:chats,id',
             'message' => 'nullable|string',
-            'file' => 'nullable|file|max:10240',
+            'file' => 'nullable|file|max:10240'
         ]);
 
-        $chat = Chat::find($request->chat_id);
+        $auth = $this->getAuthUser();
+
+        $chat = Chat::findOrFail($request->chat_id);
 
         /*
-        |-----------------------------------------
-        | SECURITY CHECK
-        |-----------------------------------------
+        |--------------------------------------------------------------------------
+        | SECURITY
+        |--------------------------------------------------------------------------
         */
         if ($chat->admin_id != $auth['user']->id) {
 
             return response()->json([
-                'status' => false,
-                'message' => 'Unauthorized chat access'
-            ], 403);
+                'status' => false
+            ]);
         }
 
-        $data = [
-            'chat_id' => $request->chat_id,
-            'sender_type' => 'admin',
-            'sender_id' => $auth['user']->id,
-            'message' => $request->message,
-        ];
+        $filePath = null;
+        $fileType = null;
+        $fileName = null;
 
         /*
-        |-----------------------------------------
-        | FILE UPLOAD
-        |-----------------------------------------
+        |--------------------------------------------------------------------------
+        | UPLOAD FILE
+        |--------------------------------------------------------------------------
         */
         if ($request->hasFile('file')) {
 
             $file = $request->file('file');
 
-            $name = time() . '_' . $file->getClientOriginalName();
-
-            $file->move(public_path('uploads/chat'), $name);
-
-            $data['file'] = 'uploads/chat/' . $name;
+            $filePath = $file->store('chat-files', 'public');
 
             $mime = $file->getMimeType();
 
-            if (str_contains($mime, 'image')) {
+            $fileType = str_contains($mime, 'image')
+                ? 'image'
+                : 'file';
 
-                $data['file_type'] = 'image';
-
-            } elseif (str_contains($mime, 'video')) {
-
-                $data['file_type'] = 'video';
-
-            } else {
-
-                $data['file_type'] = 'document';
-            }
+            $fileName = $file->getClientOriginalName();
         }
 
-        $message = Message::create($data);
-
         /*
-        |-----------------------------------------
-        | UPDATE CHAT
-        |-----------------------------------------
+        |--------------------------------------------------------------------------
+        | CREATE MESSAGE
+        |--------------------------------------------------------------------------
         */
-        $chat->update([
-            'last_message' => $request->message ?? 'File',
-            'last_message_at' => now()
+        $message = Message::create([
+            'chat_id' => $chat->id,
+            'sender_type' => 'admin',
+            'sender_id' => $auth['user']->id,
+            'message' => $request->message,
+            'file' => $filePath
+                ? asset('storage/' . $filePath)
+                : null,
+            'file_type' => $fileType,
+            'file_name' => $fileName,
         ]);
 
         /*
-        |-----------------------------------------
-        | LOAD RELATIONS
-        |-----------------------------------------
+        |--------------------------------------------------------------------------
+        | UPDATE CHAT
+        |--------------------------------------------------------------------------
         */
-        $message->load('chat.driver');
+        $chat->update([
+            'last_message' => $request->message
+                ?: ($fileType === 'image'
+                    ? '📷 Image'
+                    : '📎 File'),
+            'last_message_at' => now()
+        ]);
 
-        /*
-        |-----------------------------------------
-        | WEBSOCKET EVENT
-        |-----------------------------------------
-        */
         event(new \App\Events\MessageSent($message));
 
         return response()->json([
@@ -182,42 +269,42 @@ class ChatController extends Controller
     | GET MESSAGES
     |-----------------------------------------
     */
-   public function messages(Request $request)
-{
-    $request->validate([
-        'chat_id' => 'required|exists:chats,id'
-    ]);
+    public function messages(Request $request)
+    {
+        $request->validate([
+            'chat_id' => 'required|exists:chats,id'
+        ]);
 
-    $admin = auth()->user();
+        $admin = auth()->user();
 
-    $chat = Chat::with([
-        'driver',
-        'driver.truck',
-    ])->find($request->chat_id);
+        $chat = Chat::with([
+            'driver',
+            'driver.truck',
+        ])->find($request->chat_id);
 
-    /*
-    |-----------------------------------------
-    | SECURITY CHECK
-    |-----------------------------------------
-    */
-    if ($chat->admin_id != $admin->id) {
+        /*
+        |-----------------------------------------
+        | SECURITY CHECK
+        |-----------------------------------------
+        */
+        if ($chat->admin_id != $admin->id) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        $messages = Message::where('chat_id', $request->chat_id)
+            ->orderBy('id', 'asc')
+            ->get();
 
         return response()->json([
-            'status' => false,
-            'message' => 'Unauthorized'
-        ], 403);
+            'status' => true,
+            'chat' => $chat,
+            'data' => $messages
+        ]);
     }
-
-    $messages = Message::where('chat_id', $request->chat_id)
-        ->orderBy('id', 'asc')
-        ->get();
-
-    return response()->json([
-        'status' => true,
-        'chat' => $chat,
-        'data' => $messages
-    ]);
-}
 
     /*
     |-----------------------------------------
@@ -259,6 +346,89 @@ class ChatController extends Controller
         return response()->json([
             'status' => true,
             'data' => $chats
+        ]);
+    }
+
+    public function drivers()
+    {
+        $admin = auth()->user();
+
+        $drivers = Driver::where('admin_id', $admin->id)
+            ->orderBy('full_name')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $drivers
+        ]);
+    }
+
+    public function broadcast(Request $request)
+    {
+        $request->validate([
+            'driver_ids' => 'required|array',
+            'driver_ids.*' => 'exists:drivers,id',
+            'message' => 'required|string'
+        ]);
+
+        $auth = $this->getAuthUser();
+
+        $messages = [];
+
+        foreach ($request->driver_ids as $driverId) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | GET OR CREATE CHAT
+            |--------------------------------------------------------------------------
+            */
+            $chat = Chat::firstOrCreate([
+                'admin_id' => $auth['user']->id,
+                'driver_id' => $driverId
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | CREATE MESSAGE
+            |--------------------------------------------------------------------------
+            */
+            $message = Message::create([
+                'chat_id' => $chat->id,
+                'sender_type' => 'admin',
+                'sender_id' => $auth['user']->id,
+                'message' => $request->message,
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | ADD CHAT ID FOR FRONTEND SYNC (IMPORTANT)
+            |--------------------------------------------------------------------------
+            */
+            $message->chat_id = $chat->id;
+
+            $messages[] = $message;
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE CHAT
+            |--------------------------------------------------------------------------
+            */
+            $chat->update([
+                'last_message' => $request->message,
+                'last_message_at' => now()
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | BROADCAST EVENT
+            |--------------------------------------------------------------------------
+            */
+            event(new \App\Events\MessageSent($message));
+        }
+
+        return response()->json([
+            'status' => true,
+            'messages' => $messages
         ]);
     }
 }
