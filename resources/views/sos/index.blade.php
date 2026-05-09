@@ -103,10 +103,10 @@
 
                             {{-- DRIVER + TRUCK --}}
                             <td>
-                                {{ $alert->driver->name ?? 'N/A' }}
+                                {{ $alert->driver->full_name ?? 'N/A' }}
                                 <br>
                                 <small>
-                                    {{ $alert->trip->truck->plate_number ?? 'No Truck' }}
+                                    {{ $alert->trip->truck->truck_number ?? 'No Truck' }}
                                 </small>
                             </td>
 

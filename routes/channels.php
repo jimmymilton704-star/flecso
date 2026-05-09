@@ -33,11 +33,14 @@ Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
 
 Broadcast::channel('trip.{tripId}', function ($user = null, $tripId) {
 
-    if (!auth()->check()) {
-        return false;
-    }
+    return $user && $user->id === Trip::find($tripId)?->admin_id;
 
     return Trip::where('id', $tripId)
         ->where('admin_id', auth()->id())
         ->exists();
 });
+
+Broadcast::channel('admin.{id}', function ($user, $id) {
+    return $user && (int) $user->id === (int) $id;
+});
+

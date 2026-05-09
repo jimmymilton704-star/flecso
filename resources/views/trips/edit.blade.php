@@ -34,22 +34,23 @@
         }
     </style>
 
+
     <section class="page">
+
         <div class="page-head">
             <div>
                 <div class="breadcrumb">Operations <span>/ Trips / Edit</span></div>
                 <h1>Edit Trip</h1>
-                <div class="page-head__sub">Update trip route, vehicle, and shipment details</div>
+                <div class="page-head__sub">Update trip details, route and assignments</div>
             </div>
         </div>
 
         <form action="{{ route('trips.update', $trip->id) }}" method="POST">
             @csrf
-            
 
             <div class="card">
 
-                {{-- 1. BASIC TRIP INFO --}}
+                {{-- 1. BASIC INFO --}}
                 <div class="card__head">
                     <h3>1. Basic Trip Information</h3>
                 </div>
@@ -58,45 +59,48 @@
                     <div class="form-grid">
 
                         <div class="field">
-                            <label>Trip ID*</label>
-                            <input class="input" type="text" name="trip_id"
-                                   value="{{ old('trip_id', $trip->trip_id) }}" required>
+                            <label>Trip ID</label>
+                            <input class="input" type="text" name="trip_id" value="{{ old('trip_id', $trip->trip_id) }}">
                         </div>
 
                         <div class="field">
-                            <label>Trip Type*</label>
+                            <label>Trip Type</label>
                             <input class="input" type="text" name="trip_type"
-                                   value="{{ old('trip_type', $trip->trip_type) }}" required>
+                                value="{{ old('trip_type', $trip->trip_type) }}">
                         </div>
 
                         <div class="field">
-                            <label>Status*</label>
-                            <select name="trip_status" required>
-                                <option value="pending" {{ $trip->trip_status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="in_transit" {{ $trip->trip_status == 'in_transit' ? 'selected' : '' }}>In Transit</option>
-                                <option value="completed" {{ $trip->trip_status == 'completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="cancelled" {{ $trip->trip_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            <label>Status</label>
+                            <select name="trip_status">
+                                <option value="pending" {{ $trip->trip_status == 'pending' ? 'selected' : '' }}>Pending
+                                </option>
+                                <option value="in_transit" {{ $trip->trip_status == 'in_transit' ? 'selected' : '' }}>In
+                                    Transit</option>
+                                <option value="completed" {{ $trip->trip_status == 'completed' ? 'selected' : '' }}>Completed
+                                </option>
+                                <option value="cancelled" {{ $trip->trip_status == 'cancelled' ? 'selected' : '' }}>Cancelled
+                                </option>
                             </select>
                         </div>
 
                         <div class="field">
-                            <label>Schedule Date & Time</label>
+                            <label>Schedule</label>
                             <input class="input" type="datetime-local" name="schedule_datetime"
-                                   value="{{ old('schedule_datetime', $trip->schedule_datetime) }}">
+                                value="{{ old('schedule_datetime', $trip->schedule_datetime) }}">
                         </div>
 
                         <div class="field">
-                            <label>Payment Amount</label>
-                            <input class="input" type="number" step="0.01" name="payment_amount"
-                                   value="{{ old('payment_amount', $trip->payment_amount) }}">
+                            <label>Payment</label>
+                            <input class="input" type="number" name="payment_amount"
+                                value="{{ old('payment_amount', $trip->payment_amount) }}">
                         </div>
 
                     </div>
                 </div>
 
-                {{-- 2. ROUTE + MAP --}}
+                {{-- 2. ROUTE --}}
                 <div class="card__head">
-                    <h3>2. Route Information (Map)</h3>
+                    <h3>2. Route (Map)</h3>
                 </div>
 
                 <div class="card__body">
@@ -104,50 +108,53 @@
                     <div class="form-grid">
 
                         <div class="field full">
-                            <label>Pickup Location*</label>
-                            <input class="input" id="pickup_input" type="text"
-                                   name="pickup_location"
-                                   value="{{ old('pickup_location', $trip->pickup_location) }}" required>
+                            <label>Pickup</label>
+                            <input id="pickup_input" class="input" name="pickup_location"
+                                value="{{ old('pickup_location', $trip->pickup_location) }}">
                         </div>
 
                         <div class="field full">
-                            <label>Delivery Location*</label>
-                            <input class="input" id="delivery_input" type="text"
-                                   name="delivery_location"
-                                   value="{{ old('delivery_location', $trip->delivery_location) }}" required>
+                            <label>Delivery</label>
+                            <input id="delivery_input" class="input" name="delivery_location"
+                                value="{{ old('delivery_location', $trip->delivery_location) }}">
                         </div>
 
                         <div class="field">
-                            <label>Pickup Latitude</label>
-                            <input class="input" id="pickup_lat" type="text"
-                                   name="pickup_lat"
-                                   value="{{ old('pickup_lat', $trip->pickup_lat) }}" readonly>
+                            <label>Pickup Lat</label>
+                            <input id="pickup_lat" class="input" name="pickup_lat" value="{{ $trip->pickup_lat }}" readonly>
                         </div>
 
                         <div class="field">
-                            <label>Pickup Longitude</label>
-                            <input class="input" id="pickup_lng" type="text"
-                                   name="pickup_lng"
-                                   value="{{ old('pickup_lng', $trip->pickup_lng) }}" readonly>
+                            <label>Pickup Lng</label>
+                            <input id="pickup_lng" class="input" name="pickup_lng" value="{{ $trip->pickup_lng }}" readonly>
                         </div>
 
                         <div class="field">
-                            <label>Delivery Latitude</label>
-                            <input class="input" id="delivery_lat" type="text"
-                                   name="delivery_lat"
-                                   value="{{ old('delivery_lat', $trip->delivery_lat) }}" readonly>
+                            <label>Delivery Lat</label>
+                            <input id="delivery_lat" class="input" name="delivery_lat" value="{{ $trip->delivery_lat }}"
+                                readonly>
                         </div>
 
                         <div class="field">
-                            <label>Delivery Longitude</label>
-                            <input class="input" id="delivery_lng" type="text"
-                                   name="delivery_lng"
-                                   value="{{ old('delivery_lng', $trip->delivery_lng) }}" readonly>
+                            <label>Delivery Lng</label>
+                            <input id="delivery_lng" class="input" name="delivery_lng" value="{{ $trip->delivery_lng }}"
+                                readonly>
+                        </div>
+
+                        <div class="field">
+                            <label>Distance (KM)</label>
+                            <input id="distance_km" class="input" name="distance_km" value="{{ $trip->distance_km }}"
+                                readonly>
+                        </div>
+
+                        <div class="field">
+                            <label>ETA (Minutes)</label>
+                            <input id="eta_mins" class="input" name="eta_mins" value="{{ $trip->eta_mins }}" readonly>
                         </div>
 
                     </div>
 
-                    <div id="map" style="height: 400px; border-radius: 12px; margin-top: 15px;"></div>
+                    <div id="map" style="height:400px;margin-top:15px;border-radius:10px;"></div>
 
                 </div>
 
@@ -161,11 +168,10 @@
 
                         <div class="field">
                             <label>Driver</label>
-                            <select class="input" name="driver_id">
-                                <option value="">Select Driver</option>
+                            <select name="driver_id">
+                                <option value="">Select</option>
                                 @foreach($drivers as $driver)
-                                    <option value="{{ $driver->id }}"
-                                        {{ $trip->driver_id == $driver->id ? 'selected' : '' }}>
+                                    <option value="{{ $driver->id }}" {{ $trip->driver_id == $driver->id ? 'selected' : '' }}>
                                         {{ $driver->full_name }}
                                     </option>
                                 @endforeach
@@ -174,11 +180,10 @@
 
                         <div class="field">
                             <label>Truck</label>
-                            <select class="input" name="truck_id">
-                                <option value="">Select Truck</option>
+                            <select name="truck_id">
+                                <option value="">Select</option>
                                 @foreach($trucks as $truck)
-                                    <option value="{{ $truck->id }}"
-                                        {{ $trip->truck_id == $truck->id ? 'selected' : '' }}>
+                                    <option value="{{ $truck->id }}" {{ $trip->truck_id == $truck->id ? 'selected' : '' }}>
                                         {{ $truck->truck_number }}
                                     </option>
                                 @endforeach
@@ -187,11 +192,10 @@
 
                         <div class="field">
                             <label>Container</label>
-                            <select class="input" name="container_id">
-                                <option value="">Select Container</option>
+                            <select name="container_id">
+                                <option value="">Select</option>
                                 @foreach($containers as $container)
-                                    <option value="{{ $container->id }}"
-                                        {{ $trip->container_id == $container->id ? 'selected' : '' }}>
+                                    <option value="{{ $container->id }}" {{ $trip->container_id == $container->id ? 'selected' : '' }}>
                                         {{ $container->container_license_number }}
                                     </option>
                                 @endforeach
@@ -203,95 +207,129 @@
 
                 {{-- SUBMIT --}}
                 <div class="card__body">
-                    <div style="display:flex; gap:10px;">
-                        <a href="{{ route('trips.index') }}" class="btn btn--ghost">Cancel</a>
-                        <button type="submit" class="btn btn--primary">Update Trip</button>
-                    </div>
+                    <button class="btn btn--primary">Update Trip</button>
                 </div>
 
             </div>
         </form>
     </section>
 
-    {{-- GOOGLE MAPS --}}
-      <script
+    {{-- GOOGLE MAP --}}
+    <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQqP59sFi_cXyk8Afq_AY4Dkg4DCf-xj0&libraries=places"></script>
-</script>
 
     <script>
-        let map, pickupMarker, deliveryMarker, pickupAutocomplete, deliveryAutocomplete;
+let map, pickupMarker, deliveryMarker;
+let directionsService, directionsRenderer;
 
-        function initMap() {
+function initMap() {
 
-            const pickupLat = parseFloat("{{ $trip->pickup_lat ?? 24.8607 }}");
-            const pickupLng = parseFloat("{{ $trip->pickup_lng ?? 67.0011 }}");
+    const pickup = {
+        lat: parseFloat("{{ $trip->pickup_lat ?? 24.8607 }}"),
+        lng: parseFloat("{{ $trip->pickup_lng ?? 67.0011 }}")
+    };
 
-            const deliveryLat = parseFloat("{{ $trip->delivery_lat ?? 24.8607 }}");
-            const deliveryLng = parseFloat("{{ $trip->delivery_lng ?? 67.0011 }}");
+    const delivery = {
+        lat: parseFloat("{{ $trip->delivery_lat ?? 24.8607 }}"),
+        lng: parseFloat("{{ $trip->delivery_lng ?? 67.0011 }}")
+    };
 
-            const center = { lat: pickupLat, lng: pickupLng };
+    directionsService = new google.maps.DirectionsService();
 
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: center,
-                zoom: 10,
-            });
-
-            pickupMarker = new google.maps.Marker({
-                position: { lat: pickupLat, lng: pickupLng },
-                map,
-                draggable: true,
-                label: "P"
-            });
-
-            deliveryMarker = new google.maps.Marker({
-                position: { lat: deliveryLat, lng: deliveryLng },
-                map,
-                draggable: true,
-                label: "D"
-            });
-
-            pickupAutocomplete = new google.maps.places.Autocomplete(document.getElementById("pickup_input"));
-            deliveryAutocomplete = new google.maps.places.Autocomplete(document.getElementById("delivery_input"));
-
-            pickupAutocomplete.addListener("place_changed", function () {
-                const place = pickupAutocomplete.getPlace();
-                if (!place.geometry) return;
-
-                const loc = place.geometry.location;
-
-                pickupMarker.setPosition(loc);
-                map.setCenter(loc);
-
-                document.getElementById("pickup_lat").value = loc.lat();
-                document.getElementById("pickup_lng").value = loc.lng();
-            });
-
-            deliveryAutocomplete.addListener("place_changed", function () {
-                const place = deliveryAutocomplete.getPlace();
-                if (!place.geometry) return;
-
-                const loc = place.geometry.location;
-
-                deliveryMarker.setPosition(loc);
-                map.setCenter(loc);
-
-                document.getElementById("delivery_lat").value = loc.lat();
-                document.getElementById("delivery_lng").value = loc.lng();
-            });
-
-            pickupMarker.addListener("dragend", function () {
-                const pos = pickupMarker.getPosition();
-                document.getElementById("pickup_lat").value = pos.lat();
-                document.getElementById("pickup_lng").value = pos.lng();
-            });
-
-            deliveryMarker.addListener("dragend", function () {
-                const pos = deliveryMarker.getPosition();
-                document.getElementById("delivery_lat").value = pos.lat();
-                document.getElementById("delivery_lng").value = pos.lng();
-            });
+    directionsRenderer = new google.maps.DirectionsRenderer({
+        suppressMarkers: true, // ❗ important (we use custom markers)
+        polylineOptions: {
+            strokeColor: "#FF6B1A",
+            strokeWeight: 5
         }
+    });
 
-        window.onload = initMap;
-    </script>
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: pickup,
+        zoom: 7,
+    });
+
+    directionsRenderer.setMap(map);
+
+    // ------------------------
+    // CUSTOM MARKERS
+    // ------------------------
+    pickupMarker = new google.maps.Marker({
+        position: pickup,
+        map: map,
+        draggable: true,
+        label: "P"
+    });
+
+    deliveryMarker = new google.maps.Marker({
+        position: delivery,
+        map: map,
+        draggable: true,
+        label: "D"
+    });
+
+    // Initial route draw
+    calculateRoute();
+
+    // Drag events
+    pickupMarker.addListener("dragend", updatePickup);
+    deliveryMarker.addListener("dragend", updateDelivery);
+}
+
+// ------------------------
+// UPDATE PICKUP
+// ------------------------
+function updatePickup() {
+    const p = pickupMarker.getPosition();
+
+    document.getElementById("pickup_lat").value = p.lat();
+    document.getElementById("pickup_lng").value = p.lng();
+
+    calculateRoute();
+}
+
+// ------------------------
+// UPDATE DELIVERY
+// ------------------------
+function updateDelivery() {
+    const d = deliveryMarker.getPosition();
+
+    document.getElementById("delivery_lat").value = d.lat();
+    document.getElementById("delivery_lng").value = d.lng();
+
+    calculateRoute();
+}
+
+// ------------------------
+// CALCULATE + DRAW ROUTE
+// ------------------------
+function calculateRoute() {
+
+    directionsService.route({
+        origin: pickupMarker.getPosition(),
+        destination: deliveryMarker.getPosition(),
+        travelMode: "DRIVING"
+    }, function (res, status) {
+
+        if (status === "OK") {
+
+            // 🔥 DRAW LINE
+            directionsRenderer.setDirections(res);
+
+            const leg = res.routes[0].legs[0];
+
+            // Distance KM
+            document.getElementById("distance_km").value =
+                (leg.distance.value / 1000).toFixed(2);
+
+            // ETA Minutes
+            document.getElementById("eta_mins").value =
+                Math.round(leg.duration.value / 60);
+        }
+    });
+}
+
+window.onload = initMap;
+</script>
+
 @endsection

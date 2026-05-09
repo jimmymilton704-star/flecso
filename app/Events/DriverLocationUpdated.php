@@ -15,9 +15,12 @@ class DriverLocationUpdated implements ShouldBroadcast
 
     public $location;
 
+   public $broadcastQueue = null;
+
     public function __construct($location)
     {
         $this->location = $location;
+        //$this->dontBroadcastToCurrentUser();
     }
 
     public function broadcastOn()

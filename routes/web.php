@@ -11,6 +11,8 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Admin\FuelAnalyticsController;
+use App\Http\Controllers\TripTrackingController;
+use App\Http\Controllers\ChatController;
 /*
 |--------------------------------------------------------------------------
 | ROOT
@@ -26,7 +28,8 @@ Route::get('/', function () {
 | AUTH ROUTES (GUEST ONLY)
 |--------------------------------------------------------------------------
 */
-
+Route::get('/track-trip/{token}', [TripTrackingController::class, 'show'])
+    ->name('trip.track');
 Route::middleware('guest')->group(function () {
 
     // Register
@@ -36,6 +39,8 @@ Route::middleware('guest')->group(function () {
     // Login
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+
+    
 
     // Forgot password
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])
@@ -137,6 +142,37 @@ Route::middleware(['auth', 'activity.log'])->group(function () {
         Route::post('/{id}/update', [UserController::class, 'update'])->name('update');
 
         Route::post('/{id}/delete', [UserController::class, 'destroy'])->name('destroy');
+    });
+
+
+    /*
+|--------------------------------------------------------------------------
+| CHAT
+|--------------------------------------------------------------------------
+*/
+
+    Route::prefix('chat')->name('chat.')->group(function () {
+
+        Route::get('/', [ChatController::class, 'index'])
+            ->name('index');
+
+        Route::get('/list', [ChatController::class, 'chatList'])
+            ->name('list');
+
+        Route::post('/create', [ChatController::class, 'createOrGetChat'])
+            ->name('create');
+
+        Route::get('/messages', [ChatController::class, 'messages'])
+            ->name('messages');
+
+        Route::post('/send', [ChatController::class, 'sendMessage'])
+            ->name('send');
+
+        Route::post('/seen', [ChatController::class, 'markAsSeen'])
+            ->name('seen');
+
+        Route::post('/create-or-get', [ChatController::class, 'createOrGetChat'])
+            ->name('createOrGet');
     });
 
 

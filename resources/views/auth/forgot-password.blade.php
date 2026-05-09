@@ -7,7 +7,7 @@
     <title>Create account — Flecso</title>
     <meta name="description" content="Create your Flecso logistics management account." />
     <meta name="theme-color" content="#FF6B1A" />
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/app_icon.png') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

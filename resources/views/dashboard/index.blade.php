@@ -24,14 +24,11 @@
                         <rect x="3" y="4" width="18" height="18" rx="2" />
                         <path d="M16 2v4M8 2v4M3 10h18" />
                     </svg> Last 30 days</button>
-                <button class="btn btn--ghost"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+                <button class="btn btn--primary"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
                         stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
                     </svg> Export report</button>
-                <button class="btn btn--primary"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M12 5v14M5 12h14" />
-                    </svg> Quick add</button>
+
             </div>
         </div>
 
@@ -128,13 +125,13 @@
                         </div>
                         <h3>SOS Alerts</h3>
                     </div>
-                    <button class="btn btn--sm btn--ghost">View all</button>
+                    <a class="btn btn--sm btn--primary" href="{{ route('sos.index') }}">View all</a>
                 </div>
                 <div class="card__body">
                     @forelse($sos_alerts as $sos)
                         <div class="activity-item" style="margin-bottom:12px">
                             <div>
-                                <strong>{{ $sos->driver->name ?? 'N/A' }}</strong>
+                                <strong>{{ $sos->driver->full_name ?? 'N/A' }}</strong>
                                 <div style="font-size:12px;color:#999">
                                     Trip #{{ $sos->trip->id ?? '-' }}
                                 </div>
@@ -189,23 +186,9 @@
                     <div class="card__title">
                         <h3>Live Fleet Tracking</h3>
                     </div>
-                    <div class="chart-legend">
-                        <span><i class="dot" style="background:#FF6B1A"></i> On route</span>
-                        <span><i class="dot" style="background:#F59E0B"></i> Delayed</span>
-                    </div>
                 </div>
                 <div class="map-wrap">
-                    <div id="mapEl"></div>
-                    <div class="map-overlay-stat">
-                        <div class="pill"><strong>{{ $active_trips }}</strong><em>Active</em></div>
-                        <div class="pill"><strong>{{ $completed_trips }}</strong><em>Completed</em></div>
-                        <div class="pill"><strong>94%</strong><em>On-time</em></div>
-                    </div>
-                    <div class="map-legend">
-                        <span><i class="dot" style="background:#FF6B1A"></i> Active trucks</span>
-                        <span><i class="dot" style="background:#F59E0B"></i> Delayed</span>
-                        <span><i class="dot" style="background:#10B981"></i> Completed</span>
-                    </div>
+                    <div id="trackingMap" style="width:100%;height:500px;border-radius:16px;"></div>
                 </div>
             </div>
 
@@ -214,13 +197,13 @@
                     <div class="card__title">
                         <h3>Recent Activity</h3>
                     </div>
-                    <button class="btn btn--sm btn--ghost">See all</button>
+                    <a class="btn btn--sm btn--primary" href="{{ route('trips.index') }}">See all</a>
                 </div>
                 <div class="card__body activity-list">
                     @forelse($recent_trips as $trip)
                         <div class="activity-item" style="margin-bottom:12px">
                             <div>
-                                <strong>{{ $trip->driver->name ?? 'N/A' }}</strong>
+                                <strong>{{ $trip->driver->full_name ?? 'N/A' }}</strong>
                                 <div style="font-size:12px;color:#999">
                                     {{ ucfirst($trip->trip_status) }}
                                 </div>
@@ -244,15 +227,10 @@
                     <h3>Upcoming & Recent Trips</h3>
                 </div>
                 <div class="flex gap-8">
-                    <button class="btn btn--sm btn--ghost"><svg viewBox="0 0 24 24" width="14" height="14" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" />
-                            <path d="M16 2v4M8 2v4M3 10h18" />
-                        </svg> Calendar view</button>
-                    <button class="btn btn--sm btn--primary"><svg viewBox="0 0 24 24" width="14" height="14" fill="none"
-                            stroke="currentColor" stroke-width="2">
+                    <a class="btn btn--sm btn--primary" href="{{ route('trips.create') }}"><svg viewBox="0 0 24 24"
+                            width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 5v14M5 12h14" />
-                        </svg> Schedule trip</button>
+                        </svg> Schedule trip</a>
                 </div>
             </div>
             <div class="card__body">
@@ -275,5 +253,112 @@
             </div>
         </div>
     </section>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQqP59sFi_cXyk8Afq_AY4Dkg4DCf-xj0&callback=initMap">
+        </script>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.15.0/echo.iife.js"></script>>
+
+    <script>
+    window.Pusher = Pusher;
+
+    window.Echo = new Echo({
+         broadcaster: 'pusher',
+        key: "{{ env('PUSHER_APP_KEY') }}",
+        cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+        forceTLS: true,
+        authEndpoint: '/broadcasting/auth',
+        withCredentials: true,
+    });
+</script>
+    <script>
+         Pusher.logToConsole = true;
+        let map;
+        let markers = {};
+
+        // make global for google callback
+        window.initMap = function () {
+
+            map = new google.maps.Map(document.getElementById("trackingMap"), {
+                zoom: 6,
+                center: {
+                    lat: 31.5204,
+                    lng: 74.3587
+                }, // Lahore default
+            });
+
+            // initial drivers
+            const drivers = @json($driver_locations);
+            drivers.forEach(driver => {
+
+                if (!driver.latitude || !driver.longitude) return;
+
+                const marker = new google.maps.Marker({
+                    position: {
+                        lat: parseFloat(driver.latitude),
+                        lng: parseFloat(driver.longitude)
+                    },
+                    map: map,
+                    title: driver.driver?.full_name ?? 'Driver',
+                    icon: {
+                        url: "https://maps.google.com/mapfiles/ms/icons/truck.png"
+                    }
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                            <div style="min-width:150px">
+                                <strong>${driver.driver?.full_name ?? 'Driver'}</strong><br>
+                                Speed: ${driver.speed ?? 0} km/h<br>
+                                Updated: ${driver.updated_at ?? ''}
+                            </div>
+                        `
+                });
+
+                marker.addListener("click", () => {
+                    infoWindow.open(map, marker);
+                });
+
+                markers[driver.driver_id] = marker;
+            });
+
+            
+            // realtime websocket update
+            window.Echo.private('admin.{{ auth()->id() }}')
+                .listen('.driver.location.updated', (e) => {
+
+                    console.log('LIVE LOCATION:', e);
+
+                    const driver = e.location;
+
+                    if (!driver.latitude || !driver.longitude) return;
+
+                    const position = {
+                        lat: parseFloat(driver.latitude),
+                        lng: parseFloat(driver.longitude)
+                    };
+
+                    // update existing marker
+                    if (markers[driver.driver_id]) {
+
+                        markers[driver.driver_id].setPosition(position);
+
+                    } else {
+
+                        // create new marker
+                        markers[driver.driver_id] = new google.maps.Marker({
+                            position,
+                            map,
+                            title: driver.driver_name ?? 'Driver',
+                            icon: {
+                                url: "https://maps.google.com/mapfiles/ms/icons/truck.png"
+                            }
+                        });
+                    }
+                });
+        };
+    </script>
+
+
 
 @endsection
