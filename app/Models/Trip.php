@@ -42,6 +42,11 @@ class Trip extends Model
         'package_height',
         'package_length',
         'package_width',
+        'total_fuel_cost',
+        'total_fuel_liters',
+        'fuel_cost_per_km',
+        'avg_kmpl',
+
     ];
 
     /*
@@ -68,5 +73,9 @@ class Trip extends Model
     public function container()
     {
         return $this->belongsTo(Container::class, 'container_id');
+    }
+    public function fuelLogs()
+    {
+        return $this->hasMany(FuelLog::class);
     }
 }

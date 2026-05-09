@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Admin\FuelAnalyticsController;
 use App\Http\Controllers\TripTrackingController;
 use App\Http\Controllers\ChatController;
 /*
@@ -116,7 +117,7 @@ Route::middleware(['auth', 'activity.log'])->group(function () {
         Route::post('/update-status', [DriverController::class, 'updateStatus'])->name('update.status');
     });
 
-   Route::prefix('trips')->name('trips.')->group(function () {
+    Route::prefix('trips')->name('trips.')->group(function () {
 
         Route::get('/', [TripController::class, 'index'])->name('index');
         Route::get('/create', [TripController::class, 'create'])->name('create');
@@ -132,7 +133,7 @@ Route::middleware(['auth', 'activity.log'])->group(function () {
     Route::prefix('users')->name('users.')->group(function () {
 
         Route::post('/company/store', [UserController::class, 'companystore'])->name('company.store');
-        
+
         Route::post('/profile/update', [UserController::class, 'profileUpdate'])->name('profile.update');
 
         Route::get('/{id}/show', [UserController::class, 'show'])->name('show');
@@ -178,11 +179,17 @@ Route::middleware(['auth', 'activity.log'])->group(function () {
     // Logout
     Route::get('/logout', [AuthController::class, 'logout'])
         ->name('logout');
-    Route::get('/setting',function(){
+    Route::get('/setting', function () {
         return view('settings.setting');
     })->name('setting');
+
+    Route::get('/fuel/dashboard', [FuelAnalyticsController::class, 'dashboard'])
+        ->name('fuel.dashboard');
+
+    Route::get('/fuel/alerts', [FuelAnalyticsController::class, 'alerts'])
+        ->name('fuel.alerts');
 });
-    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
+Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
 
 
 /*

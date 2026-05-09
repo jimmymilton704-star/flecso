@@ -1,5 +1,6 @@
 @php
     $user = user();
+    $alerts = adminAlerts();
 @endphp
 
 <!DOCTYPE html>
