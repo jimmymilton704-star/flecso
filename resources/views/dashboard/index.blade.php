@@ -257,22 +257,22 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQqP59sFi_cXyk8Afq_AY4Dkg4DCf-xj0&callback=initMap">
         </script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.15.0/echo.iife.js"></script>>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.15.0/echo.iife.js"></script>
 
     <script>
-    window.Pusher = Pusher;
+        window.Pusher = Pusher;
 
-    window.Echo = new Echo({
-         broadcaster: 'pusher',
-        key: "{{ env('PUSHER_APP_KEY') }}",
-        cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
-        forceTLS: true,
-        authEndpoint: '/broadcasting/auth',
-        withCredentials: true,
-    });
-</script>
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: "{{ env('PUSHER_APP_KEY') }}",
+            cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+            forceTLS: true,
+            authEndpoint: '/broadcasting/auth',
+            withCredentials: true,
+        });
+    </script>
     <script>
-         Pusher.logToConsole = true;
+        Pusher.logToConsole = true;
         let map;
         let markers = {};
 
@@ -307,12 +307,12 @@
 
                 const infoWindow = new google.maps.InfoWindow({
                     content: `
-                            <div style="min-width:150px">
-                                <strong>${driver.driver?.full_name ?? 'Driver'}</strong><br>
-                                Speed: ${driver.speed ?? 0} km/h<br>
-                                Updated: ${driver.updated_at ?? ''}
-                            </div>
-                        `
+                                <div style="min-width:150px">
+                                    <strong>${driver.driver?.full_name ?? 'Driver'}</strong><br>
+                                    Speed: ${driver.speed ?? 0} km/h<br>
+                                    Updated: ${driver.updated_at ?? ''}
+                                </div>
+                            `
                 });
 
                 marker.addListener("click", () => {
@@ -322,7 +322,7 @@
                 markers[driver.driver_id] = marker;
             });
 
-            
+
             // realtime websocket update
             window.Echo.private('admin.{{ auth()->id() }}')
                 .listen('.driver.location.updated', (e) => {

@@ -57,13 +57,59 @@ Route::middleware('guest')->group(function () {
         ->name('password.update');
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| PROFILE COMPLETION
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->prefix('complete-profile')->name('profile.')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | STEP VIEWS
+    |--------------------------------------------------------------------------
+    */
+
+    Route::view('/step-1', 'profile-steps.step1')->name('step1');
+
+    Route::view('/step-2', 'profile-steps.step2')->name('step2');
+
+    Route::view('/step-3', 'profile-steps.step3')->name('step3');
+
+    Route::view('/step-4', 'profile-steps.step4')->name('step4');
+
+    /*
+    |--------------------------------------------------------------------------
+    | STEP SUBMIT
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post('/step-1', [AuthController::class, 'completeProfileStep1'])
+        ->name('step1.post');
+
+    Route::post('/step-2', [AuthController::class, 'completeProfileStep2'])
+        ->name('step2.post');
+
+    Route::post('/step-3', [AuthController::class, 'completeProfileStep3'])
+        ->name('step3.post');
+
+    Route::post('/step-4', [AuthController::class, 'completeProfileStep4'])
+        ->name('step4.post');
+});
+
 /*
 |--------------------------------------------------------------------------
 | AUTHENTICATED ROUTES
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'activity.log'])->group(function () {
+Route::middleware([
+    'auth',
+    'profile.completed',
+    'activity.log'
+])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -181,7 +227,7 @@ Route::middleware(['auth', 'activity.log'])->group(function () {
 
         Route::get('/drivers', [ChatController::class, 'drivers'])
             ->name('drivers');
-            
+
         Route::post('/broadcast', [ChatController::class, 'broadcast'])
             ->name('broadcast');
     });
