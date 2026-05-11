@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\AdminActivityTripsResource;
 use App\Models\Container;
 use App\Models\Trip;
+use App\Models\Driver;
 use App\Models\Truck;
 use Illuminate\Http\Request;
 
@@ -37,7 +38,7 @@ class DashboardController extends Controller
                 ->where('trip_status', 'active')
                 ->distinct('driver_id')
                 ->count('driver_id');
-    
+
             /*
             |------------------------------------------------------------------
             | ACTIVE TRIPS
@@ -45,10 +46,10 @@ class DashboardController extends Controller
             */
 
             $activeTripsQuery = Trip::with([
-                    'driver:id,name',
-                    'truck',
-                    'container'
-                ])
+                'driver:id,name',
+                'truck',
+                'container'
+            ])
                 ->where('admin_id', $adminId)
                 ->whereDate('schedule_datetime', now())
                 ->where('trip_status', 'active');
@@ -67,10 +68,10 @@ class DashboardController extends Controller
             */
 
             $allTrips = Trip::with([
-                    'driver:id,name',
-                    'truck',
-                    'container'
-                ])
+                'driver:id,name',
+                'truck',
+                'container'
+            ])
                 ->where('admin_id', $adminId)
                 ->latest()
                 ->get();
@@ -98,12 +99,88 @@ class DashboardController extends Controller
                     'all_trips' => AdminActivityTripsResource::collection($allTrips),
                 ]
             ], 200);
-
         } catch (\Exception $ex) {
             return response()->json([
                 'status' => false,
                 'message' => $ex->getMessage()
             ], 500);
         }
+    }
+    public function leaderboardApi(Request $request)
+    {
+        $adminId = auth()->id();
+
+        $drivers = Driver::where('admin_id', $adminId)
+            ->with(['trips', 'sosAlerts', 'fuelLogs'])
+            ->get();
+
+        $leaderboard = $drivers->map(function ($driver) {
+
+            /*
+        |--------------------------------------------------------------
+        | 1. ON-TIME DELIVERY SCORE (40%)
+        |--------------------------------------------------------------
+        */
+            $totalTrips = $driver->trips->count();
+
+            $onTimeTrips = $driver->trips
+                ->where('status', 'completed')
+                ->where('delivered_on_time', 1)
+                ->count();
+
+            $onTimeScore = $totalTrips > 0
+                ? ($onTimeTrips / $totalTrips) * 100
+                : 0;
+
+            /*
+        |--------------------------------------------------------------
+        | 2. INCIDENT SCORE (30%)
+        |--------------------------------------------------------------
+        */
+            $incidentCount = $driver->sosAlerts->count();
+            $incidentScore = max(0, 100 - ($incidentCount * 10));
+
+            /*
+        |--------------------------------------------------------------
+        | 3. FUEL EFFICIENCY SCORE (30%)
+        |--------------------------------------------------------------
+        */
+            $totalFuel = $driver->fuelLogs->sum('fuel_liters');
+            $totalKm   = $driver->trips->sum('distance_km');
+
+            $kmPerLitre = $totalKm > 0
+                ? ($totalKm / max($totalFuel, 1))
+                : 0;
+
+            $fuelScore = min(100, $kmPerLitre * 10);
+
+            /*
+        |--------------------------------------------------------------
+        | FINAL SCORE
+        |--------------------------------------------------------------
+        */
+            $finalScore =
+                ($onTimeScore * 0.4) +
+                ($incidentScore * 0.3) +
+                ($fuelScore * 0.3);
+
+            return [
+                'driver_id'       => $driver->id,
+                'driver_name'     => $driver->full_name,
+                'on_time_score'   => round($onTimeScore, 2),
+                'incident_score'  => round($incidentScore, 2),
+                'fuel_score'      => round($fuelScore, 2),
+                'final_score'     => round($finalScore, 2),
+            ];
+        });
+
+        $leaderboard = $leaderboard
+            ->sortByDesc('final_score')
+            ->values();
+
+        return response()->json([
+            'status' => true,
+            'data' => $leaderboard
+        ]);
     }
 }
