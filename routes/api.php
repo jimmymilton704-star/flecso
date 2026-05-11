@@ -116,10 +116,13 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard/leaderboard', [DashboardController::class, 'leaderboardApi'])->name('leaderboard');
 
     // SOS
     Route::get('/sos', [SosAlertController::class, 'index']);
     Route::get('/sos/{id}', [SosAlertController::class, 'show']);
+    Route::get('/fuel/{id}', [SosAlertController::class, 'fuelshowApi']);
+    Route::get('/fleet/{id}', [SosAlertController::class, 'fleetshowApi']);
     Route::post('/sos/resolve', [SosAlertController::class, 'resolve']);
 
     // Live Tracking
