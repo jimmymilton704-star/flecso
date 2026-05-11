@@ -95,14 +95,9 @@
 
                                 <div class="form-grid">
 
-                                    <div class="field">
-                                        <label>Company Name</label>
-                                        <input class="input" name="company_name"
-                                            value="{{ old('company_name', $user?->company_name) }}">
-                                    </div>
 
                                     <div class="field">
-                                        <label>Legal Name</label>
+                                        <label>Company Legal Name</label>
                                         <input class="input" name="company_legal_name"
                                             value="{{ old('company_legal_name', $user?->company_legal_name) }}">
                                     </div>

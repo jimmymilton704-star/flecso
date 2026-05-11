@@ -1,0 +1,574 @@
+/* =========================================================
+   Onboarding — 4-step new-account profile setup
+   ========================================================= */
+
+body.onb {
+  background: var(--surface);
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.onb {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+/* ---------- Topbar ---------- */
+.onb-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 32px;
+  background: var(--white);
+  border-bottom: 1px solid var(--surface-line);
+}
+.onb-topbar__brand {
+  display: flex; align-items: center; gap: 10px;
+}
+.onb-topbar__brand .brand-mark {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#1c1c21 0%,#000 100%);
+  display: grid; place-items: center;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.onb-topbar__brand .brand-mark::after {
+  content:""; position:absolute; inset:0;
+  background: radial-gradient(120% 80% at 80% 0%, rgba(255,107,26,.5), transparent 50%);
+}
+.onb-topbar__brand strong {
+  font-family: var(--font-display);
+  font-size: 18px; letter-spacing: -0.02em;
+}
+.onb-exit {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  font-size: 13px; font-weight: 500;
+  color: var(--ink-500);
+  background: transparent; border: none;
+  border-radius: 10px;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.onb-exit:hover { background: var(--ink-50); color: var(--ink-900); }
+
+/* ---------- Stepper ---------- */
+.onb-stepper {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--surface-line);
+  padding: 0 32px 22px;
+}
+
+/* Single horizontal track running through all circle centers.
+   Positions are measured in JS from the actual circle elements,
+   so it stays accurate regardless of padding, font, or viewport. */
+.onb-stepper::before,
+.onb-stepper::after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  top: var(--track-y, 26px);
+  pointer-events: none;
+  z-index: 0;
+}
+.onb-stepper::before {
+  left: var(--track-start, 50px);
+  width: calc(var(--track-end, 50px) - var(--track-start, 50px));
+  background: var(--ink-100);
+}
+.onb-stepper::after {
+  left: var(--track-start, 50px);
+  width: calc(var(--track-active, var(--track-start, 50px)) - var(--track-start, 50px));
+  background: var(--orange-grad);
+  transition: width .35s var(--ease);
+}
+
+.onb-step {
+  position: relative;
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 0;
+  z-index: 1;            /* keep circle/text above the track */
+  cursor: default;
+}
+.onb-step__num {
+  position: relative;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--white);
+  border: 2px solid var(--ink-200);
+  color: var(--ink-500);
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 14px;
+  flex: none;
+  transition: all var(--dur) var(--ease);
+  box-shadow: 0 0 0 4px var(--white);  /* white halo so the line doesn't poke through */
+}
+.onb-step.active .onb-step__num {
+  border-color: var(--orange-500);
+  color: var(--orange-700);
+  background: var(--orange-50);
+  box-shadow: 0 0 0 4px rgba(255,107,26,.12);
+}
+.onb-step.done .onb-step__num {
+  background: var(--orange-grad);
+  border-color: transparent;
+  color: #fff;
+}
+.onb-step__txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.onb-step__label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-400);
+}
+.onb-step.active .onb-step__label,
+.onb-step.done   .onb-step__label { color: var(--orange-600); }
+.onb-step__title {
+  font-size: 13.5px; font-weight: 600;
+  color: var(--ink-700);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.onb-step.active .onb-step__title,
+.onb-step.done   .onb-step__title { color: var(--ink-900); }
+
+/* ---------- Shell ---------- */
+.onb-shell {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 0;
+}
+
+/* Left side: context */
+.onb-side {
+  position: relative;
+  padding: 40px 36px;
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(255,107,26,.30), transparent 55%),
+    radial-gradient(80% 60% at 0% 100%, rgba(255,107,26,.20), transparent 50%),
+    linear-gradient(180deg, #0A0A0B 0%, #1C1C21 100%);
+  color: #fff;
+  overflow: hidden;
+}
+.onb-side::before {
+  content: ""; position: absolute;
+  inset: auto -10% -30% auto;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,107,26,.30), transparent 60%);
+  filter: blur(50px);
+  pointer-events: none;
+}
+.onb-side__eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px;
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  margin-bottom: 22px;
+  position: relative;
+}
+.onb-side__eyebrow .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--orange-500);
+  box-shadow: 0 0 0 3px rgba(255,107,26,.3);
+}
+.onb-side h2 {
+  font-family: var(--font-display);
+  font-size: 28px; font-weight: 700;
+  letter-spacing: -0.02em; line-height: 1.2;
+  color: #fff; margin: 0 0 12px;
+  position: relative;
+}
+.onb-side h2 em {
+  font-style: normal;
+  background: linear-gradient(135deg,#FF8A2B 0%,#FF5500 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.onb-side__sub {
+  font-size: 14.5px; line-height: 1.6;
+  color: rgba(255,255,255,.7);
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.onb-tips {
+  display: flex; flex-direction: column; gap: 14px;
+  position: relative;
+  margin-bottom: 28px;
+}
+.onb-tip {
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.onb-tip__icon {
+  width: 30px; height: 30px; border-radius: 9px;
+  background: rgba(255,107,26,.15);
+  color: var(--orange-400);
+  display: grid; place-items: center;
+  flex: none;
+}
+.onb-tip h4 {
+  font-size: 13.5px; font-weight: 600;
+  color: #fff;
+  margin: 0 0 2px;
+}
+.onb-tip p {
+  font-size: 12.5px;
+  color: rgba(255,255,255,.6);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.onb-help {
+  position: relative;
+  margin-top: auto;
+  padding: 14px 16px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: var(--r-md);
+  font-size: 12.5px;
+  color: rgba(255,255,255,.7);
+}
+.onb-help a { color: #fff; font-weight: 600; }
+.onb-help a:hover { text-decoration: underline; }
+
+.onb-side__inner {
+  display: flex; flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+/* Right side: form */
+.onb-main {
+  padding: 40px 56px 32px;
+  display: flex; flex-direction: column;
+  background: var(--surface);
+  min-width: 0;
+}
+.onb-main__head {
+  margin-bottom: 24px;
+}
+.onb-main__head .stepmeta {
+  font-size: 11.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--orange-600);
+  margin-bottom: 6px;
+}
+.onb-main__head h1 {
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+.onb-main__head p {
+  color: var(--ink-500);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ---------- Step pages ---------- */
+.onb-pane { display: none; }
+.onb-pane.active {
+  display: block;
+  animation: paneIn .35s var(--ease);
+}
+
+/* Step-specific copy on the left context panel */
+.onb-side-pane { display: none; }
+.onb-side-pane.active {
+  display: block;
+  animation: paneIn .35s var(--ease);
+}
+@keyframes paneIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.onb-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.onb-field {
+  display: flex; flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.onb-field.full { grid-column: 1 / -1; }
+.onb-field label {
+  font-size: 12.5px; font-weight: 600;
+  color: var(--ink-700);
+}
+.onb-field label .req { color: var(--orange-600); margin-left: 3px; }
+.onb-field label .opt { color: var(--ink-400); font-weight: 500; margin-left: 6px; font-size: 11px; }
+.onb-input,
+.onb-field input,
+.onb-field select,
+.onb-field textarea {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  background: var(--white);
+  border: 1px solid var(--surface-line);
+  border-radius: 10px;
+  outline: none;
+  font-size: 14px;
+  color: var(--ink-900);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.onb-field textarea { padding: 12px 14px; min-height: 96px; height: auto; resize: vertical; line-height: 1.5; }
+.onb-field input:focus,
+.onb-field select:focus,
+.onb-field textarea:focus {
+  border-color: var(--orange-400);
+  box-shadow: 0 0 0 4px rgba(255,107,26,.10);
+}
+.onb-field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238C8C95' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+.onb-field__hint {
+  font-size: 12px;
+  color: var(--ink-400);
+  display: flex; align-items: center; gap: 4px;
+}
+.onb-field.has-error input,
+.onb-field.has-error select,
+.onb-field.has-error textarea {
+  border-color: var(--danger-500);
+  box-shadow: 0 0 0 4px rgba(239,68,68,.08);
+}
+.onb-field.has-error .onb-field__hint { color: var(--danger-700); }
+
+/* Char counter */
+.onb-counter {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-400);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+
+/* Fieldset group */
+.onb-group {
+  grid-column: 1 / -1;
+  padding: 18px;
+  border: 1px solid var(--surface-line);
+  border-radius: 12px;
+  background: var(--white);
+}
+.onb-group h4 {
+  font-size: 13px; font-weight: 600;
+  margin: 0 0 4px;
+}
+.onb-group p {
+  font-size: 12.5px; color: var(--ink-500);
+  margin: 0 0 14px;
+}
+.onb-group .onb-form { gap: 14px; }
+
+/* Fleet number stepper */
+.fleet-stepper {
+  display: grid;
+  grid-template-columns: 38px 1fr 38px;
+  gap: 8px; align-items: center;
+}
+.fleet-stepper button {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: var(--white);
+  border: 1px solid var(--surface-line);
+  font-weight: 700; font-size: 16px;
+  color: var(--ink-700);
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.fleet-stepper button:hover { border-color: var(--orange-300); color: var(--orange-700); }
+.fleet-stepper input {
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px !important;
+}
+
+/* File upload zone (Step 4) */
+.onb-upload {
+  position: relative;
+  border: 1.5px dashed var(--ink-200);
+  border-radius: 14px;
+  padding: 24px 18px;
+  background: var(--surface-2);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.onb-upload:hover { border-color: var(--orange-400); background: var(--orange-50); }
+.onb-upload.has-file {
+  border-style: solid;
+  border-color: var(--success-500);
+  background: var(--success-50);
+}
+.onb-upload__icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: var(--white);
+  display: grid; place-items: center;
+  margin: 0 auto 10px;
+  color: var(--orange-500);
+  border: 1px solid var(--surface-line);
+}
+.onb-upload.has-file .onb-upload__icon { color: var(--success-700); }
+.onb-upload h5 { font-size: 14px; margin-bottom: 2px; }
+.onb-upload p { font-size: 12.5px; color: var(--ink-500); margin: 0; }
+.onb-upload input[type="file"] { display: none; }
+.onb-upload__file {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: var(--white);
+  border: 1px solid var(--success-500);
+  border-radius: 10px;
+  margin-top: 8px;
+  font-size: 12.5px; font-weight: 600;
+  color: var(--success-700);
+}
+.onb-upload__file button {
+  background: transparent;
+  color: var(--ink-500);
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.onb-upload__file button:hover { background: var(--ink-100); color: var(--ink-900); }
+
+/* ---------- Footer ---------- */
+.onb-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 22px 56px 32px;
+  border-top: 1px solid var(--surface-line);
+  background: var(--surface);
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+}
+.onb-footer__progress {
+  font-size: 12.5px;
+  color: var(--ink-500);
+}
+.onb-footer__progress strong { color: var(--ink-900); }
+.onb-footer__buttons { display: flex; gap: 10px; }
+.onb-back {
+  height: 44px; padding: 0 18px;
+  background: var(--white);
+  border: 1px solid var(--surface-line);
+  border-radius: 10px;
+  font-weight: 600; font-size: 13.5px;
+  color: var(--ink-700);
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.onb-back:hover { border-color: var(--ink-200); color: var(--ink-900); }
+.onb-back[disabled] { opacity: .35; cursor: not-allowed; }
+.onb-continue {
+  height: 44px; padding: 0 22px;
+  background: var(--orange-grad);
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 600; font-size: 13.5px;
+  display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: var(--shadow-orange);
+  transition: transform var(--dur) var(--ease);
+}
+.onb-continue:hover { transform: translateY(-1px); }
+.onb-continue:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+.onb-continue .spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+.onb-continue.loading .spinner { display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Success ---------- */
+.onb-success {
+  text-align: center;
+  padding: 40px 20px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.onb-success__icon {
+  width: 88px; height: 88px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, var(--success-50), #C7F3DA);
+  color: var(--success-700);
+  display: grid; place-items: center;
+  margin: 0 auto 20px;
+  animation: pop .55s var(--ease);
+}
+@keyframes pop {
+  from { opacity: 0; transform: scale(.7); }
+  60%  { transform: scale(1.05); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.onb-success h2 {
+  font-size: 28px; margin-bottom: 8px;
+  font-family: var(--font-display);
+}
+.onb-success p {
+  color: var(--ink-500);
+  font-size: 14.5px;
+  max-width: 420px; margin: 0 auto 20px;
+  line-height: 1.55;
+}
+.onb-success__btn {
+  height: 48px; padding: 0 22px;
+  background: var(--orange-grad);
+  color: #fff;
+  border-radius: 12px;
+  font-weight: 600; font-size: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: var(--shadow-orange);
+  transition: transform var(--dur) var(--ease);
+  text-decoration: none;
+}
+.onb-success__btn:hover { transform: translateY(-1px); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+  .onb-shell { grid-template-columns: 320px 1fr; }
+  .onb-main { padding: 32px 36px 24px; }
+  .onb-side { padding: 32px 28px; }
+  .onb-side h2 { font-size: 24px; }
+  .onb-footer { padding: 18px 36px 24px; }
+}
+@media (max-width: 860px) {
+  .onb-shell { grid-template-columns: 1fr; }
+  .onb-side { display: none; }
+  .onb-main { padding: 28px 22px 20px; }
+  .onb-footer { padding: 16px 22px 22px; }
+  .onb-stepper { padding: 0 22px 18px; }
+  .onb-step__txt { display: none; }
+  .onb-step { justify-content: center; }
+  .onb-step + .onb-step::before { left: -50%; right: 50%; margin: 0; top: 22px; }
+}
+@media (max-width: 600px) {
+  .onb-form { grid-template-columns: 1fr; }
+  .onb-topbar { padding: 14px 18px; }
+  .onb-stepper { padding: 0 18px 16px; }
+  .onb-main__head h1 { font-size: 22px; }
+  .onb-field input, .onb-field select { font-size: 16px; } /* prevent iOS zoom */
+  .onb-footer { flex-direction: column; align-items: stretch; gap: 10px; }
+  .onb-footer__buttons { width: 100%; }
+  .onb-back, .onb-continue { flex: 1; justify-content: center; }
+  .onb-footer__progress { text-align: center; }
+}

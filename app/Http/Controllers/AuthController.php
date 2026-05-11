@@ -52,36 +52,36 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'phone'    => 'required|string|max:20',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:20',
             'password' => 'required|min:8|confirmed',
         ]);
 
         $user = User::create([
-            'name'              => $request->name,
-            'email'             => $request->email,
-            'phone'             => $request->phone,
-            'password'          => Hash::make($request->password),
-            'role'              => 'admin',
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
+            'role' => 'admin',
             'profile_completed' => false,
         ]);
 
         // Trial subscription
         $trialStart = now();
-        $trialEnd   = now()->addDays(14);
+        $trialEnd = now()->addDays(14);
 
         Subscription::create([
             'user_id' => $user->id,
             'status' => 'trial',
             'trial_ends_at' => $trialEnd,
             'current_period_start' => $trialStart,
-            'current_period_end'   => $trialEnd,
-            'stripe_customer_id'    => null,
-            'stripe_subscription_id'=> null,
-            'stripe_price_id'       => null,
+            'current_period_end' => $trialEnd,
+            'stripe_customer_id' => null,
+            'stripe_subscription_id' => null,
+            'stripe_price_id' => null,
             'extra_drivers' => 0,
-            'extra_cost'    => 0,
+            'extra_cost' => 0,
         ]);
 
         // Login user
@@ -100,7 +100,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -116,7 +116,19 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard')->with('success', 'Login successful');
+        if (!$user->profile_completed) {
+
+            return redirect()
+                ->route('profile.step1')
+                ->with(
+                    'error',
+                    'Please complete your profile first.'
+                );
+        }
+
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Login successful');
     }
 
 
@@ -142,10 +154,10 @@ class AuthController extends Controller
     public function registerDriver(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-            'avatar'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $avatarPath = null;
@@ -166,12 +178,12 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
-            'avatar'   => $avatarPath,
-            'role'     => 'driver',
-            'parent_id'=> Auth::id()
+            'avatar' => $avatarPath,
+            'role' => 'driver',
+            'parent_id' => Auth::id()
         ]);
 
         return back()->with('success', 'Driver registered successfully');
@@ -188,10 +200,10 @@ class AuthController extends Controller
     {
         $request->validate([
             'company_legal_name' => 'required|string',
-            'company_type'       => 'required|string',
-            'vat_number'         => 'required|digits:11',
-            'fiscal_code'        => 'required|string',
-            'rea_number'         => 'required|string',
+            'company_type' => 'required|string',
+            'vat_number' => 'required|digits:11',
+            'fiscal_code' => 'required|string',
+            'rea_number' => 'required|string',
         ]);
 
         $user = Auth::user();
@@ -204,19 +216,21 @@ class AuthController extends Controller
             'rea_number'
         ]));
 
-        return back()->with('success', 'Step 1 completed');
+        return redirect()
+            ->route('profile.step2')
+            ->with('success', 'Step 1 completed');
     }
 
 
     public function completeProfileStep2(Request $request)
     {
         $request->validate([
-            'pec_email'          => 'required|email',
-            'sdi_code'           => 'required|string|size:7',
+            'pec_email' => 'required|email',
+            'sdi_code' => 'required|string|size:7',
             'registered_address' => 'required|string',
-            'city'               => 'required|string',
-            'province'           => 'required|string|size:2',
-            'zip_code'           => 'required|string',
+            'city' => 'required|string',
+            'province' => 'required|string|size:2',
+            'zip_code' => 'required|string',
         ]);
 
         Auth::user()->update($request->only([
@@ -228,18 +242,20 @@ class AuthController extends Controller
             'zip_code'
         ]));
 
-        return back()->with('success', 'Step 2 completed');
+        return redirect()
+            ->route('profile.step3')
+            ->with('success', 'Step 2 completed');
     }
 
 
     public function completeProfileStep3(Request $request)
     {
         $request->validate([
-            'ren_number'           => 'required|string',
-            'eu_license_number'    => 'nullable|string',
-            'fleet_trucks'         => 'required|integer|min:0',
-            'fleet_vans'           => 'required|integer|min:0',
-            'fleet_containers'     => 'required|integer|min:0',
+            'ren_number' => 'required|string',
+            'eu_license_number' => 'nullable|string',
+            'fleet_trucks' => 'required|integer|min:0',
+            'fleet_vans' => 'required|integer|min:0',
+            'fleet_containers' => 'required|integer|min:0',
             'insurance_policy_number' => 'required|string',
         ]);
 
@@ -252,17 +268,19 @@ class AuthController extends Controller
             'insurance_policy_number'
         ]));
 
-        return back()->with('success', 'Step 3 completed');
+        return redirect()
+            ->route('profile.step4')
+            ->with('success', 'Step 3 completed');
     }
 
 
     public function completeProfileStep4(Request $request)
     {
         $request->validate([
-            'rep_full_name'    => 'required|string',
-            'rep_position'     => 'required|string',
-            'rep_fiscal_code'  => 'required|string|size:16',
-            'rep_document'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'rep_full_name' => 'required|string',
+            'rep_position' => 'required|string',
+            'rep_fiscal_code' => 'required|string|size:16',
+            'rep_document' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         $user = Auth::user();
@@ -283,13 +301,15 @@ class AuthController extends Controller
         }
 
         $user->update([
-            'rep_full_name'     => $request->rep_full_name,
-            'rep_position'      => $request->rep_position,
-            'rep_fiscal_code'   => $request->rep_fiscal_code,
+            'rep_full_name' => $request->rep_full_name,
+            'rep_position' => $request->rep_position,
+            'rep_fiscal_code' => $request->rep_fiscal_code,
             'profile_completed' => true,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Profile completed');
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Profile completed successfully');
     }
 
 
