@@ -114,10 +114,15 @@ Route::middleware([
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+    Route::get('/dashboard/leaderboard', [DashboardController::class, 'leaderboard'])
+        ->name('leaderboard');
+
 
     Route::get('/sos-alerts', [SosAlertController::class, 'index'])->name('sos.index');
 
     Route::get('/sos-alerts/{id}', [SosAlertController::class, 'show'])->name('sos.show');
+    Route::get('/fuel-alerts/{id}', [SosAlertController::class, 'Fuelshow'])->name('fuel.show');
+    Route::get('/fleet-alerts/{id}', [SosAlertController::class, 'Fleetshow'])->name('fleet.show');
 
     Route::post('/sos-alerts/resolve', [SosAlertController::class, 'resolve'])->name('sos.resolve');
 

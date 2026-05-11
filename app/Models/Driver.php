@@ -84,5 +84,15 @@ class Driver extends Model
     public function truck() {
         return $this->hasOne(Truck::class);
     }
+    public function sosAlerts() {
+        return $this->hasMany(SosAlert::class);
+    }
+    public function fuelLogs() {
+        return $this->hasMany(FuelLog::class);
+    }
+    public function trips() {
+        return $this->hasMany(Trip::class);
+    }
+
 
 }

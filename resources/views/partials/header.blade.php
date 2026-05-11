@@ -79,8 +79,7 @@
                         </div>
                     @endforeach
                 </div>
-                <footer class="notify-pop__foot"><a href="#" id="AlertMarkAll">Mark all read</a><a href="#"
-                        class="link-primary">Open inbox</a></footer>
+                
             </div>
         </div>
 

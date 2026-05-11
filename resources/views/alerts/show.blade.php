@@ -12,10 +12,12 @@
     $trip   = $alert->trip;
 
     $severity = ucfirst($alert->emergency_type ?? 'warning');
-    $status   = ucfirst($alert->status ?? 'pending');
+    $status   = ucfirst($alert->status ? 'Resolved' : 'Pending');
 
     $raisedAt = \Carbon\Carbon::parse($alert->created_at);
 @endphp
+@dd($status)
+<link rel="stylesheet" href="{{ asset('css/sos.css') }}">
 
 <section class="page">
 
