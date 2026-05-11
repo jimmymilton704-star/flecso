@@ -302,7 +302,7 @@
         </div>
     </div>
 
-
+ <script src="{{ asset('js/onboarding.js') }}"></script>
 
 </body>
 

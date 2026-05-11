@@ -1,7 +1,12 @@
 /* =========================================================
    Onboarding — 4-step new-account profile setup
    ========================================================= */
-
+:root {
+    --track-start: 50px;
+    --track-end: 1434.5px;
+    --track-active: 50px;
+    --track-y: 137.6875px;
+}
 body.onb {
   background: var(--surface);
   min-height: 100vh;

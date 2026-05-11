@@ -72,14 +72,13 @@ Route::middleware(['auth'])->prefix('complete-profile')->name('profile.')->group
     |--------------------------------------------------------------------------
     */
 
-    Route::view('/step-1', 'profile-steps.step1')->name('step1');
+    Route::view('/step-1', 'profile-steps.step1', ['step' => 1])->name('step1');
 
-    Route::view('/step-2', 'profile-steps.step2')->name('step2');
+    Route::view('/step-2', 'profile-steps.step2', ['step' => 2])->name('step2');
 
-    Route::view('/step-3', 'profile-steps.step3')->name('step3');
+    Route::view('/step-3', 'profile-steps.step3', ['step' => 3])->name('step3');
 
-    Route::view('/step-4', 'profile-steps.step4')->name('step4');
-
+    Route::view('/step-4', 'profile-steps.step4', ['step' => 4])->name('step4');
     /*
     |--------------------------------------------------------------------------
     | STEP SUBMIT
