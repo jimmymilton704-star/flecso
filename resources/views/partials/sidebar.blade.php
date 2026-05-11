@@ -104,7 +104,7 @@
                 </svg></div>
             <h4>Upgrade to Premium</h4>
             <p>Unlock AI routing, advanced analytics, and priority support.</p>
-            <button class="btn btn--primary btn--block">Upgrade Now</button>
+            <a class="btn btn--primary btn--block" href="#">Upgrade Now</a>
         </div>
     </div>
 </aside>
