@@ -40,6 +40,16 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
 
+    Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('otp.verify.form');
+
+Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
+
+Route::post('/otp/resend', [AuthController::class, 'resendOtp'])->name('otp.resend');
+
+Route::get('/otp/verify', function () {
+    return view('auth.verify-otp');
+})->name('otp.verify.form');
+
 
 
     // Forgot password

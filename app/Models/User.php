@@ -59,7 +59,11 @@ class User extends Authenticatable
 
         // Status
         'profile_completed',
-        'last_seen'
+        'last_seen',
+
+        'email_otp',
+        'email_otp_expires_at',
+        'email_verified_at',
     ];
 
     /**
@@ -96,7 +100,7 @@ class User extends Authenticatable
         return $this->hasOne(Subscription::class);
     }
 
-   public function getAvatarUrlAttribute()
+    public function getAvatarUrlAttribute()
     {
         return $this->avatar
             ? asset($this->avatar) // ✅ FIXED

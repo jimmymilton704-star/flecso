@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\EmailOtpMail;
 
 
 class AuthController extends Controller
@@ -49,6 +51,53 @@ class AuthController extends Controller
     |--------------------------------------------------------------------------
     */
 
+    // public function register(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|email|unique:users,email',
+    //         'phone' => 'required|string|max:20',
+    //         'password' => 'required|min:8|confirmed',
+    //     ]);
+
+    //     $otp = rand(100000, 999999);
+
+    //    $user = User::create([
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'phone' => $request->phone,
+    //         'password' => Hash::make($request->password),
+    //         'role' => 'admin',
+    //         'profile_completed' => false,
+
+    //         // OTP fields
+    //         'email_otp' => $otp,
+    //         'email_otp_expires_at' => now()->addMinutes(10),
+    //         'email_verified_at' => null,
+    //     ]);
+    //     // Trial subscription
+    //     $trialStart = now();
+    //     $trialEnd = now()->addDays(14);
+
+    //     Subscription::create([
+    //         'user_id' => $user->id,
+    //         'status' => 'trial',
+    //         'trial_ends_at' => $trialEnd,
+    //         'current_period_start' => $trialStart,
+    //         'current_period_end' => $trialEnd,
+    //         'stripe_customer_id' => null,
+    //         'stripe_subscription_id' => null,
+    //         'stripe_price_id' => null,
+    //         'extra_drivers' => 0,
+    //         'extra_cost' => 0,
+    //     ]);
+
+    //     // Login user
+    //     Auth::login($user);
+
+    //     return redirect()->route('dashboard')->with('success', 'Registration successful! Trial started.');
+    // }
+
     public function register(Request $request)
     {
         $request->validate([
@@ -58,6 +107,8 @@ class AuthController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
 
+        $otp = rand(100000, 999999);
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -65,7 +116,15 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'role' => 'admin',
             'profile_completed' => false,
+
+            // OTP fields
+            'email_otp' => $otp,
+            'email_otp_expires_at' => now()->addMinutes(10),
+            'email_verified_at' => null,
         ]);
+
+        // 📧 SEND OTP EMAIL (NEW PART)
+        Mail::to($user->email)->send(new EmailOtpMail($otp));
 
         // Trial subscription
         $trialStart = now();
@@ -84,13 +143,93 @@ class AuthController extends Controller
             'extra_cost' => 0,
         ]);
 
-        // Login user
-        Auth::login($user);
+        session([
+            'otp_email' => $request->email
+        ]);
 
-        return redirect()->route('dashboard')->with('success', 'Registration successful! Trial started.');
+        // ❌ IMPORTANT: Don't login yet (OTP required)
+        return redirect()
+            ->route('otp.verify.form')
+            ->with('email', $request->email)
+            ->with('success', 'OTP sent to your email. Please verify first.');
+    }
+
+    /*
+        |--------------------------------------------------------------------------
+        | SHOW OTP FORM (ADMIN)
+        |--------------------------------------------------------------------------
+        */
+
+    public function showOtpForm()
+    {
+        return view('auth.verify-otp');
     }
 
 
+    /*
+       |--------------------------------------------------------------------------
+       | VERIFY OTP (ADMIN)
+       |--------------------------------------------------------------------------
+       */
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('error', 'Invalid email');
+        }
+
+        if ($user->email_otp !== $request->otp) {
+            return back()->with('error', 'Invalid OTP');
+        }
+
+        if (now()->greaterThan($user->email_otp_expires_at)) {
+            return back()->with('error', 'OTP expired');
+        }
+
+        $user->update([
+            'email_verified_at' => now(),
+            'email_otp' => null,
+            'email_otp_expires_at' => null,
+        ]);
+
+        Auth::login($user);
+
+        return redirect()->route('dashboard')->with('success', 'Email verified successfully');
+    }
+
+
+
+
+    public function resendOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('error', 'User not found');
+        }
+
+        $otp = rand(100000, 999999);
+
+        $user->update([
+            'email_otp' => $otp,
+            'email_otp_expires_at' => now()->addMinutes(10),
+        ]);
+
+        Mail::to($user->email)->send(new EmailOtpMail($otp));
+
+        return back()->with('success', 'OTP resent successfully');
+    }
     /*
     |--------------------------------------------------------------------------
     | LOGIN (ADMIN)
@@ -126,6 +265,10 @@ class AuthController extends Controller
                     'error',
                     'Unauthorized access'
                 );
+        }
+
+        if (!$user->email_verified_at) {
+            return back()->with('error', 'Please verify your email first');
         }
 
         Auth::login($user);
