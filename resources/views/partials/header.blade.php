@@ -154,7 +154,7 @@
                         </svg><span>Help & Support</span></button>
                 </div>
                 <footer class="notify-pop__foot" style="padding:8px">
-                    <a class="profile-link--danger" style="width:100%;justify-content:center"
+                    <a class="profile-link" data-action="logout" style="width:100%;justify-content:center"
                         href="{{ route('logout') }}"><svg viewBox="0 0 24 24" width="16" height="16"
                             fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
