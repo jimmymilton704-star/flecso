@@ -14,30 +14,7 @@
     <div class="topbar__actions">
         <button class="chip"><span class="chip-dot"></span><span>All Systems Operational</span></button>
 
-        <!-- Messages -->
-        <div class="notify-wrap">
-            <button class="icon-btn icon-btn--notify" aria-label="Messages" id="msgBtn">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
-                    stroke-width="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-                <span class="notify-badge" id="msgBadge">2</span>
-            </button>
-            <div class="notify-pop" id="msgPop" role="dialog" aria-label="Messages">
-                <header class="notify-pop__head">
-                    <div>
-                        <h3>Messages</h3>
-                        <p class="muted" id="msgCount">2 unread</p>
-                    </div>
-                    <button class="btn btn--sm btn--ghost" id="msgCompose"><svg viewBox="0 0 24 24" width="14"
-                            height="14" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 5v14M5 12h14" />
-                        </svg> New</button>
-                </header>
-                <div class="notify-pop__body" id="msgList"></div>
-
-            </div>
-        </div>
+        
         <div class="notify-wrap">
             <button class="icon-btn icon-btn--notify" aria-label="Alerts" id="AlertBtn">
                 <svg width="20px" height="20px" viewBox="-2.5 -2.5 30.00 30.00" fill="none"

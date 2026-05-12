@@ -204,7 +204,7 @@
                         <div class="activity-item" style="margin-bottom:12px">
                             <div>
                                 <strong>{{ $trip->driver->full_name ?? 'N/A' }}</strong>
-                                <div style="font-size:12px;color:#999">
+                                <div style="display:inline-block;margin-top:8px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--success-50);color:var(--success-700)">
                                     {{ ucfirst($trip->trip_status) }}
                                 </div>
                             </div>
@@ -239,11 +239,11 @@
                         <div>
                             <strong>Trip #{{ $trip->id }}</strong>
                             <div style="font-size:12px;color:#999">
-                                Driver: {{ $trip->driver->name ?? 'N/A' }}
+                                Driver: {{ $trip->driver->full_name ?? 'N/A' }}
                             </div>
                         </div>
 
-                        <div style="font-size:12px;color:#888">
+                        <div style="display:inline-block;margin-top:8px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--success-50);color:var(--success-700)">
                             {{ $trip->trip_status }}
                         </div>
                     </div>
@@ -301,18 +301,82 @@
                     map: map,
                     title: driver.driver?.full_name ?? 'Driver',
                     icon: {
-                        url: "https://maps.google.com/mapfiles/ms/icons/truck.png"
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+
+        <svg xmlns="http://www.w3.org/2000/svg" width="110" height="90" viewBox="0 0 110 90">
+
+            <defs>
+
+                <!-- Gradient -->
+                <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FF8C42"/>
+                    <stop offset="100%" stop-color="#FF5B00"/>
+                </linearGradient>
+
+                <!-- Glow -->
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="6" result="blur"/>
+                    <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+
+                <!-- Shadow -->
+                <filter id="shadow">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#00000055"/>
+                </filter>
+
+            </defs>
+
+            <!-- Outer glow -->
+            <circle
+                cx="55"
+                cy="45"
+                r="30"
+                fill="#FF6B1A"
+                opacity="0.20"
+                filter="url(#glow)"
+            />
+
+            <!-- Main badge -->
+            <rect
+                x="20"
+                y="15"
+                width="70"
+                height="60"
+                rx="20"
+                fill="url(#bg)"
+                filter="url(#shadow)"
+            />
+
+            <!-- Truck Emoji Style -->
+            <text
+                x="55"
+                y="56"
+                text-anchor="middle"
+                font-size="34"
+            >
+                🚚
+            </text>
+
+        </svg>
+
+        `),
+
+                        scaledSize: new google.maps.Size(70, 58),
+                        anchor: new google.maps.Point(35, 29)
                     }
                 });
 
                 const infoWindow = new google.maps.InfoWindow({
                     content: `
-                                <div style="min-width:150px">
-                                    <strong>${driver.driver?.full_name ?? 'Driver'}</strong><br>
-                                    Speed: ${driver.speed ?? 0} km/h<br>
-                                    Updated: ${driver.updated_at ?? ''}
-                                </div>
-                            `
+                                                <div style="min-width:150px">
+                                                    <strong>${driver.driver?.full_name ?? 'Driver'}</strong><br>
+                                                    Speed: ${driver.speed ?? 0} km/h<br>
+                                                    Updated: ${driver.updated_at ?? ''}
+                                                </div>
+                                            `
                 });
 
                 marker.addListener("click", () => {
@@ -350,8 +414,73 @@
                             position,
                             map,
                             title: driver.driver_name ?? 'Driver',
+
                             icon: {
-                                url: "https://maps.google.com/mapfiles/ms/icons/truck.png"
+                                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="110" height="90" viewBox="0 0 110 90">
+
+                <defs>
+
+                    <!-- Gradient -->
+                    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#FF8C42"/>
+                        <stop offset="100%" stop-color="#FF5B00"/>
+                    </linearGradient>
+
+                    <!-- Glow -->
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="6" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+
+                    <!-- Shadow -->
+                    <filter id="shadow">
+                        <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#00000055"/>
+                    </filter>
+
+                </defs>
+
+                <!-- Outer glow -->
+                <circle
+                    cx="55"
+                    cy="45"
+                    r="30"
+                    fill="#FF6B1A"
+                    opacity="0.20"
+                    filter="url(#glow)"
+                />
+
+                <!-- Main badge -->
+                <rect
+                    x="20"
+                    y="15"
+                    width="70"
+                    height="60"
+                    rx="20"
+                    fill="url(#bg)"
+                    filter="url(#shadow)"
+                />
+
+                <!-- Truck Emoji Style -->
+                <text
+                    x="55"
+                    y="56"
+                    text-anchor="middle"
+                    font-size="34"
+                >
+                    🚚
+                </text>
+
+            </svg>
+
+            `),
+
+                                scaledSize: new google.maps.Size(70, 58),
+                                anchor: new google.maps.Point(35, 29)
                             }
                         });
                     }

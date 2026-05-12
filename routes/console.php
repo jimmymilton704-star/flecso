@@ -21,3 +21,4 @@ Artisan::command('inspire', function () {
 Artisan::command('fleet:monitor-trucks', function () {
     $this->call('App\Console\Commands\MonitorFleetTrucks');
 })->purpose('Monitor truck maintenance and compliance status');
+

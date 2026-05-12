@@ -17,29 +17,18 @@
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}" />
 </head>
 
-    
+
 <body class="auth">
 
     <div class="auth-shell">
         <aside class="auth-hero">
             <div class="auth-hero__top">
-                <div class="brand-mark">
-                    <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
-                        <path d="M6 8h20l-4 8h-12l-2 4h16" stroke="url(#g3)" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                        <circle cx="11" cy="24" r="2.5" stroke="url(#g3)" stroke-width="2.5" />
-                        <circle cx="22" cy="24" r="2.5" stroke="url(#g3)" stroke-width="2.5" />
-                        <defs>
-                            <linearGradient id="g3" x1="0" y1="0" x2="32" y2="32">
-                                <stop offset="0%" stop-color="#FF7A1A" />
-                                <stop offset="100%" stop-color="#FF3D00" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
+
+
+                <div class="brand-text"><img src="{{ asset('images/logo-white.png') }}" alt="Flecso Logo" width="120px">
                 </div>
-                <div class="brand-text"><span class="brand-name">Flecso</span><span class="brand-tag">Logistics
-                        OS</span></div>
             </div>
+
 
             <div class="auth-hero__body">
                 <span class="auth-hero__eyebrow"><span class="dot"></span> Account recovery</span>
@@ -94,7 +83,7 @@
 
             <div class="auth-hero__footer">
                 <span>© 2026 Flecso Logistics S.p.A.</span>
-                <span><a href="#">Privacy</a> · <a href="#">Terms</a></span>
+                <!-- <span><a href="#">Privacy</a> · <a href="#">Terms</a></span> -->
             </div>
         </aside>
 

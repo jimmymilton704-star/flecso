@@ -107,11 +107,25 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Invalid credentials'
+                );
         }
 
         if ($user->role !== 'admin') {
-            return back()->withErrors(['email' => 'Unauthorized access'])->withInput();
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Unauthorized access'
+                );
         }
 
         Auth::login($user);

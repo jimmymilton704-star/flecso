@@ -24,7 +24,7 @@
         <aside class="auth-hero">
             <div class="auth-hero__top">
                 
-                <div class="brand-text"><img src="{{ asset('images/logo.png') }}" alt="Flecso Logo" width="120px"></div>
+                <div class="brand-text"><img src="{{ asset('images/logo-white.png') }}" alt="Flecso Logo" width="120px"></div>
             </div>
 
             <div class="auth-hero__body">
@@ -88,7 +88,7 @@
 
             <div class="auth-hero__footer">
                 <span>© 2026 Flecso Logistics S.p.A.</span>
-                <span><a href="#">Privacy</a> · <a href="#">Terms</a></span>
+                <!-- <span><a href="#">Privacy</a> · <a href="#">Terms</a></span> -->
             </div>
         </aside>
 
