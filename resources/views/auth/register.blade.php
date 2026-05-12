@@ -194,8 +194,8 @@
 
                     <label class="checkbox" style="font-size:13px;margin-top:4px">
                         <input type="checkbox" id="agree" name="agree" required />
-                        I agree to the <a href="#"
-                            style="color:var(--orange-600);font-weight:600;margin:0 3px">Terms</a> and <a href="#"
+                        I agree to the <a href="https://flecso.com/terms-of-service/"
+                            style="color:var(--orange-600);font-weight:600;margin:0 3px">Terms</a> and <a href="https://flecso.com/privacy-policy/"
                             style="color:var(--orange-600);font-weight:600;margin-left:3px">Privacy Policy</a>.
                     </label>
 
