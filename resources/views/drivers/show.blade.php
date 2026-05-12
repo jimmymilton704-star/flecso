@@ -45,19 +45,19 @@
             </div>
 
             <div class="detail-hero__actions">
-                <button class="btn btn--ghost">Message</button>
+                {{-- <button class="btn btn--ghost">Message</button> --}}
                 <a href="{{ route('drivers.edit', $driver->id) }}" class="btn btn--ghost"><svg viewBox="0 0 24 24"
                         width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                         <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"></path>
                     </svg>Edit</a>
-                <a  class="btn btn--primary"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+                {{-- <a  class="btn btn--primary"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="6" cy="19" r="3"></circle>
                         <circle cx="18" cy="5" r="3"></circle>
                         <path d="M6 16V8a4 4 0 0 1 4-4h4M18 8v8a4 4 0 0 1-4 4h-4"></path>
-                    </svg>Assign Trip</a>
+                    </svg>Assign Trip</a> --}}
             </div>
         </div>
 

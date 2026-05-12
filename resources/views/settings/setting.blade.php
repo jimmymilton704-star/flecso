@@ -484,14 +484,14 @@
                                     <h5 style="font-size:14px">About Us</h5>
                                     <p class="muted">Our mission, story, and the team building Flecso</p>
                                 </div>
-                                <button class="btn btn--ghost btn--sm">View</button>
-                                <button class="btn btn--ghost btn--sm">
+                                <a href="https://flecso.com/about-us/" class="btn btn--ghost btn--sm">View</a>
+                                {{-- <button class="btn btn--ghost btn--sm">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                                         stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                         <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
                                     </svg>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div
@@ -508,14 +508,14 @@
                                     <h5 style="font-size:14px">Privacy Policy</h5>
                                     <p class="muted">How we collect, use, and protect customer data</p>
                                 </div>
-                                <button class="btn btn--ghost btn--sm">View</button>
-                                <button class="btn btn--ghost btn--sm">
+                                <a  href="https://flecso.com/privacy-policy/"  class="btn btn--ghost btn--sm">View</a>
+                                {{-- <button class="btn btn--ghost btn--sm">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                                         stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                         <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
                                     </svg>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div
@@ -532,14 +532,14 @@
                                     <h5 style="font-size:14px">Terms & Conditions</h5>
                                     <p class="muted">Legal terms governing the use of our platform</p>
                                 </div>
-                                <button class="btn btn--ghost btn--sm">View</button>
-                                <button class="btn btn--ghost btn--sm">
+                                <a  href="https://flecso.com/terms-of-service/" class="btn btn--ghost btn--sm">View</a>
+                                {{-- <button class="btn btn--ghost btn--sm">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                                         stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                         <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
                                     </svg>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div
@@ -553,17 +553,17 @@
                                     </svg>
                                 </div>
                                 <div style="flex:1">
-                                    <h5 style="font-size:14px">Data Processing Agreement</h5>
-                                    <p class="muted">GDPR-compliant DPA for enterprise customers</p>
+                                    <h5 style="font-size:14px">Features</h5>
+                                    <p class="muted">Overview of available features and functionality</p>
                                 </div>
-                                <button class="btn btn--ghost btn--sm">View</button>
-                                <button class="btn btn--ghost btn--sm">
+                                <a href="https://flecso.com/features/" class="btn btn--ghost btn--sm">View</a>
+                                {{-- <button class="btn btn--ghost btn--sm">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                                         stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                         <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
                                     </svg>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div style="display:flex;align-items:center;gap:14px;padding:14px 0">
@@ -576,17 +576,17 @@
                                     </svg>
                                 </div>
                                 <div style="flex:1">
-                                    <h5 style="font-size:14px">Cookie Policy</h5>
-                                    <p class="muted">Information about the cookies we use</p>
+                                    <h5 style="font-size:14px">Support</h5>
+                                    <p class="muted">Get help and support for using our platform</p>
                                 </div>
-                                <button class="btn btn--ghost btn--sm">View</button>
-                                <button class="btn btn--ghost btn--sm">
+                                <a href="https://flecso.com/support/" class="btn btn--ghost btn--sm">View</a>
+                                {{-- <button class="btn btn--ghost btn--sm">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
                                         stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                         <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
                                     </svg>
-                                </button>
+                                </button> --}}
                             </div>
                         </div>
                     </div>
