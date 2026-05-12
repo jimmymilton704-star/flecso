@@ -402,7 +402,7 @@
                                     <tr>
 
                                         <td align="left">
-                                            <img src="{{ url('images/logo.png') }}" alt="Flecso Logo" class="logo">
+                                            <img src="https://www.flecso.app/images/logo.png" alt="Flecso Logo" class="logo">
                                         </td>
 
                                         <td align="right" class="header-meta">

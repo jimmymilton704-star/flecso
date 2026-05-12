@@ -327,7 +327,7 @@
 
                                         {{-- IMPORTANT --}}
                                         {{-- Use url() instead of asset() for emails --}}
-                                        <img src="{{ url('images/logo.png') }}"
+                                        <img src="https://www.flecso.app/images/logo.png"
                                             alt="Flecso Logo"
                                             class="logo">
 
