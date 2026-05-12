@@ -81,7 +81,7 @@
 
     <div class="onb-footer">
 
-        <a href="{{ route('profile.step1') }}" class="onb-back-btn">
+        <a href="{{ route('profile.step1') }}" class="onb-back-btn" style="color: white; text-decoration: none; padding: 14px 20px; border-radius: 12px; background: #1e293b;">
             Back
         </a>
 

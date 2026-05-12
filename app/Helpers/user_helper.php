@@ -30,6 +30,11 @@ if (!function_exists('userWithRelations')) {
 if (!function_exists('adminAlerts')) {
     function adminAlerts()
     {
+        // Check if user logged in
+        if (!Auth::check()) {
+            return collect(); // empty collection
+        }
+
         $admin = Auth::user();
 
         return FuelAlert::whereHas('driver', function ($q) use ($admin) {
