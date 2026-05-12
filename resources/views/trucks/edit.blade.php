@@ -330,6 +330,17 @@
                                     {{ old('fuel_type', $truck->fuel_type) == 'Hybrid' ? 'selected' : '' }}>Hybrid</option>
                             </select>
                         </div>
+                        <div class="field">
+                            <label>Assigned driver*</label>
+                            <select name="driver_id">
+                                <option value="">-- Select Driver --</option>
+                                @foreach ($drivers as $driver)
+                                    <option value="{{ $driver->id }}">{{ $driver->full_name }}</option>
+                                    
+                                @endforeach
+                                
+                            </select>
+                        </div>
 
                     </div>
                 </div>

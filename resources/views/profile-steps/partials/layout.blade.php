@@ -998,15 +998,7 @@
     <div class="onb">
 
         <header class="onb-topbar">
-            <div class="onb-topbar__brand">
-                <div class="brand-mark">
-                    <div class="brand-text">
-                        <img src="{{ asset('images/logo.png') }}" alt="Flecso Logo" width="120px">
-                    </div>
-                </div>
-                <strong>Flecso</strong>
-            </div>
-
+            <img src="{{ asset('images/app_icon.png') }}" alt="Flecso Logo" width="40px" height="40px">
             <a class="onb-exit" id="onbExit" type="button" href="{{ route('logout') }}">
                 Save &amp; exit
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
