@@ -277,6 +277,17 @@
                                 <option value="Hybrid">Hybrid</option>
                             </select>
                         </div>
+                        <div class="field">
+                            <label>Assigned driver*</label>
+                            <select name="driver_id">
+                                <option value="">-- Select Driver --</option>
+                                @foreach ($drivers as $driver)
+                                    <option value="{{ $driver->id }}">{{ $driver->name }}</option>
+                                    
+                                @endforeach
+                                
+                            </select>
+                        </div>
 
                     </div>
                 </div>

@@ -204,6 +204,68 @@
 
                     </div>
                 </div>
+                {{-- 4. DELIVERY DETAILS --}}
+                <div class="card__head">
+                    <h3>4. Delivery Details</h3>
+                </div>
+
+                <div class="card__body">
+                    <div class="form-grid">
+
+                        <div class="field">
+                            <label>Receiver Name</label>
+                            <input class="input" type="text" name="delivery_name" value="{{ old('delivery_name', $trip->delivery_name) }}">
+                        </div>
+
+                        <div class="field">
+                            <label>Receiver Phone</label>
+                            <input class="input" type="text" name="delivery_phone" value="{{ old('delivery_phone', $trip->delivery_phone) }}">
+                        </div>
+
+                        <div class="field">
+                            <label>Receiver Email</label>
+                            <input class="input" type="email" name="delivery_email" value="{{ old('delivery_email', $trip->delivery_email) }}">
+                        </div>
+
+                    </div>
+                </div>
+
+                {{-- 5. PACKAGE INFO --}}
+                <div class="card__head">
+                    <h3>5. Package Information</h3>
+                </div>
+
+                <div class="card__body">
+                    <div class="form-grid">
+
+                        <div class="field full">
+                            <label>Description</label>
+                            <input class="input" type="text" name="package_description" value="{{ old('package_description', $trip->package_description) }}">
+                        </div>
+
+                        <div class="field">
+                            <label>Weight (KG)</label>
+                            <input class="input" type="number" step="any" name="package_weight" value="{{ old('package_weight', $trip->package_weight) }}">
+                        </div>
+
+                        <div class="field">
+                            <label>Height</label>
+                            <input class="input" type="number" step="any" name="package_height" value="{{ old('package_height', $trip->package_height) }}">
+                        </div>
+
+                        <div class="field">
+                            <label>Length</label>
+                            <input class="input" type="number" step="any" name="package_length" value="{{ old('package_length', $trip->package_length) }}">
+                        </div>
+
+                        <div class="field">
+                            <label>Width</label>
+                            <input class="input" type="number" step="any" name="package_width" value="{{ old('package_width', $trip->package_width) }}">
+                        </div>
+
+                    </div>
+                </div>
+
 
                 {{-- SUBMIT --}}
                 <div class="card__body">

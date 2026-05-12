@@ -9,7 +9,8 @@ class ActivityLogController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ActivityLog::with('user')->latest();
+        $query = ActivityLog::where('user_id', auth()->id())
+            ->with('user')->latest();
 
         // 🔍 Search (action, route, model, user name)
         if ($request->filled('search')) {

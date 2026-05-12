@@ -163,6 +163,7 @@
                                         @if($trip->trip_status == 'active') badge--success
                                         @elseif($trip->trip_status == 'pending') badge--warning
                                         @elseif($trip->trip_status == 'completed') badge--neutral
+                                        @elseif($trip->trip_status == 'in_transit') badge--success
                                         @else badge--danger @endif">
                                         {{ ucfirst($trip->trip_status) }}
                                     </span>

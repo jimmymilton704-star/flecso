@@ -35,9 +35,9 @@ class TripController extends Controller
     public function create()
     {
         return view('trips.create', [
-            'drivers' => Driver::all(),
-            'trucks' => Truck::all(),
-            'containers' => Container::all(),
+            'drivers' => Driver::where('admin_id', auth()->id())->get(),
+            'trucks' => Truck::where('admin_id', auth()->id())->get(),
+            'containers' => Container::where('admin_id', auth()->id())->get(),
         ]);
     }
 
@@ -135,9 +135,9 @@ class TripController extends Controller
 
         return view('trips.edit', [
             'trip' => $trip,
-            'drivers' => Driver::all(),
-            'trucks' => Truck::all(),
-            'containers' => Container::all(),
+            'drivers' => Driver::where('admin_id', $adminId)->get(),
+            'trucks' => Truck::where('admin_id', $adminId)->get(),
+            'containers' => Container::where('admin_id', $adminId)->get(),
         ]);
     }
 
