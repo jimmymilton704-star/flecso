@@ -113,9 +113,9 @@
             <button class="topbar__profile" id="profileBtn" type="button">
                 <img src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/80?img=47' }}"
                     alt="User" />
-                <div class="profile-meta"><span class="profile-name">Marco Bianchi</span><span
+                <div class="profile-meta"><span class="profile-name">{{ $user->name }}</span><span
                         class="profile-role">Admin
-                        · Milan HQ</span></div>
+                        · {{ $user->name }}</span></div>
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                     stroke-width="2">
                     <path d="m6 9 6 6 6-6" />
@@ -126,8 +126,8 @@
                     <img src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/80?img=47' }}"
                         style="width:44px;height:44px;border-radius:50%;object-fit:cover" alt="">
                     <div style="flex:1">
-                        <h3 style="font-size:14px">Marco Bianchi</h3>
-                        <p class="muted">marco.b@flecso.io</p>
+                        <h3 style="font-size:14px">{{ $user->name }}</h3>
+                        <p class="muted">{{ $user->email }}</p>
                     </div>
                 </header>
                 <div class="notify-pop__body" style="padding:6px">

@@ -14,6 +14,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailOtpMail;
+use App\Mail\WelcomeMail;
 
 
 class AuthController extends Controller
@@ -122,6 +123,8 @@ class AuthController extends Controller
             'email_otp_expires_at' => now()->addMinutes(10),
             'email_verified_at' => null,
         ]);
+
+        Mail::to($user->email)->send(new WelcomeMail($user));
 
         // 📧 SEND OTP EMAIL (NEW PART)
         Mail::to($user->email)->send(new EmailOtpMail($otp));
