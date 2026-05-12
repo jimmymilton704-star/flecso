@@ -108,7 +108,7 @@
                                 <input type="file" name="driver_photo" class="file-input" hidden accept="image/*">
                                 <div class="upload-content">
                                     <strong>Click to upload Driver Photo</strong>
-                                    
+
                                 </div>
                             </label>
                         </div>
@@ -133,7 +133,8 @@
 
                         <div class="field">
                             <label>Fiscal Code (Codice Fiscale)</label>
-                            <input class="input" type="text" name="fiscal_code" maxlength="16" value="{{ old('fiscal_code') }}">
+                            <input class="input" type="text" name="fiscal_code" maxlength="16"
+                                value="{{ old('fiscal_code') }}">
                         </div>
 
                         <div class="field">
@@ -143,7 +144,9 @@
 
                         <div class="field full">
                             <label>Residential Address</label>
-                            <input class="input" type="text" name="residential_address" value="{{ old('residential_address') }}">
+
+                            <input id="residential_address" class="input" type="text" name="residential_address"
+                                placeholder="Start typing address..." value="{{ old('residential_address') }}">
                         </div>
                     </div>
                 </div>
@@ -161,7 +164,8 @@
 
                         <div class="field">
                             <label>License Category</label>
-                            <input class="input" type="text" name="driving_license_category" placeholder="e.g. C, CE" value="{{ old('driving_license_category') }}">
+                            <input class="input" type="text" name="driving_license_category" placeholder="e.g. C, CE"
+                                value="{{ old('driving_license_category') }}">
                         </div>
 
                         <div class="field">
@@ -181,7 +185,8 @@
 
                         <div class="field">
                             <label>Tachograph Card Number</label>
-                            <input class="input" type="text" name="tachograph_card_number" value="{{ old('tachograph_card_number') }}">
+                            <input class="input" type="text" name="tachograph_card_number"
+                                value="{{ old('tachograph_card_number') }}">
                         </div>
                     </div>
                 </div>
@@ -194,22 +199,26 @@
                     <div class="form-grid">
                         <div class="field">
                             <label>Work Permit Number</label>
-                            <input class="input" type="text" name="work_permit_number" value="{{ old('work_permit_number') }}">
+                            <input class="input" type="text" name="work_permit_number"
+                                value="{{ old('work_permit_number') }}">
                         </div>
 
                         <div class="field">
                             <label>Work Permit Expiry</label>
-                            <input class="input" type="date" name="work_permit_expiry" value="{{ old('work_permit_expiry') }}">
+                            <input class="input" type="date" name="work_permit_expiry"
+                                value="{{ old('work_permit_expiry') }}">
                         </div>
 
                         <div class="field">
                             <label>Medical Fitness Date</label>
-                            <input class="input" type="date" name="medical_fitness_date" value="{{ old('medical_fitness_date') }}">
+                            <input class="input" type="date" name="medical_fitness_date"
+                                value="{{ old('medical_fitness_date') }}">
                         </div>
 
                         <div class="field">
                             <label>Criminal Record Check Status</label>
-                            <input class="input" type="text" name="criminal_record_check" value="{{ old('criminal_record_check') }}">
+                            <input class="input" type="text" name="criminal_record_check"
+                                value="{{ old('criminal_record_check') }}">
                         </div>
                     </div>
                 </div>
@@ -220,7 +229,7 @@
                 </div>
                 <div class="card__body">
                     <div class="form-grid">
-                        
+
                         {{-- License Front --}}
                         <div class="field">
                             <label>License Front</label>
@@ -261,7 +270,8 @@
                         <div class="field">
                             <label>Work Permit File</label>
                             <label class="upload-box">
-                                <input type="file" name="work_permit_file" class="file-input" hidden accept=".pdf,.doc,.docx">
+                                <input type="file" name="work_permit_file" class="file-input" hidden
+                                    accept=".pdf,.doc,.docx">
                                 <div class="upload-content">
                                     <strong>Click to upload Work Permit</strong>
                                     <span>PDF, DOC (Max 10MB)</span>
@@ -299,11 +309,11 @@
     <script>
         // Generic logic for all upload boxes to show filename
         document.querySelectorAll('.file-input').forEach(input => {
-            input.addEventListener('change', function() {
+            input.addEventListener('change', function () {
                 let fileName = this.files[0]?.name;
                 let container = this.closest('.upload-box').querySelector('.upload-content strong');
                 let subtext = this.closest('.upload-box').querySelector('.upload-content span');
-                
+
                 if (fileName) {
                     container.innerText = fileName;
                     subtext.innerText = "File selected successfully";
@@ -311,5 +321,36 @@
                 }
             });
         });
+    </script>
+
+    {{-- GOOGLE MAPS API --}}
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQqP59sFi_cXyk8Afq_AY4Dkg4DCf-xj0&libraries=places"></script>
+
+    <script>
+        function initAddressAutocomplete() {
+
+            const input = document.getElementById('residential_address');
+
+            if (!input) return;
+
+            const autocomplete = new google.maps.places.Autocomplete(input, {
+                types: ['address'],
+            });
+
+            autocomplete.addListener('place_changed', function () {
+
+                const place = autocomplete.getPlace();
+
+                console.log(place);
+
+                // Full formatted address
+                if (place.formatted_address) {
+                    input.value = place.formatted_address;
+                }
+            });
+        }
+
+        window.addEventListener('load', initAddressAutocomplete);
     </script>
 @endsection
