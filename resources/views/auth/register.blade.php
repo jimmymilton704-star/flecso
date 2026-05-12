@@ -160,7 +160,7 @@
                                 <path
                                     d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 3.1 5.18 2 2 0 0 1 5.11 3h3a2 2 0 0 1 2 1.72c.12.86.32 1.7.59 2.5a2 2 0 0 1-.45 2.11L9 10a16 16 0 0 0 6 6l.67-.25a2 2 0 0 1 2.11-.45c.8.27 1.64.47 2.5.59A2 2 0 0 1 22 16.92z" />
                             </svg>
-                            <input type="text" name="phone" value="{{ old('phone') }}" placeholder="+92 300 1234567"
+                            <input type="text" name="phone" value="{{ old('phone') }}" placeholder="+39 300 1234567"
                                 required />
                         </div>
                     </div>

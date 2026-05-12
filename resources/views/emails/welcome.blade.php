@@ -496,7 +496,6 @@
                                         <td class="footer-brand-cell">
 
                                             <div class="footer-logo-row">
-                                                <span class="footer-mark">▶</span>
                                                 <span class="footer-wordmark">FLECSO</span>
                                             </div>
 
@@ -517,13 +516,7 @@
                                                 support@flecso.com
                                             </a>
 
-                                            <a href="tel:+18883540119" class="footer-contact-link">
-                                                +1 (888) 354-0119
-                                            </a>
-
-                                            <div class="footer-hours">
-                                                Mon–Fri, 6am–8pm CT
-                                            </div>
+                                           
 
                                         </td>
 
@@ -552,24 +545,14 @@
 
                                         </td>
 
-                                        <td class="social-cell">
-
-                                            <a href="#" class="social-btn">in</a>
-                                            <a href="#" class="social-btn">𝕏</a>
-                                            <a href="#" class="social-btn">▶</a>
-
-                                        </td>
+                                        
 
                                     </tr>
                                 </table>
 
                                 <div class="footer-legal">
                                     © 2026 Flecso, Inc. All rights reserved.
-                                    <br>
-                                    You're receiving this email because you created a Flecso account.
-                                    <a href="#" class="footer-link">Manage preferences</a>
-                                    ·
-                                    <a href="#" class="footer-link">Unsubscribe</a>
+                                   
                                 </div>
 
                             </td>

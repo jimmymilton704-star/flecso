@@ -395,7 +395,7 @@
                                     <td class="footer-left">
 
                                         <div class="footer-logo">
-                                            <span>▶</span>FLECSO
+                                            FLECSO
                                         </div>
 
                                         <div class="footer-tagline">
@@ -415,13 +415,7 @@
                                             support@flecso.com
                                         </a>
 
-                                        <a href="tel:+18883540119" class="footer-link">
-                                            +1 (888) 354-0119
-                                        </a>
-
-                                        <div class="footer-hours">
-                                            Mon–Fri, 6am–8pm CT
-                                        </div>
+                                        
 
                                     </td>
 
@@ -440,19 +434,14 @@
                                         <a href="#">Terms</a>
                                     </td>
 
-                                    <td class="social">
-                                        <a href="#">in</a>
-                                        <a href="#">𝕏</a>
-                                        <a href="#">▶</a>
-                                    </td>
+                                   
 
                                 </tr>
                             </table>
 
                             <div class="legal">
                                 © {{ date('Y') }} Flecso, Inc. All rights reserved.
-                                <br>
-                                This is an automated security message — please don't reply.
+                                
                             </div>
 
                         </td>
