@@ -438,7 +438,7 @@
                 <div class="podium-rank rank-2">2</div>
                 <div class="driver-avatar">
                     @if (!empty($top3[1]['driver']->driver_photo))
-                        <img src="{{ asset('storage/' . $top3[1]['driver']->driver_photo) }}" alt="Driver">
+                        <img src="{{ asset( $top3[1]['driver']->driver_photo) }}" alt="Driver">
                     @else
                         {{ strtoupper(substr($top3[1]['driver']->full_name ?? 'D', 0, 1)) }}
                     @endif
@@ -454,7 +454,7 @@
                 <div class="podium-rank rank-1">1</div>
                 <div class="driver-avatar" style="width:86px;height:86px;font-size:32px;">
                     @if (!empty($top3[0]['driver']->driver_photo))
-                        <img src="{{ asset('storage/' . $top3[0]['driver']->driver_photo) }}" alt="Driver">
+                        <img src="{{ asset( $top3[0]['driver']->driver_photo) }}" alt="Driver">
                     @else
                         {{ strtoupper(substr($top3[0]['driver']->full_name ?? 'D', 0, 1)) }}
                     @endif
@@ -470,7 +470,7 @@
                 <div class="podium-rank rank-3">3</div>
                 <div class="driver-avatar">
                     @if (!empty($top3[2]['driver']->driver_photo))
-                        <img src="{{ asset('storage/' . $top3[2]['driver']->driver_photo) }}" alt="Driver">
+                        <img src="{{ asset( $top3[2]['driver']->driver_photo) }}" alt="Driver">
                     @else
                         {{ strtoupper(substr($top3[2]['driver']->full_name ?? 'D', 0, 1)) }}
                     @endif
@@ -512,7 +512,7 @@
                                 <div class="driver-cell">
                                     <div class="driver-avatar driver-avatar--sm">
                                         @if (!empty($row['driver']->driver_photo))
-                                            <img src="{{ asset('storage/' . $row['driver']->driver_photo) }}" alt="Avatar">
+                                            <img src="{{ asset( $row['driver']->driver_photo) }}" alt="Avatar">
                                         @else
                                             {{ strtoupper(substr($row['driver']->full_name ?? 'D', 0, 1)) }}
                                         @endif
