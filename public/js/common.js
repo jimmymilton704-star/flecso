@@ -483,10 +483,7 @@
         else if (action === "settings") goto("setting");
         else if (action === "billing") goto("setting#subscription");
         else if (action === "help") goto("setting#support");
-        else if (action === "logout") {
-            toast("Signing out…");
-            setTimeout(() => (location.href = "login.html"), 600);
-        }
+        else if (action === "logout") goto("logout")
     });
 
     /* ---------- Global button wiring ---------- */
