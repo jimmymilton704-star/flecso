@@ -148,6 +148,7 @@ class TripController extends Controller
     */
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $adminId = auth()->id();
 
         $trip = Trip::where('id', $id)
@@ -172,6 +173,7 @@ class TripController extends Controller
                 'recorded_at' => now(),
             ]);
         }
+        $trip->update($request->all());
 
         return redirect()
             ->route('trips.index')

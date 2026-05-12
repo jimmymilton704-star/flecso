@@ -386,13 +386,13 @@
                             <div class="field">
                                 <label>Current Mileage*</label>
                                 <input class="input" type="number" name="current_km"
-                                value="{{ old('current_km', $truck->health->current_km) }}" required>
+                                value="{{ old('current_km', $truck->maintenance->last_service_km ?? '') }}" required>
                             </div>
 
                             <div class="field">
                                 <label>Estimate Mileage*</label>
                                 <input class="input" type="number" name="estimate_km"
-                                value="{{ old('estimate_km', $truck->maintenance->next_due_km) }}" required>
+                                value="{{ old('estimate_km', $truck->maintenance->next_due_km ?? '') }}" required>
                             </div>
                         </div>
                     </div>
