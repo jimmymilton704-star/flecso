@@ -507,9 +507,9 @@
 
     @php
         $totalLogs = $logs->total();
-        $todayAll = \App\Models\ActivityLog::whereDate('created_at', today())->count();
-        $todayPost = \App\Models\ActivityLog::where('method', 'POST')->whereDate('created_at', today())->count();
-        $todayDelete = \App\Models\ActivityLog::where('method', 'DELETE')->whereDate('created_at', today())->count();
+        $todayAll = \App\Models\ActivityLog::where('user_id', auth()->id())->whereDate('created_at', today())->count();
+        $todayPost = \App\Models\ActivityLog::where('user_id', auth()->id())->where('method', 'POST')->whereDate('created_at', today())->count();
+        $todayDelete = \App\Models\ActivityLog::where('user_id', auth()->id())->where('method', 'DELETE')->whereDate('created_at', today())->count();
     @endphp
 
     <div class="al-stats">
