@@ -68,7 +68,7 @@ class DashboardController extends Controller
             */
 
             $allTrips = Trip::with([
-                'driver:id,name',
+                'driver:id,full_name',
                 'truck',
                 'container'
             ])
