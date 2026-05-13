@@ -9,6 +9,8 @@ use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use App\Mail\DriverWelcomeMail;
+use Illuminate\Support\Facades\Mail;
 
 class DriverController extends Controller
 {
@@ -129,6 +131,8 @@ class DriverController extends Controller
             ], 403);
         }
 
+        $plainPassword = $request->password;
+
         $data = $request->all();
         $data['admin_id'] = $adminId;
         $data['password'] = Hash::make($request->password);
@@ -156,6 +160,10 @@ class DriverController extends Controller
         $upload('medical_certificate');
 
         $driver = Driver::create($data);
+
+         Mail::to($driver->email)->send(
+            new DriverWelcomeMail($driver, $plainPassword)
+        );
 
         return response()->json([
             'status' => true,

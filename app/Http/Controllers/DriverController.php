@@ -9,6 +9,8 @@ use App\Models\Truck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use App\Mail\DriverWelcomeMail;
+use Illuminate\Support\Facades\Mail;
 
 class DriverController extends Controller
 {
@@ -81,6 +83,8 @@ class DriverController extends Controller
             return back()->with('error', $limit['message']);
         }
 
+        $plainPassword = $request->password;
+
         $data = $request->all();
         $data['admin_id'] = $adminId;
         $data['password'] = Hash::make($request->password);
@@ -89,9 +93,10 @@ class DriverController extends Controller
         $upload = function ($field, $path) use ($request, &$data) {
             if ($request->hasFile($field)) {
                 $file = $request->file($field);
-                $name = time().'_'.$file->getClientOriginalName();
+                $name = time() . '_' . $file->getClientOriginalName();
                 $file->move(public_path($path), $name);
-                $data[$field] = $path.'/'.$name;
+
+                $data[$field] = $path . '/' . $name;
             }
         };
 
@@ -102,9 +107,16 @@ class DriverController extends Controller
         $upload('work_permit_file', 'uploads/drivers/docs');
         $upload('medical_certificate', 'uploads/drivers/docs');
 
-        Driver::create($data);
+        $driver = Driver::create($data);
 
-        return redirect()->route('drivers.index')->with('success', 'Driver created');
+        // SEND EMAIL
+        Mail::to($driver->email)->send(
+            new DriverWelcomeMail($driver, $plainPassword)
+        );
+
+        return redirect()
+            ->route('drivers.index')
+            ->with('success', 'Driver created and credentials email sent.');
     }
 
     /* EDIT */
