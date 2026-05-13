@@ -108,79 +108,110 @@ class DashboardController extends Controller
     }
     public function leaderboardApi(Request $request)
     {
-        $adminId = auth()->id();
+        try {
 
-        $drivers = Driver::where('admin_id', $adminId)
-            ->with(['trips', 'sosAlerts', 'fuelLogs'])
-            ->get();
+            $adminId = auth()->id();
 
-        $leaderboard = $drivers->map(function ($driver) {
+            $drivers = Driver::where('admin_id', $adminId)
+                ->with(['trips', 'sosAlerts', 'fuelLogs'])
+                ->get();
 
-            /*
-        |--------------------------------------------------------------
-        | 1. ON-TIME DELIVERY SCORE (40%)
-        |--------------------------------------------------------------
-        */
-            $totalTrips = $driver->trips->count();
+            // If no drivers found
+            if ($drivers->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No data found',
+                    'data' => []
+                ], 404);
+            }
 
-            $onTimeTrips = $driver->trips
-                ->where('status', 'completed')
-                ->where('delivered_on_time', 1)
-                ->count();
+            $leaderboard = $drivers->map(function ($driver) {
 
-            $onTimeScore = $totalTrips > 0
-                ? ($onTimeTrips / $totalTrips) * 100
-                : 0;
+                /*
+            |--------------------------------------------------------------
+            | 1. ON-TIME DELIVERY SCORE (40%)
+            |--------------------------------------------------------------
+            */
+                $totalTrips = $driver->trips->count();
 
-            /*
-        |--------------------------------------------------------------
-        | 2. INCIDENT SCORE (30%)
-        |--------------------------------------------------------------
-        */
-            $incidentCount = $driver->sosAlerts->count();
-            $incidentScore = max(0, 100 - ($incidentCount * 10));
+                $onTimeTrips = $driver->trips
+                    ->where('status', 'completed')
+                    ->where('delivered_on_time', 1)
+                    ->count();
 
-            /*
-        |--------------------------------------------------------------
-        | 3. FUEL EFFICIENCY SCORE (30%)
-        |--------------------------------------------------------------
-        */
-            $totalFuel = $driver->fuelLogs->sum('fuel_liters');
-            $totalKm   = $driver->trips->sum('distance_km');
+                $onTimeScore = $totalTrips > 0
+                    ? ($onTimeTrips / $totalTrips) * 100
+                    : 0;
 
-            $kmPerLitre = $totalKm > 0
-                ? ($totalKm / max($totalFuel, 1))
-                : 0;
+                /*
+            |--------------------------------------------------------------
+            | 2. INCIDENT SCORE (30%)
+            |--------------------------------------------------------------
+            */
+                $incidentCount = $driver->sosAlerts->count();
 
-            $fuelScore = min(100, $kmPerLitre * 10);
+                $incidentScore = max(0, 100 - ($incidentCount * 10));
 
-            /*
-        |--------------------------------------------------------------
-        | FINAL SCORE
-        |--------------------------------------------------------------
-        */
-            $finalScore =
-                ($onTimeScore * 0.4) +
-                ($incidentScore * 0.3) +
-                ($fuelScore * 0.3);
+                /*
+            |--------------------------------------------------------------
+            | 3. FUEL EFFICIENCY SCORE (30%)
+            |--------------------------------------------------------------
+            */
+                $totalFuel = $driver->fuelLogs->sum('fuel_liters');
 
-            return [
-                'driver_id'       => $driver->id,
-                'driver_name'     => $driver->full_name,
-                'on_time_score'   => round($onTimeScore, 2),
-                'incident_score'  => round($incidentScore, 2),
-                'fuel_score'      => round($fuelScore, 2),
-                'final_score'     => round($finalScore, 2),
-            ];
-        });
+                $totalKm = $driver->trips->sum('distance_km');
 
-        $leaderboard = $leaderboard
-            ->sortByDesc('final_score')
-            ->values();
+                $kmPerLitre = $totalKm > 0
+                    ? ($totalKm / max($totalFuel, 1))
+                    : 0;
 
-        return response()->json([
-            'status' => true,
-            'data' => $leaderboard
-        ]);
+                $fuelScore = min(100, $kmPerLitre * 10);
+
+                /*
+            |--------------------------------------------------------------
+            | FINAL SCORE
+            |--------------------------------------------------------------
+            */
+                $finalScore =
+                    ($onTimeScore * 0.4) +
+                    ($incidentScore * 0.3) +
+                    ($fuelScore * 0.3);
+
+                return [
+                    'driver_id'      => $driver->id,
+                    'driver_name'    => $driver->full_name,
+                    'on_time_score'  => round($onTimeScore, 2),
+                    'incident_score' => round($incidentScore, 2),
+                    'fuel_score'     => round($fuelScore, 2),
+                    'final_score'    => round($finalScore, 2),
+                ];
+            });
+
+            $leaderboard = $leaderboard
+                ->sortByDesc('final_score')
+                ->values();
+
+            // If leaderboard empty
+            if ($leaderboard->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No response data available',
+                    'data' => []
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Leaderboard fetched successfully',
+                'data' => $leaderboard
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
