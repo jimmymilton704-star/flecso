@@ -53,7 +53,7 @@ class AuthController extends Controller
 
             // Stripe fields (empty for now)
             'stripe_customer_id'    => null,
-            'stripe_subscription_id'=> null,
+            'stripe_subscription_id' => null,
             'stripe_price_id'       => null,
 
             // Add-ons
@@ -139,7 +139,7 @@ class AuthController extends Controller
             'rea_number'         => 'required|string',
         ]);
 
-        $user = $request->user(); 
+        $user = $request->user();
 
         if ($user->id !== $request->user()->id) {
             return response()->json([
@@ -162,7 +162,7 @@ class AuthController extends Controller
             'data' => $user
         ]);
     }
-    
+
     /**
      * Complete Profile Step 2
      */
@@ -177,7 +177,7 @@ class AuthController extends Controller
             'zip_code'           => 'required|string',
         ]);
 
-       $user = $request->user(); 
+        $user = $request->user();
 
         $user->update([
             'pec_email'          => $request->pec_email,
@@ -218,7 +218,7 @@ class AuthController extends Controller
             'fleet_trucks'          => $request->fleet_trucks,
             'fleet_vans'            => $request->fleet_vans,
             'fleet_containers'      => $request->fleet_containers,
-            'insurance_policy_number'=> $request->insurance_policy_number,
+            'insurance_policy_number' => $request->insurance_policy_number,
         ]);
 
         return response()->json([
@@ -370,7 +370,7 @@ class AuthController extends Controller
             'fleet_trucks'          => 'nullable|integer|min:0',
             'fleet_vans'            => 'nullable|integer|min:0',
             'fleet_containers'      => 'nullable|integer|min:0',
-            'insurance_policy_number'=> 'nullable|string',
+            'insurance_policy_number' => 'nullable|string',
 
             // STEP 4
             'rep_full_name'    => 'nullable|string',
@@ -405,7 +405,7 @@ class AuthController extends Controller
             }
 
             $file = $request->file('avatar');
-            $name = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+            $name = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $path = public_path('uploads/users');
 
@@ -415,7 +415,7 @@ class AuthController extends Controller
 
             $file->move($path, $name);
 
-            $data['avatar'] = 'uploads/users/'.$name;
+            $data['avatar'] = 'uploads/users/' . $name;
         }
 
         /*
@@ -430,7 +430,7 @@ class AuthController extends Controller
             }
 
             $file = $request->file('rep_document');
-            $name = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+            $name = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $path = public_path('uploads/documents');
 
@@ -440,7 +440,7 @@ class AuthController extends Controller
 
             $file->move($path, $name);
 
-            $data['rep_document'] = 'uploads/documents/'.$name;
+            $data['rep_document'] = 'uploads/documents/' . $name;
         }
 
         /*
@@ -501,35 +501,86 @@ class AuthController extends Controller
         $request->validate([
             'email'    => 'required|email',
             'password' => 'required',
+            'type'     => 'required|in:admin,driver'
         ]);
 
 
-        $user = User::where('email', $request->email)->first();
+        if ($request->type === 'admin') {
+            $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Invalid credentials'
+                ], 401);
+            }
+
+            if ($user->role !== 'admin') {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+
+            $token = $user->createToken('api-token')->plainTextToken;
+
             return response()->json([
-                'status'  => false,
-                'message' => 'Invalid credentials'
-            ], 401);
+                'status'  => true,
+                'message' => 'Login successful',
+                'token'   => $token,
+                'profile_completed' => (bool) $user->profile_completed,
+                'data'    => $user,
+            ]);
         }
+        if($request->type ==='phone')
+        {
+            if(!$request->phone_otp)
+            {
+                throw ValidationException::withMessages([
+                    'phone_otp' => 'The phone OTP is required.'
+                ]);
+            }
 
-        if ($user->role !== 'admin') {
+            $user = User::where('phone', $request->phone)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User not found with this phone number'
+                ], 404);
+            }
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Invalid credentials'
+                ], 401);
+            }
+
+            if ($user->role !== 'admin') {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+            $user->update([
+                'phone_otp' => $request->phone_otp,
+                'phone_otp_expires_at' => now()->addMinutes(1),
+                'phone_verified_at' => now(),
+            ]);
+
+            $token = $user->createToken('api-token')->plainTextToken;
             return response()->json([
-                'status'  => false,
-                'message' => 'Unauthorized access'
-            ], 403);
+                'status'  => true,
+                'message' => 'Login successful',
+                'token'   => $token,
+                'profile_completed' => (bool) $user->profile_completed,
+                'data'    => $user,
+            ]);
+
+            
         }
-
-
-        $token = $user->createToken('api-token')->plainTextToken;
-
-        return response()->json([
-            'status'  => true,
-            'message' => 'Login successful',
-            'token'   => $token,
-            'profile_completed' => (bool) $user->profile_completed,
-            'data'    => $user,
-        ]);
     }
 
     /**
@@ -615,7 +666,7 @@ class AuthController extends Controller
 
             'profile_completed' => (bool) $user->profile_completed,
 
-            'data' => $user->toArray(), 
+            'data' => $user->toArray(),
         ]);
     }
 

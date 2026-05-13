@@ -50,6 +50,11 @@ class Driver extends Model
         'cqc_card',
         'work_permit_file',
         'medical_certificate',
+
+        // OTP Fields
+        'phone_otp',
+        'phone_otp_expires_at',
+        'phone_verified_at',
     ];
 
     protected $hidden = [

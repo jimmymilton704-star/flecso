@@ -64,6 +64,8 @@ class User extends Authenticatable
         'email_otp',
         'email_otp_expires_at',
         'email_verified_at',
+
+        'phone_verified_at',
     ];
 
     /**

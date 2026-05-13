@@ -15,16 +15,264 @@
         rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* ── Login tabs ─────────────────────────────────────────────────── */
+        .login-tabs {
+            display: flex;
+            gap: 0;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .login-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 11px 0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #a0aec0;
+            background: #f8fafc;
+            border: none;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+        }
+
+        .login-tab:first-child {
+            border-right: 1.5px solid #e2e8f0;
+        }
+
+        .login-tab.active {
+            background: #fff;
+            color: #FF6B1A;
+        }
+
+        .login-tab svg {
+            flex-shrink: 0;
+        }
+
+        /* ── Tab panels ─────────────────────────────────────────────────── */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ── Divider ────────────────────────────────────────────────────── */
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 6px 0 18px;
+            color: #cbd5e0;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        /* ── OTP boxes (same as register) ───────────────────────────────── */
+        .otp-wrapper {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 18px 0 6px;
+        }
+
+        .otp-box {
+            width: 48px;
+            height: 56px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            color: #1a202c;
+            background: #f8fafc;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .otp-box:focus {
+            border-color: #FF6B1A;
+            box-shadow: 0 0 0 3px rgba(255, 107, 26, .15);
+            background: #fff;
+        }
+
+        .otp-box.filled {
+            border-color: #FF6B1A;
+            background: #fff7f3;
+        }
+
+        .swal-phone-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff7f3;
+            border: 1px solid #ffd8bf;
+            color: #c05000;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 4px 0 2px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .swal-resend-row {
+            margin-top: 14px;
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .swal-resend-row a {
+            color: #FF6B1A;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .swal-resend-row a:hover {
+            text-decoration: underline;
+        }
+
+        .swal2-confirm.swal-btn-orange {
+            background: #FF6B1A !important;
+            border-radius: 10px !important;
+            font-family: 'Space Grotesk', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            padding: 12px 32px !important;
+            box-shadow: 0 4px 14px rgba(255, 107, 26, .35) !important;
+        }
+
+        .swal2-cancel.swal-btn-outline {
+            background: transparent !important;
+            border: 1.5px solid #e2e8f0 !important;
+            color: #4a5568 !important;
+            border-radius: 10px !important;
+            font-family: 'Space Grotesk', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            padding: 12px 24px !important;
+        }
+
+        .otp-timer {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #a0aec0;
+            margin-top: 4px;
+        }
+
+        .otp-timer span {
+            font-weight: 700;
+            color: #FF6B1A;
+            min-width: 24px;
+            display: inline-block;
+        }
+
+        /* ── Send OTP button ────────────────────────────────────────────── */
+        #sendLoginOtp {
+            width: 100%;
+            padding: 13px;
+            background: none;
+            border: 1.5px solid #FF6B1A;
+            color: #FF6B1A;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background .2s, color .2s;
+            margin-top: 4px;
+        }
+
+        #sendLoginOtp:hover {
+            background: #fff7f3;
+        }
+
+        #sendLoginOtp:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        #sendLoginOtp.loading .btn-label::after {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 107, 26, .3);
+            border-top-color: #FF6B1A;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Alert flash ────────────────────────────────────────────────── */
+        .auth-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            margin-bottom: 16px;
+        }
+
+        .auth-alert--error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .auth-alert--success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #15803d;
+        }
+    </style>
 </head>
 
 <body class="auth">
 
     <div class="auth-shell">
-        <!-- Left: Brand hero -->
+
+        {{-- ═══ LEFT HERO ═══════════════════════════════════════════════════════ --}}
         <aside class="auth-hero">
             <div class="auth-hero__top">
-                
-                <div class="brand-text"><img src="{{ asset('images/logo-white.png') }}" alt="Flecso Logo" width="120px"></div>
+                <div class="brand-text">
+                    <img src="{{ asset('images/logo-white.png') }}" alt="Flecso Logo" width="120px">
+                </div>
             </div>
 
             <div class="auth-hero__body">
@@ -88,11 +336,10 @@
 
             <div class="auth-hero__footer">
                 <span>© 2026 Flecso Logistics S.p.A.</span>
-                <!-- <span><a href="#">Privacy</a> · <a href="#">Terms</a></span> -->
             </div>
         </aside>
 
-        <!-- Right: Form -->
+        {{-- ═══ RIGHT FORM ════════════════════════════════════════════════════════ --}}
         <main class="auth-main">
             <div class="auth-card">
                 <div class="auth-card__head">
@@ -100,67 +347,180 @@
                     <p>New to Flecso? <a href="{{ url('/register') }}">Create an account</a></p>
                 </div>
 
-                <form class="auth-form" method="POST" action="{{ url('/login') }}">
-                    @csrf
+                {{-- SUCCESS --}}
+                @if (session('success'))
+                    <div class="auth-alert auth-alert--success">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                @endif
 
-                    <!-- Email -->
-                    <div class="auth-field">
-                        <label for="email">Email</label>
-                        <div class="auth-input">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <rect x="2" y="4" width="20" height="16" rx="2" />
-                                <path d="m22 6-10 7L2 6" />
-                            </svg>
-
-                            <input type="email" name="email" value="{{ old('email') }}" autocomplete="email"
-                                placeholder="marco.b@flecso.io" required />
+                {{-- ERROR --}}
+                @if (session('error') || $errors->any())
+                    <div class="auth-alert auth-alert--error">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M18 6 6 18M6 6l12 12" />
+                        </svg>
+                        <div>
+                            @if (session('error'))
+                                <div>{{ session('error') }}</div>
+                            @endif
+                            @foreach ($errors->all() as $error)
+                                <div>{{ $error }}</div>
+                            @endforeach
                         </div>
-                        <span class="auth-field__hint">We'll never share your email.</span>
                     </div>
+                @endif
 
-                    <!-- Password -->
-                    <div class="auth-field">
-                        <label for="password">Password</label>
-                        <div class="auth-input with-button">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2" />
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                            </svg>
-
-                            <input type="password" name="password" autocomplete="current-password"
-                                placeholder="Enter your password" required />
-
-                            <button type="button" class="auth-input__btn" data-toggle-pw
-                            onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'">
-                                👁
-                            </button>
-                        </div>
-                        <span class="auth-field__hint">At least 8 characters.</span>
-                    </div>
-
-                    <!-- Remember + Forgot -->
-                    <div class="auth-row">
-                        <label class="checkbox">
-                            <input type="checkbox" name="remember">
-                            Remember me for 30 days
-                        </label>
-
-                        <a href="{{ url('/forgot-password') }}">Forgot password?</a>
-                    </div>
-
-                    <!-- Submit -->
-                    <button type="submit" class="auth-submit">
-                        <span class="spinner"></span>
-                        <span class="label">Sign in</span>
+                {{-- ── TABS ───────────────────────────────────────────────── --}}
+                <div class="login-tabs">
+                    <button class="login-tab active" id="tabEmail" onclick="switchTab('email')">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="2" y="4" width="20" height="16" rx="2" />
+                            <path d="m22 6-10 7L2 6" />
+                        </svg>
+                        Email & Password
                     </button>
-                </form>
-            </div>
+                    <button class="login-tab" id="tabPhone" onclick="switchTab('phone')">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 3.1 5.18 2 2 0 0 1 5.11 3h3a2 2 0 0 1 2 1.72c.12.86.32 1.7.59 2.5a2 2 0 0 1-.45 2.11L9 10a16 16 0 0 0 6 6l.67-.25a2 2 0 0 1 2.11-.45c.8.27 1.64.47 2.5.59A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                        Phone OTP
+                    </button>
+                </div>
+
+                {{-- ── TAB 1 : EMAIL + PASSWORD ───────────────────────────── --}}
+                <div class="tab-panel active" id="panelEmail">
+                    <form class="auth-form" method="POST" action="{{ url('/login') }}">
+                        @csrf
+
+                        <div class="auth-field">
+                            <label for="email">Email</label>
+                            <div class="auth-input">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                                    <path d="m22 6-10 7L2 6" />
+                                </svg>
+                                <input type="email" name="email" value="{{ old('email') }}"
+                                    autocomplete="email" placeholder="you@company.com" required />
+                            </div>
+                        </div>
+
+                        <div class="auth-field">
+                            <label for="password">Password</label>
+                            <div class="auth-input with-button">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                                <input type="password" id="emailPassword" name="password"
+                                    autocomplete="current-password" placeholder="Enter your password" required />
+                                <button type="button" class="auth-input__btn"
+                                    onclick="togglePw('emailPassword', this)">👁</button>
+                            </div>
+                        </div>
+
+                        <div class="auth-row">
+                            <label class="checkbox">
+                                <input type="checkbox" name="remember"> Remember me for 30 days
+                            </label>
+                            <a href="{{ url('/forgot-password') }}">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="auth-submit">
+                            <span class="spinner"></span>
+                            <span class="label">Sign in</span>
+                        </button>
+                    </form>
+                </div>
+
+                {{-- ── TAB 2 : PHONE + PASSWORD ──────────────────────────────────── --}}
+                <div class="tab-panel" id="panelPhone">
+                    <form class="auth-form" method="POST" action="{{ url('/login/phone') }}">
+                        @csrf
+
+                        <div class="auth-field">
+                            <label for="loginPhone">Phone number</label>
+                            <div class="auth-input">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 3.1 5.18 2 2 0 0 1 5.11 3h3a2 2 0 0 1 2 1.72c.12.86.32 1.7.59 2.5a2 2 0 0 1-.45 2.11L9 10a16 16 0 0 0 6 6l.67-.25a2 2 0 0 1 2.11-.45c.8.27 1.64.47 2.5.59A2 2 0 0 1 22 16.92z" />
+                                </svg>
+                                <input type="text" id="loginPhone" name="phone"
+                                    placeholder="03001234567 or +923001234567"
+                                    onblur="this.value = normalizePhone(this.value)" required />
+                            </div>
+                        </div>
+
+                        <div class="auth-field">
+                            <label for="phonePassword">Password</label>
+                            <div class="auth-input with-button">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                                <input type="password" id="phonePassword" name="password"
+                                    placeholder="Enter your password" required />
+                                <button type="button" class="auth-input__btn"
+                                    onclick="togglePw('phonePassword', this)">👁</button>
+                            </div>
+                        </div>
+
+                        <div class="auth-row">
+                            <label class="checkbox">
+                                <input type="checkbox" name="remember"> Remember me for 30 days
+                            </label>
+                            <a href="{{ url('/forgot-password') }}">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="auth-submit">
+                            <span class="spinner"></span>
+                            <span class="label">Sign in</span>
+                        </button>
+                    </form>
+                </div>
+
+            </div>{{-- auth-card --}}
         </main>
     </div>
 
     <div class="toast" id="toast" aria-live="polite"></div>
+
+    {{-- ═══ SCRIPTS ════════════════════════════════════════════════════════════ --}}
+    <script>
+        function switchTab(tab) {
+            document.getElementById('panelEmail').classList.toggle('active', tab === 'email');
+            document.getElementById('panelPhone').classList.toggle('active', tab === 'phone');
+            document.getElementById('tabEmail').classList.toggle('active', tab === 'email');
+            document.getElementById('tabPhone').classList.toggle('active', tab === 'phone');
+        }
+
+        function togglePw(inputId) {
+            const inp = document.getElementById(inputId);
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+        }
+
+        // normalize on blur
+        function normalizePhone(raw) {
+            let p = raw.trim().replace(/\s+/g, '');
+            if (!p) return '';
+            if (/^0\d/.test(p)) return '+92' + p.slice(1);
+            if (/^[1-9]\d{9}$/.test(p)) return '+92' + p;
+            return p;
+        }
+    </script>
+
 </body>
 
 </html>
