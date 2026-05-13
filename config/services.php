@@ -34,5 +34,8 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+    'firebase' => [
+        'api_key' => env('FIREBASE_API_KEY'),
+    ],
 
 ];
