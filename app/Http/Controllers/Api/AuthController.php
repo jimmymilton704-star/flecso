@@ -10,7 +10,6 @@ use App\Models\Driver;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -21,84 +20,41 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'              => 'required|string|max:255',
-            'email'             => 'required|email|unique:users,email',
-            'phone'             => 'required|string|max:20',
-            'password'          => 'required|min:8|confirmed',
-            'firebase_id_token' => 'nullable|string',
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|unique:users,email',
+            'phone'        => 'required|string|max:30|unique:users,phone',
+            'country_code' => 'nullable|string',
+            'password'     => 'required|min:8|confirmed',
+            'phone_otp'    => 'nullable|string',
+            'is_verified'  => 'nullable|boolean',
         ]);
 
-        /*
-    |--------------------------------------------------------------------------
-    | Phone OTP verification via Firebase
-    | Frontend mobile handles OTP. API only checks Firebase token.
-    |--------------------------------------------------------------------------
-    */
-        $phoneVerified = false;
+        $phone = $this->formatPhoneNumber($request->phone, $request->country_code);
 
-        if ($request->filled('phone') && $request->filled('firebase_id_token')) {
-            $apiKey = config('services.firebase.api_key');
-
-            $response = Http::post(
-                "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={$apiKey}",
-                [
-                    'idToken' => $request->firebase_id_token
-                ]
-            );
-
-            if ($response->failed() || empty($response->json('users'))) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => 'Phone verification failed. Please try again.'
-                ], 422);
-            }
-
-            $firebaseUser = $response->json('users.0');
-            $firebasePhone = $firebaseUser['phoneNumber'] ?? null;
-
-            if (!$firebasePhone) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => 'Phone number not found in Firebase token.'
-                ], 422);
-            }
-
-            /*
-        |--------------------------------------------------------------------------
-        | Optional but recommended:
-        | Check Firebase phone and request phone are same.
-        |--------------------------------------------------------------------------
-        */
-            if ($firebasePhone !== $request->phone) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => 'Firebase phone number does not match request phone.'
-                ], 422);
-            }
-
-            $phoneVerified = true;
+        if (!preg_match('/^\+[1-9]\d{7,14}$/', $phone)) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Phone number must be in international format, for example +923001234567.'
+            ], 422);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Create User Admin
-    |--------------------------------------------------------------------------
-    */
+        $phoneVerified = $request->boolean('is_verified');
+
         $user = User::create([
-            'name'              => $request->name,
-            'email'             => $request->email,
-            'phone'             => $request->phone,
-            'password'          => Hash::make($request->password),
-            'role'              => 'admin',
-            'profile_completed' => false,
-            'phone_verified_at' => $phoneVerified ? now() : null,
+            'name'                 => $request->name,
+            'email'                => $request->email,
+            'phone'                => $phone,
+            'password'             => Hash::make($request->password),
+            'role'                 => 'admin',
+            'profile_completed'    => false,
+
+            // Mobile/frontend OTP verify karega.
+            // API sirf is_verified true check kar ke verified date save karegi.
+            'phone_otp'            => $request->phone_otp,
+            'phone_otp_expires_at' => $phoneVerified ? now()->addMinute() : null,
+            'phone_verified_at'    => $phoneVerified ? now() : null,
         ]);
 
-        /*
-    |--------------------------------------------------------------------------
-    | Auto create 14-day trial subscription
-    |--------------------------------------------------------------------------
-    */
         $trialStart = now();
         $trialEnd   = now()->addDays(14);
 
@@ -115,11 +71,6 @@ class AuthController extends Controller
             'extra_cost'             => 0,
         ]);
 
-        /*
-    |--------------------------------------------------------------------------
-    | Create token
-    |--------------------------------------------------------------------------
-    */
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
@@ -131,7 +82,7 @@ class AuthController extends Controller
             'trial' => [
                 'start'     => $trialStart,
                 'end'       => $trialEnd,
-                'days_left' => 14,
+                'days_left' => 14
             ],
             'data' => $user,
         ], 200);
@@ -187,6 +138,10 @@ class AuthController extends Controller
     {
         $request->validate([
             'company_legal_name' => 'required|string',
+            'company_type'       => 'required|string',
+            'vat_number'         => 'required|digits:11',
+            'fiscal_code'        => 'required|string',
+            'rea_number'         => 'required|string',
         ]);
 
         $user = $request->user();
@@ -219,6 +174,8 @@ class AuthController extends Controller
     public function completeProfileStep2(Request $request)
     {
         $request->validate([
+            'pec_email'          => 'required|email',
+            'sdi_code'           => 'required|string|size:7',
             'registered_address' => 'required|string',
             'city'               => 'required|string',
             'province'           => 'required|string|size:2',
@@ -249,6 +206,14 @@ class AuthController extends Controller
 
     public function completeProfileStep3(Request $request)
     {
+        $request->validate([
+            'ren_number'           => 'required|string',
+            'eu_license_number'    => 'nullable|string',
+            'fleet_trucks'         => 'required|integer|min:0',
+            'fleet_vans'           => 'required|integer|min:0',
+            'fleet_containers'     => 'required|integer|min:0',
+            'insurance_policy_number' => 'required|string',
+        ]);
 
         $user = $request->user();
 
@@ -273,6 +238,12 @@ class AuthController extends Controller
      */
     public function completeProfileStep4(Request $request)
     {
+        $request->validate([
+            'rep_full_name'    => 'required|string',
+            'rep_position'     => 'required|string',
+            'rep_fiscal_code'  => 'required|string|size:16',
+            'rep_document'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ]);
 
         $user = $request->user();
 
@@ -533,18 +504,21 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'type'     => 'required|in:admin,driver,phone',
-            'email'    => 'required_if:type,admin,driver|email',
-            'phone'    => 'required_if:type,phone|string',
-            'password' => 'required',
+            'type'         => 'required|in:email,phone',
+            'email'        => 'required_if:type,email|nullable|email',
+            'phone'        => 'required_if:type,phone|nullable|string',
+            'country_code' => 'nullable|string',
+            'password'     => 'required',
+            'phone_otp'    => 'nullable|string',
+            'is_verified'  => 'nullable|boolean',
         ]);
 
         /*
     |--------------------------------------------------------------------------
-    | Admin login with email
+    | Admin Login With Email
     |--------------------------------------------------------------------------
     */
-        if ($request->type === 'admin') {
+        if ($request->type === 'email') {
             $user = User::where('email', $request->email)->first();
 
             if (!$user || !Hash::check($request->password, $user->password)) {
@@ -561,38 +535,28 @@ class AuthController extends Controller
                 ], 403);
             }
 
-            if (!$user->email_verified_at) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => 'Please verify your email first'
-                ], 403);
-            }
-
             $token = $user->createToken('api-token')->plainTextToken;
 
             return response()->json([
                 'status'  => true,
                 'message' => 'Login successful',
                 'token'   => $token,
+                'login_type' => 'email',
                 'profile_completed' => (bool) $user->profile_completed,
+                'phone_verified' => (bool) $user->phone_verified_at,
                 'data'    => $user,
             ], 200);
         }
 
         /*
     |--------------------------------------------------------------------------
-    | Admin login with phone
-    | Firebase OTP already verified from mobile frontend.
-    | API only checks phone, password, role, email verification, phone verification.
+    | Admin Login With Phone
     |--------------------------------------------------------------------------
     */
         if ($request->type === 'phone') {
             $phone = $request->phone;
 
-            // Same normalization as web controller: 03xx => +923xx
-            if (preg_match('/^0\d/', $phone)) {
-                $phone = '+92' . substr($phone, 1);
-            }
+            
 
             $user = User::where('phone', $phone)->first();
 
@@ -610,17 +574,23 @@ class AuthController extends Controller
                 ], 403);
             }
 
-            if (!$user->email_verified_at) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => 'Please verify your email first'
-                ], 403);
+            /*
+        |--------------------------------------------------------------------------
+        | If frontend verified phone OTP during login, update verification fields.
+        |--------------------------------------------------------------------------
+        */
+            if ($request->boolean('is_verified')) {
+                $user->update([
+                    'phone_otp'            => $request->phone_otp,
+                    'phone_otp_expires_at' => now()->addMinute(),
+                    'phone_verified_at'    => now(),
+                ]);
             }
 
             if (!$user->phone_verified_at) {
                 return response()->json([
                     'status'  => false,
-                    'message' => 'This phone number is not verified. Please register again or use email login.'
+                    'message' => 'Phone number is not verified.'
                 ], 403);
             }
 
@@ -630,34 +600,10 @@ class AuthController extends Controller
                 'status'  => true,
                 'message' => 'Phone login successful',
                 'token'   => $token,
+                'login_type' => 'phone',
                 'profile_completed' => (bool) $user->profile_completed,
                 'phone_verified' => true,
                 'data'    => $user,
-            ], 200);
-        }
-
-        /*
-    |--------------------------------------------------------------------------
-    | Driver login
-    |--------------------------------------------------------------------------
-    */
-        if ($request->type === 'driver') {
-            $driver = Driver::where('email', $request->email)->first();
-
-            if (!$driver || !Hash::check($request->password, $driver->password)) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => 'Invalid credentials'
-                ], 401);
-            }
-
-            $token = $driver->createToken('driver-token')->plainTextToken;
-
-            return response()->json([
-                'status'  => true,
-                'message' => 'Driver login successful',
-                'token'   => $token,
-                'data'    => $driver,
             ], 200);
         }
     }
@@ -703,37 +649,94 @@ class AuthController extends Controller
     public function driverLogin(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
+            'type'         => 'required|in:email,phone',
+            'email'        => 'required_if:type,email|nullable|email',
+            'phone'        => 'required_if:type,phone|nullable|string',
+            'country_code' => 'nullable|string',
+            'phone_otp'    => 'required_if:type,phone|nullable|string',
+            'password'     => 'required',
         ]);
 
-        $driver = Driver::where('email', $request->email)->first();
+        /*
+        |--------------------------------------------------------------------------
+        | Driver Login With Email
+        |--------------------------------------------------------------------------
+        */
+        if ($request->type === 'email') {
 
-        if (!$driver || !Hash::check($request->password, $driver->password)) {
+            $driver = Driver::where('email', $request->email)->first();
+
+            if (!$driver || !Hash::check($request->password, $driver->password)) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Invalid credentials'
+                ], 401);
+            }
+
+            if ($driver->status !== 'active') {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Driver is not active'
+                ], 403);
+            }
+
+            $token = $driver->createToken('driver-token')->plainTextToken;
+
             return response()->json([
-                'status' => false,
-                'message' => 'Invalid credentials'
-            ], 401);
+                'status'     => true,
+                'message'    => 'Driver login successful',
+                'token'      => $token,
+                'login_type' => 'email',
+                'data'       => $driver
+            ], 200);
         }
 
-        // Check driver status
-        if ($driver->status !== 'active') {
+        /*
+        |--------------------------------------------------------------------------
+        | Driver Login With Phone
+        |--------------------------------------------------------------------------
+        */
+        if ($request->type === 'phone') {
+
+            $phone = $request->phone;
+
+            $driver = Driver::where('phone', $phone)->first();
+
+            if (!$driver || !Hash::check($request->password, $driver->password)) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Invalid phone number or password'
+                ], 401);
+            }
+
+            if ($driver->status !== 'active') {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Driver is not active'
+                ], 403);
+            }
+
+            $driver->update([
+                'phone'                => $phone,
+                'phone_otp'            => $request->phone_otp,
+                'phone_verified_at'    => now(),
+                'phone_otp_expires_at' => now()->addMinute(),
+            ]);
+
+            $token = $driver->createToken('driver-token')->plainTextToken;
+
             return response()->json([
-                'status' => false,
-                'message' => 'Driver is not active'
-            ], 403);
+                'status'               => true,
+                'message'              => 'Driver phone login successful',
+                'token'                => $token,
+                'login_type'           => 'phone',
+                'phone_verified'       => true,
+                'phone_otp_expires_at' => $driver->phone_otp_expires_at,
+                'data'                 => $driver
+            ], 200);
         }
-
-        // Create token
-        $token = $driver->createToken('driver-token')->plainTextToken;
-
-        return response()->json([
-            'status'  => true,
-            'message' => 'Driver login successful',
-            'token'   => $token,
-            'data'    => $driver
-        ]);
     }
+
 
     public function me(Request $request)
     {
