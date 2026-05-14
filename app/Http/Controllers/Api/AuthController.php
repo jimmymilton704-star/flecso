@@ -138,10 +138,6 @@ class AuthController extends Controller
     {
         $request->validate([
             'company_legal_name' => 'required|string',
-            'company_type'       => 'required|string',
-            'vat_number'         => 'required|digits:11',
-            'fiscal_code'        => 'required|string',
-            'rea_number'         => 'required|string',
         ]);
 
         $user = $request->user();
@@ -174,8 +170,6 @@ class AuthController extends Controller
     public function completeProfileStep2(Request $request)
     {
         $request->validate([
-            'pec_email'          => 'required|email',
-            'sdi_code'           => 'required|string|size:7',
             'registered_address' => 'required|string',
             'city'               => 'required|string',
             'province'           => 'required|string|size:2',
@@ -206,14 +200,6 @@ class AuthController extends Controller
 
     public function completeProfileStep3(Request $request)
     {
-        $request->validate([
-            'ren_number'           => 'required|string',
-            'eu_license_number'    => 'nullable|string',
-            'fleet_trucks'         => 'required|integer|min:0',
-            'fleet_vans'           => 'required|integer|min:0',
-            'fleet_containers'     => 'required|integer|min:0',
-            'insurance_policy_number' => 'required|string',
-        ]);
 
         $user = $request->user();
 
@@ -238,12 +224,7 @@ class AuthController extends Controller
      */
     public function completeProfileStep4(Request $request)
     {
-        $request->validate([
-            'rep_full_name'    => 'required|string',
-            'rep_position'     => 'required|string',
-            'rep_fiscal_code'  => 'required|string|size:16',
-            'rep_document'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-        ]);
+        
 
         $user = $request->user();
 
