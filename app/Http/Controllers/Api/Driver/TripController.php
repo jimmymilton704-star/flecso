@@ -46,10 +46,12 @@ class TripController extends Controller
                 'message' => 'Trip not found'
             ], 404);
         }
+        $tripaccount = $trip->account()->with('transactions')->first();
 
         return response()->json([
             'status' => true,
-            'data' => $trip
+            'data' => $trip,
+            'account' => $tripaccount
         ]);
     }
 

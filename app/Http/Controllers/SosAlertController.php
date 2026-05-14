@@ -10,9 +10,12 @@ use App\Models\FuelLog;
 use App\Models\Truck;
 use App\Models\TruckHealthLog;
 use App\Models\TruckMaintenance;
+use App\Models\TripAccount;
+use App\Models\TripAccountTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class SosAlertController extends Controller
 {
@@ -213,6 +216,62 @@ class SosAlertController extends Controller
             'truckMaintainance' => $truckMaintainance,
         ]);
     }
+    private function createTripTransaction($data)
+    {
+        $account = TripAccount::where('trip_id', $data['trip_id'])
+            ->where('admin_id', $data['admin_id'])
+            ->lockForUpdate()
+            ->first();
+
+        if (!$account) {
+            throw new \Exception('Trip account not found.');
+        }
+
+        $amount = (float) $data['amount'];
+
+        if ($amount <= 0) {
+            throw new \Exception('Transaction amount must be greater than zero.');
+        }
+
+        $alreadyExists = TripAccountTransaction::where('trip_account_id', $account->id)
+            ->where('source_type', $data['source_type'])
+            ->where('source_id', $data['source_id'])
+            ->exists();
+
+        if ($alreadyExists) {
+            return null;
+        }
+
+        $balanceBefore = $account->remaining_amount;
+        $balanceAfter = $balanceBefore - $amount;
+
+        if ($balanceAfter < 0) {
+            throw new \Exception('Insufficient trip account balance.');
+        }
+
+        $transaction = TripAccountTransaction::create([
+            'trip_account_id' => $account->id,
+            'trip_id' => $data['trip_id'],
+            'driver_id' => $data['driver_id'],
+            'type' => $data['type'],
+            'amount' => $amount,
+            'expense_date' => $data['expense_date'] ?? now()->toDateString(),
+            'title' => $data['title'] ?? ucfirst(str_replace('_', ' ', $data['type'])),
+            'description' => $data['description'] ?? null,
+            'source_type' => $data['source_type'],
+            'source_name' => $data['source_name'],
+            'source_id' => $data['source_id'],
+            'balance_before' => $balanceBefore,
+            'balance_after' => $balanceAfter,
+        ]);
+
+        $account->update([
+            'total_expense' => $account->total_expense + $amount,
+            'remaining_amount' => $balanceAfter,
+        ]);
+
+        return $transaction;
+    }
 
     /*
     |-----------------------------------------
@@ -225,37 +284,99 @@ class SosAlertController extends Controller
 
         $request->validate([
             'alert_id' => 'required|integer',
-            'source'   => 'required|in:sos,fleet,fuel',
+
+            // alert source
+            'source' => 'required|string|in:sos,fleet,fuel,toll_tax,maintenance,food,advance,other',
+
+            // transaction data
+            'trip_id' => 'required|integer|exists:trips,id',
+            'driver_id' => 'required|integer|exists:drivers,id',
+            'amount' => 'required|numeric|min:1',
+            'transaction_type' => 'required|string|in:fuel,toll_tax,maintenance,food,advance,other,sos,fleet',
+            'source_name' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'expense_date' => 'nullable|date',
         ]);
 
-        $id = $request->alert_id;
-        $source = $request->source;
-
         try {
-            if ($source === 'sos') {
-                $alert = SosAlert::where('id', $id)->where('admin_id', $adminId)->first();
-                if ($alert) {
-                    $alert->update(['status' => 'resolved']);
-                }
-            } elseif ($source === 'fleet') {
-                $alert = FleetAlert::where('id', $id)->where('admin_id', $adminId)->first();
-                if ($alert) {
-                    $alert->update(['is_read' => 1]);
-                }
-            } elseif ($source === 'fuel') {
-                $alert = FuelAlert::where('id', $id)->first();
-                if ($alert) {
-                    $alert->update(['is_resolved' => 1]);
-                }
-            }
+            DB::transaction(function () use ($request, $adminId) {
 
-            if (!$alert) {
-                return back()->with('error', 'Alert not found or unauthorized.');
-            }
+                $source = $request->source;
+                $alertId = $request->alert_id;
 
-            return back()->with('success', ucfirst($source) . ' alert marked as resolved.');
+                /*
+            |--------------------------------------------------------------------------
+            | Mark Alert Resolved According To Source
+            |--------------------------------------------------------------------------
+            */
+
+                if ($source === 'sos') {
+                    $alert = SosAlert::where('id', $alertId)
+                        ->where('admin_id', $adminId)
+                        ->first();
+
+                    if (!$alert) {
+                        throw new \Exception('SOS alert not found or unauthorized.');
+                    }
+
+                    $alert->update([
+                        'status' => 'resolved',
+                    ]);
+                } elseif ($source === 'fleet') {
+                    $alert = FleetAlert::where('id', $alertId)
+                        ->where('admin_id', $adminId)
+                        ->first();
+
+                    if (!$alert) {
+                        throw new \Exception('Fleet alert not found or unauthorized.');
+                    }
+
+                    $alert->update([
+                        'is_read' => 1,
+                    ]);
+                } elseif ($source === 'fuel') {
+                    $alert = FuelAlert::where('id', $alertId)
+                        ->whereHas('driver', function ($q) use ($adminId) {
+                            $q->where('admin_id', $adminId);
+                        })
+                        ->first();
+
+                    if (!$alert) {
+                        throw new \Exception('Fuel alert not found or unauthorized.');
+                    }
+
+                    $alert->update([
+                        'is_resolved' => 1,
+                    ]);
+                }
+
+                /*
+            |--------------------------------------------------------------------------
+            | Create Trip Account Transaction For Any Source
+            |--------------------------------------------------------------------------
+            */
+
+                $this->createTripTransaction([
+                    'admin_id' => $adminId,
+                    'trip_id' => $request->trip_id,
+                    'driver_id' => $request->driver_id,
+
+                    'type' => $request->transaction_type,
+                    'amount' => $request->amount,
+                    'expense_date' => $request->expense_date ?? now()->toDateString(),
+
+                    'title' => ucfirst(str_replace('_', ' ', $request->transaction_type)),
+                    'description' => $request->description,
+
+                    'source_type' => $source,
+                    'source_name' => $request->source_name ?? ucfirst(str_replace('_', ' ', $source)),
+                    'source_id' => $alertId,
+                ]);
+            });
+
+            return back()->with('success', 'Alert resolved and transaction created successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 }

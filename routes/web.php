@@ -199,6 +199,8 @@ Route::middleware([
 
         Route::post('/{id}/delete', [TripController::class, 'destroy'])->name('destroy');
     });
+    Route::get('/trip-payment-suggestion', [TripController::class, 'paymentSuggestion'])
+        ->name('trips.payment-suggestion');
     Route::prefix('users')->name('users.')->group(function () {
 
         Route::post('/company/store', [UserController::class, 'companystore'])->name('company.store');
