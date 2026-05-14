@@ -43,13 +43,13 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('otp.verify.form');
 
-Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
+    Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
 
-Route::post('/otp/resend', [AuthController::class, 'resendOtp'])->name('otp.resend');
+    Route::post('/otp/resend', [AuthController::class, 'resendOtp'])->name('otp.resend');
 
-Route::get('/otp/verify', function () {
-    return view('auth.verify-otp');
-})->name('otp.verify.form');
+    Route::get('/otp/verify', function () {
+        return view('auth.verify-otp');
+    })->name('otp.verify.form');
 
 
 
@@ -191,6 +191,8 @@ Route::middleware([
 
         Route::post('/{id}/delete', [TripController::class, 'destroy'])->name('destroy');
     });
+    Route::get('/trip-payment-suggestion', [TripController::class, 'paymentSuggestion'])
+        ->name('trips.payment-suggestion');
     Route::prefix('users')->name('users.')->group(function () {
 
         Route::post('/company/store', [UserController::class, 'companystore'])->name('company.store');

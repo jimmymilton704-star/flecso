@@ -78,4 +78,13 @@ class Trip extends Model
     {
         return $this->hasMany(FuelLog::class);
     }
+    public function account()
+    {
+        return $this->hasOne(TripAccount::class);
+    }
+
+    public function accountTransactions()
+    {
+        return $this->hasMany(TripAccountTransaction::class);
+    }
 }

@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\LiveTrackingController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\Driver\FuelLogController;
+use App\Http\Controllers\Api\TripAccountController;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
@@ -172,6 +173,27 @@ Route::middleware('auth:driver')->prefix('driver')->group(function () {
     // Fuel Log
     Route::post('/fuel-logs', [FuelLogController::class, 'store']);
     Route::get('/trip/{trip}/fuel-logs', [FuelLogController::class, 'tripFuelLogs']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | TRIP ACCOUNTS
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/trip-accounts', [TripAccountController::class, 'index']);
+    Route::post('/trip-accounts', [TripAccountController::class, 'store']);
+
+    Route::get('/trips/{tripId}/account', [TripAccountController::class, 'show']);
+    Route::post('/trips/{tripId}/account/add-balance', [TripAccountController::class, 'addBalance']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | GENERIC TRIP EXPENSES
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/trip-expenses', [TripAccountController::class, 'addExpense']);
+
+    Route::get('/trips/{tripId}/transactions', [TripAccountController::class, 'transactions']);
+    Route::delete('/trip-transactions/{transactionId}', [TripAccountController::class, 'destroyTransaction']);
 });
 
 
