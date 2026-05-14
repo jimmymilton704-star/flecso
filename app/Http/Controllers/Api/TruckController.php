@@ -48,23 +48,23 @@ class TruckController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
             'license_plate_number'   => 'required|string',
-            'vin_number'             => 'required|string',
-            'first_registration_date'=> 'required|date',
-            'usage_type'             => 'required|string',
+            'vin_number'             => 'nullable|string',
+            'first_registration_date'=> 'nullable|date',
+            'usage_type'             => 'nullable|string',
             'documento_unico'        => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
 
-            'vehicle_category'    => 'required|string',
-            'gvw_kg'              => 'required|numeric',
-            'payload_capacity_kg' => 'required|numeric',
-            'number_of_axles'     => 'required|integer',
-            'engine_class'        => 'required|string',
-            'fuel_type'           => 'required|string',
+            'vehicle_category'    => 'nullable|string',
+            'gvw_kg'              => 'nullable|numeric',
+            'payload_capacity_kg' => 'nullable|numeric',
+            'number_of_axles'     => 'nullable|integer',
+            'engine_class'        => 'nullable|string',
+            'fuel_type'           => 'nullable|string',
 
-            'next_inspection_date'   => 'required|date',
-            'insurance_policy_number'=> 'required|string',
-            'insurance_expiry_date'  => 'required|date',
-            'tachograph_calibration_expiry' => 'required|date',
-            'bollo_expiry_date'      => 'required|date',
+            'next_inspection_date'   => 'nullable|date',
+            'insurance_policy_number'=> 'nullable|string',
+            'insurance_expiry_date'  => 'nullable|date',
+            'tachograph_calibration_expiry' => 'nullable|date',
+            'bollo_expiry_date'      => 'nullable|date',
         ]);
 
         $data = $request->all();

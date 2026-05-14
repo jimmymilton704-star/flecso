@@ -39,55 +39,56 @@ class ContainerController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-         $validation = $request->validate([
+        $validation = $request->validate([
             // Basic
-            'container_id'             => 'required|string',
+            'container_id' => 'required|string',
             'container_license_number' => 'required|string',
-            'container_type'           => 'required|string',
-            'status'                   => 'required|string',
-            'weight_capacity'          => 'required|numeric',
-            'image'                    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'container_type' => 'required|string',
+            'status' => 'required|string',
+            'weight_capacity' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
             // ISO
-            'owner_code'           => 'required|string|size:3',
-            'category_identifier'  => 'required|string|size:1',
-            'serial_number'        => 'required|string|size:6',
-            'check_digit'          => 'required|string|size:1',
-            'iso_type_size_code'   => 'required|string|size:4',
+            'owner_code' => 'nullable|string|size:3',
+            'category_identifier' => 'nullable|string|size:1',
+            'serial_number' => 'nullable|string|size:6',
+            'check_digit' => 'nullable|string|size:1',
+            'iso_type_size_code' => 'nullable|string|size:4',
 
             // Technical
-            'manufacturer_serial_number' => 'required|string',
-            'manufacture_date'           => 'required|date',
-            'max_operating_weight'       => 'required|numeric',
-            'stacking_weight'            => 'required|numeric',
-            'next_examination_date'      => 'required|date',
+            'manufacturer_serial_number' => 'nullable|string',
+            'manufacture_date' => 'nullable|date',
+            'max_operating_weight' => 'nullable|numeric',
+            'stacking_weight' => 'nullable|numeric',
+            'next_examination_date' => 'nullable|date',
 
             // Custom
-            'eori_number'      => 'nullable|string',
-            'seal_number'      => 'nullable|string',
+            'eori_number' => 'nullable|string',
+            'seal_number' => 'nullable|string',
             'container_status' => 'required|in:empty,full',
-            'owner_lessor'     => 'nullable|string',
+            'owner_lessor' => 'nullable|string',
         ]);
 
         // dd($validation);
         $data = $request->all();
-        
+
         $data['admin_id'] = auth()->id();
-        
+
         /*
         | IMAGE UPLOAD
         */
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $path = public_path('uploads/containers');
-            if (!file_exists($path)) mkdir($path, 0755, true);
+            if (!file_exists($path))
+                mkdir($path, 0755, true);
 
             $file->move($path, $fileName);
-            $data['image'] = 'uploads/containers/'.$fileName;
+            $data['image'] = 'uploads/containers/' . $fileName;
         }
-        
+
 
         Container::create($data);
 
@@ -132,13 +133,14 @@ class ContainerController extends Controller
             }
 
             $file = $request->file('image');
-            $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $path = public_path('uploads/containers');
-            if (!file_exists($path)) mkdir($path, 0755, true);
+            if (!file_exists($path))
+                mkdir($path, 0755, true);
 
             $file->move($path, $fileName);
-            $data['image'] = 'uploads/containers/'.$fileName;
+            $data['image'] = 'uploads/containers/' . $fileName;
         }
 
         $container->update($data);
@@ -180,5 +182,69 @@ class ContainerController extends Controller
             ->firstOrFail();
 
         return view('containers.show', compact('container'));
+    }
+
+    /*
+|-----------------------------------------
+| IMPORT CONTAINERS CSV
+|-----------------------------------------
+*/
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|mimes:csv,txt',
+        ]);
+
+        $file = fopen($request->file('csv_file')->getRealPath(), 'r');
+
+        $header = fgetcsv($file);
+
+        $adminId = auth()->id();
+
+        $count = 0;
+
+        while (($row = fgetcsv($file)) !== false) {
+
+            $data = array_combine($header, $row);
+
+            Container::create([
+                'admin_id' => $adminId,
+
+                // BASIC
+                'container_id' => $data['container_id'],
+                'container_license_number' => $data['container_license_number'],
+                'container_type' => $data['container_type'],
+                'status' => $data['status'],
+                'weight_capacity' => $data['weight_capacity'],
+                'container_status' => $data['container_status'],
+
+                // ISO
+                'owner_code' => $data['owner_code'],
+                'category_identifier' => $data['category_identifier'],
+                'serial_number' => $data['serial_number'],
+                'check_digit' => $data['check_digit'],
+                'iso_type_size_code' => $data['iso_type_size_code'],
+
+                // TECHNICAL
+                'manufacturer_serial_number' => $data['manufacturer_serial_number'],
+                'manufacture_date' => $data['manufacture_date'],
+                'max_operating_weight' => $data['max_operating_weight'],
+                'stacking_weight' => $data['stacking_weight'],
+                'next_examination_date' => $data['next_examination_date'],
+
+                // EXTRA
+                'eori_number' => $data['eori_number'] ?? null,
+                'seal_number' => $data['seal_number'] ?? null,
+                'owner_lessor' => $data['owner_lessor'] ?? null,
+            ]);
+
+            $count++;
+        }
+
+        fclose($file);
+
+        return redirect()
+            ->route('containers.index')
+            ->with('success', $count . ' containers imported successfully.');
     }
 }

@@ -21,7 +21,6 @@
         <div class="onb-field">
             <label>
                 REN Number
-                <span class="req">*</span>
             </label>
 
             <input
@@ -78,7 +77,6 @@
         <div class="onb-field">
             <label>
                 Fleet Trucks
-                <span class="req">*</span>
             </label>
 
             <input
@@ -98,7 +96,6 @@
         <div class="onb-field">
             <label>
                 Fleet Vans
-                <span class="req">*</span>
             </label>
 
             <input
@@ -118,7 +115,6 @@
         <div class="onb-field">
             <label>
                 Fleet Containers
-                <span class="req">*</span>
             </label>
 
             <input

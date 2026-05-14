@@ -104,7 +104,7 @@
                                 <td>
                                     <div class="cell-asset">
                                         <img class="asset-thumb"
-                                            src="{{ $container->image ? asset($container->image) : 'https://via.placeholder.com/60' }}"
+                                            src="{{ $container->image ? asset($container->image) : 'https://i.pravatar.cc/30' }}"
                                             alt="">
 
                                         <div>

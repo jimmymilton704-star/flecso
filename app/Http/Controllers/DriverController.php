@@ -54,7 +54,8 @@ class DriverController extends Controller
     /* LIST */
     public function index()
     {
-        $drivers = Driver::where('admin_id', auth()->id())->latest()->paginate(10);;
+        $drivers = Driver::where('admin_id', auth()->id())->latest()->paginate(10);
+        ;
         return view('drivers.index', compact('drivers'));
     }
 
@@ -145,10 +146,10 @@ class DriverController extends Controller
                 }
 
                 $file = $request->file($field);
-                $name = time().'_'.$file->getClientOriginalName();
+                $name = time() . '_' . $file->getClientOriginalName();
                 $file->move(public_path($path), $name);
 
-                $data[$field] = $path.'/'.$name;
+                $data[$field] = $path . '/' . $name;
             }
         };
 
@@ -194,5 +195,106 @@ class DriverController extends Controller
         $driver = Driver::where('admin_id', auth()->id())->findOrFail($id);
         $truck = Truck::where('driver_id', $driver->id)->first();
         return view('drivers.show', compact('driver', 'truck'));
+    }
+
+
+    /*
+|-----------------------------------------
+| IMPORT DRIVERS CSV
+|-----------------------------------------
+*/
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|mimes:csv,txt',
+        ]);
+
+        $adminId = auth()->id();
+
+        $file = fopen($request->file('csv_file')->getRealPath(), 'r');
+
+        $header = fgetcsv($file);
+
+        $count = 0;
+
+        while (($row = fgetcsv($file)) !== false) {
+
+            $data = array_combine($header, $row);
+
+            /*
+            | CHECK LIMIT
+            */
+            $limit = $this->checkDriverLimit($adminId);
+
+            if (!$limit['allowed']) {
+                break;
+            }
+
+            /*
+            | SKIP DUPLICATE EMAIL
+            */
+            if (Driver::where('email', $data['email'])->exists()) {
+                continue;
+            }
+
+            $plainPassword = $data['password'];
+
+            /*
+            | CREATE DRIVER
+            */
+            $driver = Driver::create([
+
+                'admin_id' => $adminId,
+
+                // BASIC
+                'full_name' => $data['full_name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'password' => Hash::make($plainPassword),
+                'status' => $data['status'],
+
+                // PERSONAL
+                'place_of_birth' => $data['place_of_birth'] ?? null,
+                'date_of_birth' => $data['date_of_birth'] ?? null,
+                'fiscal_code' => $data['fiscal_code'] ?? null,
+                'nationality' => $data['nationality'] ?? null,
+                'residential_address' => $data['residential_address'] ?? null,
+
+                // LICENSE
+                'license_number' => $data['license_number'] ?? null,
+                'driving_license_category' => $data['driving_license_category'] ?? null,
+                'license_expiry' => $data['license_expiry'] ?? null,
+                'cqc_number' => $data['cqc_number'] ?? null,
+                'cqc_expiry' => $data['cqc_expiry'] ?? null,
+                'tachograph_card_number' => $data['tachograph_card_number'] ?? null,
+
+                // HEALTH & PERMIT
+                'work_permit_number' => $data['work_permit_number'] ?? null,
+                'work_permit_expiry' => $data['work_permit_expiry'] ?? null,
+                'medical_fitness_date' => $data['medical_fitness_date'] ?? null,
+                'criminal_record_check' => $data['criminal_record_check'] ?? null,
+            ]);
+
+            /*
+            | SEND WELCOME EMAIL
+            */
+            try {
+
+                Mail::to($driver->email)->send(
+                    new DriverWelcomeMail($driver, $plainPassword)
+                );
+
+            } catch (\Exception $e) {
+
+            }
+
+            $count++;
+        }
+
+        fclose($file);
+
+        return redirect()
+            ->route('drivers.index')
+            ->with('success', $count . ' drivers imported successfully.');
     }
 }

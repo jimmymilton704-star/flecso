@@ -57,6 +57,63 @@
             @endif
         </div>
 
+        {{-- CSV IMPORT --}}
+        <div class="card" style="margin-bottom:20px;">
+
+            <div class="card__head">
+                <h3>Import Containers From CSV</h3>
+            </div>
+
+            <div class="card__body">
+
+                <form action="{{ route('containers.import') }}" method="POST" enctype="multipart/form-data">
+
+                    @csrf
+
+                    <div class="form-grid">
+
+                        <div class="field full">
+
+                            <label>Upload CSV File</label>
+
+                            <label class="upload-box">
+
+                                <input type="file" name="csv_file" id="csvUpload" accept=".csv" hidden required>
+
+                                <div class="upload-content">
+                                    <strong id="csvText">
+                                        Click to upload CSV
+                                    </strong>
+
+                                    <span id="csvSub">
+                                        CSV format only
+                                    </span>
+                                </div>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+
+                        <button type="submit" class="btn btn--primary">
+                            Import Containers
+                        </button>
+
+                        <a href="{{ asset('samples/container-sample.csv') }}" class="btn btn--ghost" download>
+                            Download Sample CSV
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
         <form action="{{ route('containers.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
@@ -131,28 +188,28 @@
                     <div class="form-grid">
 
                         <div class="field">
-                            <label>Owner Code*</label>
-                            <input class="input" type="text" name="owner_code" maxlength="3" required>
+                            <label>Owner Code</label>
+                            <input class="input" type="text" name="owner_code" maxlength="3">
                         </div>
 
                         <div class="field">
-                            <label>Category Identifier*</label>
-                            <input class="input" type="text" name="category_identifier" maxlength="1" required>
+                            <label>Category Identifier</label>
+                            <input class="input" type="text" name="category_identifier" maxlength="1">
                         </div>
 
                         <div class="field">
-                            <label>Serial Number*</label>
-                            <input class="input" type="text" name="serial_number" maxlength="6" required>
+                            <label>Serial Number</label>
+                            <input class="input" type="text" name="serial_number" maxlength="6">
                         </div>
 
                         <div class="field">
-                            <label>Check Digit*</label>
-                            <input class="input" type="text" name="check_digit" maxlength="1" required>
+                            <label>Check Digit</label>
+                            <input class="input" type="text" name="check_digit" maxlength="1">
                         </div>
 
                         <div class="field">
-                            <label>ISO Size Code*</label>
-                            <input class="input" type="text" name="iso_type_size_code" maxlength="4" required>
+                            <label>ISO Size Code</label>
+                            <input class="input" type="text" name="iso_type_size_code" maxlength="4">
                         </div>
 
                     </div>
@@ -166,28 +223,28 @@
                     <div class="form-grid">
 
                         <div class="field">
-                            <label>Manufacturer Serial*</label>
-                            <input class="input" type="text" name="manufacturer_serial_number" required>
+                            <label>Manufacturer Serial</label>
+                            <input class="input" type="text" name="manufacturer_serial_number">
                         </div>
 
                         <div class="field">
-                            <label>Manufacture Date*</label>
-                            <input class="input" type="date" name="manufacture_date" required>
+                            <label>Manufacture Date</label>
+                            <input class="input" type="date" name="manufacture_date">
                         </div>
 
                         <div class="field">
-                            <label>Max Operating Weight*</label>
-                            <input class="input" type="number" name="max_operating_weight" required>
+                            <label>Max Operating Weight</label>
+                            <input class="input" type="number" name="max_operating_weight">
                         </div>
 
                         <div class="field">
-                            <label>Stacking Weight*</label>
-                            <input class="input" type="number" name="stacking_weight" required>
+                            <label>Stacking Weight</label>
+                            <input class="input" type="number" name="stacking_weight">
                         </div>
 
                         <div class="field">
                             <label>Next Examination*</label>
-                            <input class="input" type="date" name="next_examination_date" required>
+                            <input class="input" type="date" name="next_examination_date">
                         </div>
 
                     </div>
@@ -231,11 +288,26 @@
     </section>
 
     <script>
-        document.getElementById('imgUpload').addEventListener('change', function() {
+        document.getElementById('imgUpload').addEventListener('change', function () {
             let fileName = this.files[0]?.name;
             if (fileName) {
                 document.getElementById('imgText').innerText = fileName;
                 document.getElementById('imgSub').innerText = "Image selected";
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('csvUpload').addEventListener('change', function () {
+
+            let fileName = this.files[0]?.name;
+
+            if (fileName) {
+
+                document.getElementById('csvText').innerText = fileName;
+
+                document.getElementById('csvSub').innerText =
+                    "CSV selected successfully";
             }
         });
     </script>

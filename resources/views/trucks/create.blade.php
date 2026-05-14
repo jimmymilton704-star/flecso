@@ -76,6 +76,64 @@
                 <div class="page-head__sub">Register a new vehicle into your fleet</div>
             </div>
         </div>
+        {{-- CSV IMPORT --}}
+        <div class="card" style="margin-bottom:20px;">
+
+            <div class="card__head">
+                <h3>Import Trucks From CSV</h3>
+            </div>
+
+            <div class="card__body">
+
+                <form action="{{ route('trucks.import') }}" method="POST" enctype="multipart/form-data">
+
+                    @csrf
+
+                    <div class="form-grid">
+
+                        <div class="field full">
+
+                            <label>Upload CSV File</label>
+
+                            <label class="upload-box">
+
+                                <input type="file" name="csv_file" id="trucksCsvUpload" accept=".csv" hidden required>
+
+                                <div class="upload-content">
+
+                                    <strong id="trucksCsvText">
+                                        Click to upload CSV
+                                    </strong>
+
+                                    <span id="trucksCsvSub">
+                                        CSV format only
+                                    </span>
+
+                                </div>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+
+                        <button type="submit" class="btn btn--primary">
+                            Import Trucks
+                        </button>
+
+                        <a href="{{ asset('samples/trucks-sample.csv') }}" class="btn btn--ghost" download>
+                            Download Sample CSV
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
 
         <form action="{{ route('trucks.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -153,8 +211,7 @@
                                 <input type="file" name="image" id="docUpload" hidden>
 
                                 <div class="upload-content">
-                                    <svg width="28" height="28" fill="none" stroke="currentColor"
-                                        stroke-width="2">
+                                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                         <path d="M17 8l-5-5-5 5" />
                                         <path d="M12 3v12" />
@@ -187,18 +244,18 @@
                         </div>
 
                         <div class="field">
-                            <label>VIN Number*</label>
-                            <input class="input" type="text" name="vin_number" required>
+                            <label>VIN Number</label>
+                            <input class="input" type="text" name="vin_number">
                         </div>
 
                         <div class="field">
-                            <label>Registration Date*</label>
-                            <input class="input" type="date" name="first_registration_date" required>
+                            <label>Registration Date</label>
+                            <input class="input" type="date" name="first_registration_date">
                         </div>
 
                         <div class="field">
-                            <label>Usage Type*</label>
-                            <select name="usage_type" required>
+                            <label>Usage Type</label>
+                            <select name="usage_type">
                                 <option value="Owned">Owned</option>
                                 <option value="Leased">Leased</option>
                                 <option value="Rented">Rented</option>
@@ -213,8 +270,7 @@
                                     hidden>
 
                                 <div class="upload-content">
-                                    <svg width="28" height="28" fill="none" stroke="currentColor"
-                                        stroke-width="2">
+                                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                         <path d="M17 8l-5-5-5 5" />
                                         <path d="M12 3v12" />
@@ -241,8 +297,8 @@
                     <div class="form-grid">
 
                         <div class="field">
-                            <label>Vehicle Category*</label>
-                            <select name="vehicle_category" required>
+                            <label>Vehicle Category</label>
+                            <select name="vehicle_category">
                                 <option value="N1">N1</option>
                                 <option value="N2">N2</option>
                                 <option value="N3">N3</option>
@@ -250,28 +306,28 @@
                         </div>
 
                         <div class="field">
-                            <label>GVW (kg)*</label>
-                            <input class="input" type="number" name="gvw_kg" required>
+                            <label>GVW (kg)</label>
+                            <input class="input" type="number" name="gvw_kg">
                         </div>
 
                         <div class="field">
-                            <label>Payload Capacity (kg)*</label>
-                            <input class="input" type="number" name="payload_capacity_kg" required>
+                            <label>Payload Capacity (kg)</label>
+                            <input class="input" type="number" name="payload_capacity_kg">
                         </div>
 
                         <div class="field">
-                            <label>Axles*</label>
-                            <input class="input" type="number" name="number_of_axles" required>
+                            <label>Axles</label>
+                            <input class="input" type="number" name="number_of_axles">
                         </div>
 
                         <div class="field">
-                            <label>Engine Class*</label>
-                            <input class="input" type="text" name="engine_class" required>
+                            <label>Engine Class</label>
+                            <input class="input" type="text" name="engine_class">
                         </div>
 
                         <div class="field">
-                            <label>Fuel Type*</label>
-                            <select name="fuel_type" required>
+                            <label>Fuel Type</label>
+                            <select name="fuel_type">
                                 <option value="Diesel">Diesel</option>
                                 <option value="Electric">Electric</option>
                                 <option value="Hybrid">Hybrid</option>
@@ -282,10 +338,10 @@
                             <select name="driver_id">
                                 <option value="">-- Select Driver --</option>
                                 @foreach ($drivers as $driver)
-                                    <option value="{{ $driver->id }}">{{ $driver->name }}</option>
-                                    
+                                    <option value="{{ $driver->id }}">{{ $driver->full_name }}</option>
+
                                 @endforeach
-                                
+
                             </select>
                         </div>
 
@@ -300,35 +356,35 @@
                     <div class="form-grid">
 
                         <div class="field">
-                            <label>Next Inspection*</label>
-                            <input class="input" type="date" name="next_inspection_date" required>
+                            <label>Next Inspection</label>
+                            <input class="input" type="date" name="next_inspection_date">
                         </div>
 
                         <div class="field">
-                            <label>Insurance Policy*</label>
-                            <input class="input" type="text" name="insurance_policy_number" required>
+                            <label>Insurance Policy</label>
+                            <input class="input" type="text" name="insurance_policy_number">
                         </div>
 
                         <div class="field">
-                            <label>Insurance Expiry*</label>
-                            <input class="input" type="date" name="insurance_expiry_date" required>
+                            <label>Insurance Expiry</label>
+                            <input class="input" type="date" name="insurance_expiry_date">
                         </div>
 
                         <div class="field">
-                            <label>Tachograph Expiry*</label>
-                            <input class="input" type="date" name="tachograph_calibration_expiry" required>
+                            <label>Tachograph Expiry</label>
+                            <input class="input" type="date" name="tachograph_calibration_expiry">
                         </div>
 
                         <div class="field">
-                            <label>Bollo Expiry*</label>
-                            <input class="input" type="date" name="bollo_expiry_date" required>
+                            <label>Bollo Expiry</label>
+                            <input class="input" type="date" name="bollo_expiry_date">
                         </div>
 
                     </div>
                 </div>
 
                 <div class="card__head">
-                    <h3><span class="count">4.</span> Health</h3>
+                    <h3><span class="count">5.</span> Health</h3>
                 </div>
                 <div class="card__body">
                     <div class="form-grid">
@@ -357,7 +413,7 @@
         </form>
     </section>
     <script>
-        document.getElementById('docUpload').addEventListener('change', function() {
+        document.getElementById('docUpload').addEventListener('change', function () {
             let fileName = this.files[0]?.name;
             if (fileName) {
                 document.getElementById('uploadText').innerText = fileName;
@@ -366,7 +422,7 @@
         });
     </script>
     <script>
-        document.getElementById('docUploadFile').addEventListener('change', function() {
+        document.getElementById('docUploadFile').addEventListener('change', function () {
             let file = this.files[0];
 
             if (file) {
@@ -381,6 +437,21 @@
 
                 document.getElementById('docUploadText').innerText = file.name;
                 document.getElementById('docUploadSub').innerText = "Document selected";
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('trucksCsvUpload').addEventListener('change', function () {
+
+            let fileName = this.files[0]?.name;
+
+            if (fileName) {
+
+                document.getElementById('trucksCsvText').innerText = fileName;
+
+                document.getElementById('trucksCsvSub').innerText =
+                    "CSV selected successfully";
             }
         });
     </script>

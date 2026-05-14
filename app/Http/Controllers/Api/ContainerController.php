@@ -43,18 +43,18 @@ class ContainerController extends Controller
             'image'                   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
             // ISO
-            'owner_code'              => 'required|string|size:3',
-            'category_identifier'     => 'required|string|size:1',
-            'serial_number'           => 'required|string|size:6',
-            'check_digit'             => 'required|string|size:1',
-            'iso_type_size_code'      => 'required|string|size:4',
+            'owner_code'              => 'nullable|string|size:3',
+            'category_identifier'     => 'nullable|string|size:1',
+            'serial_number'           => 'nullable|string|size:6',
+            'check_digit'             => 'nullable|string|size:1',
+            'iso_type_size_code'      => 'nullable|string|size:4',
 
             // Technical
-            'manufacturer_serial_number' => 'required|string',
-            'manufacture_date'           => 'required|date',
-            'max_operating_weight'       => 'required|numeric',
-            'stacking_weight'            => 'required|numeric',
-            'next_examination_date'      => 'required|date',
+            'manufacturer_serial_number' => 'nullable|string',
+            'manufacture_date'           => 'nullable|date',
+            'max_operating_weight'       => 'nullable|numeric',
+            'stacking_weight'            => 'nullable|numeric',
+            'next_examination_date'      => 'nullable|date',
 
             // Custom
             'eori_number'       => 'nullable|string',

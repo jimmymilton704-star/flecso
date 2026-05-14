@@ -1,0 +1,3 @@
+container_id,container_license_number,container_type,status,weight_capacity,container_status,owner_code,category_identifier,serial_number,check_digit,iso_type_size_code,manufacturer_serial_number,manufacture_date,max_operating_weight,stacking_weight,next_examination_date,eori_number,seal_number,owner_lessor
+CONT-1001,LIC-5001,20FT,active,28000,empty,ABC,U,123456,7,22G1,MSN-1001,2025-01-15,30000,192000,2026-01-15,EORI-1001,SEAL-001,Maersk
+CONT-1002,LIC-5002,40FT,active,32000,full,XYZ,U,654321,3,45R1,MSN-1002,2024-11-10,34000,210000,2026-02-01,EORI-1002,SEAL-002,MSC

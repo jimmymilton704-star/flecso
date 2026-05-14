@@ -43,13 +43,13 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('otp.verify.form');
 
-Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
+    Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
 
-Route::post('/otp/resend', [AuthController::class, 'resendOtp'])->name('otp.resend');
+    Route::post('/otp/resend', [AuthController::class, 'resendOtp'])->name('otp.resend');
 
-Route::get('/otp/verify', function () {
-    return view('auth.verify-otp');
-})->name('otp.verify.form');
+    Route::get('/otp/verify', function () {
+        return view('auth.verify-otp');
+    })->name('otp.verify.form');
 
 
 
@@ -149,6 +149,9 @@ Route::middleware([
         Route::delete('/{id}/delete', [TruckController::class, 'destroy'])->name('destroy');
 
         Route::post('/assign-driver', [TruckController::class, 'assignDriver'])->name('assignDriver');
+
+        Route::post('/import', [TruckController::class, 'import'])
+            ->name('import');
     });
 
     Route::prefix('containers')->name('containers.')->group(function () {
@@ -163,6 +166,9 @@ Route::middleware([
         Route::post('/{id}/update', [ContainerController::class, 'update'])->name('update');
 
         Route::post('/{id}/delete', [ContainerController::class, 'destroy'])->name('destroy');
+
+        Route::post('/import', [ContainerController::class, 'import'])
+            ->name('import');
     });
 
 
@@ -176,6 +182,8 @@ Route::middleware([
         Route::post('/update/{id}', [DriverController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [DriverController::class, 'destroy'])->name('delete');
         Route::post('/update-status', [DriverController::class, 'updateStatus'])->name('update.status');
+        Route::post('/import', [DriverController::class, 'import'])
+            ->name('import');
     });
 
     Route::prefix('trips')->name('trips.')->group(function () {

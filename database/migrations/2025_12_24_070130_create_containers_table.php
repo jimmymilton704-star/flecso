@@ -30,22 +30,22 @@ return new class extends Migration
         | ISO IDENTIFICATION SYSTEM
         |-----------------------------------------
         */
-        $table->string('owner_code', 3); // 3 letters
+        $table->string('owner_code', 3)->nullable(); // 3 letters
         $table->string('category_identifier', 1)->default('U'); // usually U
-        $table->string('serial_number', 6); // 6 digits
-        $table->string('check_digit', 1); // 1 digit
-        $table->string('iso_type_size_code', 4); // e.g., 42G1
+        $table->string('serial_number', 6)->nullable(); // 6 digits
+        $table->string('check_digit', 1)->nullable(); // 1 digit
+        $table->string('iso_type_size_code', 4)->nullable(); // e.g., 42G1
 
         /*
         |-----------------------------------------
         | TECHNICAL & SAFETY (CSC)
         |-----------------------------------------
         */
-        $table->string('manufacturer_serial_number');
-        $table->date('manufacture_date'); // month/year
-        $table->decimal('max_operating_weight', 10, 2);
-        $table->decimal('stacking_weight', 10, 2);
-        $table->date('next_examination_date'); // NED
+        $table->string('manufacturer_serial_number')->nullable();
+        $table->date('manufacture_date')->nullable(); // month/year
+        $table->decimal('max_operating_weight', 10, 2)->nullable();
+        $table->decimal('stacking_weight', 10, 2)->nullable();
+        $table->date('next_examination_date')->nullable(); // NED
 
         /*
         |-----------------------------------------

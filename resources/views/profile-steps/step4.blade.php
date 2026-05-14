@@ -25,7 +25,6 @@
         <div class="onb-field">
             <label>
                 Representative Full Name
-                <span class="req">*</span>
             </label>
 
             <input
@@ -45,7 +44,6 @@
         <div class="onb-field">
             <label>
                 Position
-                <span class="req">*</span>
             </label>
 
             <select name="rep_position" class="onb-input">
@@ -88,7 +86,6 @@
         <div class="onb-field full">
             <label>
                 Representative Fiscal Code
-                <span class="req">*</span>
             </label>
 
             <input
@@ -110,7 +107,6 @@
 
             <label>
                 Identity Document
-                <span class="req">*</span>
             </label>
 
             <label class="onb-upload">

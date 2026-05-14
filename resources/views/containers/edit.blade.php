@@ -125,28 +125,28 @@
                 <div class="form-grid">
 
                     <div class="field">
-                        <label>Owner Code*</label>
-                        <input class="input" type="text" name="owner_code" value="{{ $container->owner_code }}" maxlength="3" required>
+                        <label>Owner Code</label>
+                        <input class="input" type="text" name="owner_code" value="{{ $container->owner_code }}" maxlength="3">
                     </div>
 
                     <div class="field">
-                        <label>Category Identifier*</label>
-                        <input class="input" type="text" name="category_identifier" value="{{ $container->category_identifier }}" maxlength="1" required>
+                        <label>Category Identifier</label>
+                        <input class="input" type="text" name="category_identifier" value="{{ $container->category_identifier }}" maxlength="1">
                     </div>
 
                     <div class="field">
-                        <label>Serial Number*</label>
-                        <input class="input" type="text" name="serial_number" value="{{ $container->serial_number }}" maxlength="6" required>
+                        <label>Serial Number</label>
+                        <input class="input" type="text" name="serial_number" value="{{ $container->serial_number }}" maxlength="6">
                     </div>
 
                     <div class="field">
-                        <label>Check Digit*</label>
-                        <input class="input" type="text" name="check_digit" value="{{ $container->check_digit }}" maxlength="1" required>
+                        <label>Check Digit</label>
+                        <input class="input" type="text" name="check_digit" value="{{ $container->check_digit }}" maxlength="1">
                     </div>
 
                     <div class="field">
-                        <label>ISO Size Code*</label>
-                        <input class="input" type="text" name="iso_type_size_code" value="{{ $container->iso_type_size_code }}" maxlength="4" required>
+                        <label>ISO Size Code</label>
+                        <input class="input" type="text" name="iso_type_size_code" value="{{ $container->iso_type_size_code }}" maxlength="4">
                     </div>
 
                 </div>
@@ -160,28 +160,28 @@
                 <div class="form-grid">
 
                     <div class="field">
-                        <label>Manufacturer Serial*</label>
-                        <input class="input" type="text" name="manufacturer_serial_number" value="{{ $container->manufacturer_serial_number }}" required>
+                        <label>Manufacturer Serial</label>
+                        <input class="input" type="text" name="manufacturer_serial_number" value="{{ $container->manufacturer_serial_number }}">
                     </div>
 
                     <div class="field">
-                        <label>Manufacture Date*</label>
-                        <input class="input" type="date" name="manufacture_date" value="{{ $container->manufacture_date }}" required>
+                        <label>Manufacture Date</label>
+                        <input class="input" type="date" name="manufacture_date" value="{{ $container->manufacture_date }}">
                     </div>
 
                     <div class="field">
-                        <label>Max Operating Weight*</label>
-                        <input class="input" type="number" name="max_operating_weight" value="{{ $container->max_operating_weight }}" required>
+                        <label>Max Operating Weight</label>
+                        <input class="input" type="number" name="max_operating_weight" value="{{ $container->max_operating_weight }}">
                     </div>
 
                     <div class="field">
-                        <label>Stacking Weight*</label>
-                        <input class="input" type="number" name="stacking_weight" value="{{ $container->stacking_weight }}" required>
+                        <label>Stacking Weight</label>
+                        <input class="input" type="number" name="stacking_weight" value="{{ $container->stacking_weight }}">
                     </div>
 
                     <div class="field">
-                        <label>Next Examination*</label>
-                        <input class="input" type="date" name="next_examination_date" value="{{ $container->next_examination_date }}" required>
+                        <label>Next Examination</label>
+                        <input class="input" type="date" name="next_examination_date" value="{{ $container->next_examination_date }}">
                     </div>
 
                 </div>

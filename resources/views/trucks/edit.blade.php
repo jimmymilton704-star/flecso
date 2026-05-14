@@ -207,21 +207,21 @@
                         </div>
 
                         <div class="field">
-                            <label>VIN Number*</label>
+                            <label>VIN Number</label>
                             <input class="input" type="text" name="vin_number"
-                                value="{{ old('vin_number', $truck->vin_number) }}" required>
+                                value="{{ old('vin_number', $truck->vin_number) }}" >
                         </div>
 
                         <div class="field">
-                            <label>Registration Date*</label>
+                            <label>Registration Date</label>
                             <input class="input" type="date" name="first_registration_date"
                                 value="{{ old('first_registration_date', $truck->first_registration_date ? \Carbon\Carbon::parse($truck->first_registration_date)->format('Y-m-d') : '') }}"
-                                required>
+                                >
                         </div>
 
                         <div class="field">
-                            <label>Usage Type*</label>
-                            <select name="usage_type" required>
+                            <label>Usage Type</label>
+                            <select name="usage_type">
                                 <option value="Owned"
                                     {{ old('usage_type', $truck->usage_type) == 'Owned' ? 'selected' : '' }}>Owned</option>
                                 <option value="Leased"
@@ -280,8 +280,8 @@
                     <div class="form-grid">
 
                         <div class="field">
-                            <label>Vehicle Category*</label>
-                            <select name="vehicle_category" required>
+                            <label>Vehicle Category</label>
+                            <select name="vehicle_category">
                                 <option value="N1"
                                     {{ old('vehicle_category', $truck->vehicle_category) == 'N1' ? 'selected' : '' }}>N1
                                 </option>
@@ -295,32 +295,32 @@
                         </div>
 
                         <div class="field">
-                            <label>GVW (kg)*</label>
+                            <label>GVW (kg)</label>
                             <input class="input" type="number" name="gvw_kg"
-                                value="{{ old('gvw_kg', $truck->gvw_kg) }}" required>
+                                value="{{ old('gvw_kg', $truck->gvw_kg) }}">
                         </div>
 
                         <div class="field">
-                            <label>Payload Capacity (kg)*</label>
+                            <label>Payload Capacity (kg)</label>
                             <input class="input" type="number" name="payload_capacity_kg"
-                                value="{{ old('payload_capacity_kg', $truck->payload_capacity_kg) }}" required>
+                                value="{{ old('payload_capacity_kg', $truck->payload_capacity_kg) }}">
                         </div>
 
                         <div class="field">
-                            <label>Axles*</label>
+                            <label>Axles</label>
                             <input class="input" type="number" name="number_of_axles"
-                                value="{{ old('number_of_axles', $truck->number_of_axles) }}" required>
+                                value="{{ old('number_of_axles', $truck->number_of_axles) }}">
                         </div>
 
                         <div class="field">
-                            <label>Engine Class*</label>
+                            <label>Engine Class</label>
                             <input class="input" type="text" name="engine_class"
-                                value="{{ old('engine_class', $truck->engine_class) }}" required>
+                                value="{{ old('engine_class', $truck->engine_class) }}">
                         </div>
 
                         <div class="field">
-                            <label>Fuel Type*</label>
-                            <select name="fuel_type" required>
+                            <label>Fuel Type</label>
+                            <select name="fuel_type">
                                 <option value="Diesel"
                                     {{ old('fuel_type', $truck->fuel_type) == 'Diesel' ? 'selected' : '' }}>Diesel</option>
                                 <option value="Electric"
@@ -335,7 +335,9 @@
                             <select name="driver_id">
                                 <option value="">-- Select Driver --</option>
                                 @foreach ($drivers as $driver)
-                                    <option value="{{ $driver->id }}">{{ $driver->full_name }}</option>
+                                    <option value="{{ $driver->id }}" {{ old('driver_id', $truck->driver_id) == $driver->id ? 'selected' : '' }}>
+                                        {{ $driver->full_name }}
+                                    </option>
                                     
                                 @endforeach
                                 
@@ -353,43 +355,43 @@
                     <div class="form-grid">
 
                         <div class="field">
-                            <label>Next Inspection*</label>
+                            <label>Next Inspection</label>
                             <input class="input" type="date" name="next_inspection_date"
                                 value="{{ old('next_inspection_date', $truck->next_inspection_date ? \Carbon\Carbon::parse($truck->next_inspection_date)->format('Y-m-d') : '') }}"
-                                required>
+                                >
                         </div>
 
                         <div class="field">
-                            <label>Insurance Policy*</label>
+                            <label>Insurance Policy</label>
                             <input class="input" type="text" name="insurance_policy_number"
-                                value="{{ old('insurance_policy_number', $truck->insurance_policy_number) }}" required>
+                                value="{{ old('insurance_policy_number', $truck->insurance_policy_number) }}">
                         </div>
 
                         <div class="field">
-                            <label>Insurance Expiry*</label>
+                            <label>Insurance Expiry</label>
                             <input class="input" type="date" name="insurance_expiry_date"
                                 value="{{ old('insurance_expiry_date', $truck->insurance_expiry_date ? \Carbon\Carbon::parse($truck->insurance_expiry_date)->format('Y-m-d') : '') }}"
-                                required>
+                                >
                         </div>
 
                         <div class="field">
-                            <label>Tachograph Expiry*</label>
+                            <label>Tachograph Expiry</label>
                             <input class="input" type="date" name="tachograph_calibration_expiry"
                                 value="{{ old('tachograph_calibration_expiry', $truck->tachograph_calibration_expiry ? \Carbon\Carbon::parse($truck->tachograph_calibration_expiry)->format('Y-m-d') : '') }}"
                                 required>
                         </div>
 
                         <div class="field">
-                            <label>Bollo Expiry*</label>
+                            <label>Bollo Expiry</label>
                             <input class="input" type="date" name="bollo_expiry_date"
                                 value="{{ old('bollo_expiry_date', $truck->bollo_expiry_date ? \Carbon\Carbon::parse($truck->bollo_expiry_date)->format('Y-m-d') : '') }}"
-                                required>
+                                >
                         </div>
 
                     </div>
 
                     <div class="card__head">
-                        <h3><span class="count">4.</span> Health</h3>
+                        <h3><span class="count">5.</span> Health</h3>
                     </div>
                     <div class="card__body">
                         <div class="form-grid">

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -27,6 +26,18 @@ return new class extends Migration
             $table->string('file')->nullable(); // image, pdf, etc
             $table->string('file_type')->nullable(); // image, video, doc
             $table->string('file_name')->nullable();
+
+            $table->text('translated_message')->nullable();
+
+            $table->string('original_language')->nullable();
+
+            $table->string('translated_language')->nullable();
+
+            $table->text('voice_message')->nullable();
+
+            $table->text('translated_voice')->nullable();
+
+            $table->boolean('is_voice')->default(false);
 
             // Seen / read
             $table->boolean('is_seen')->default(false);

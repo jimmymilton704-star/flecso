@@ -25,7 +25,7 @@
         </div>
 
         <div class="onb-field">
-            <label>Company type <span class="req">*</span></label>
+            <label>Company type</label>
 
             <select name="company_type">
                 <option value="">Select</option>
@@ -35,19 +35,19 @@
         </div>
 
         <div class="onb-field">
-            <label>VAT Number <span class="req">*</span></label>
+            <label>VAT Number</label>
             <input type="text" name="vat_number" class="onb-input"
                    value="{{ old('vat_number', auth()->user()->vat_number) }}">
         </div>
 
         <div class="onb-field">
-            <label>Fiscal code <span class="req">*</span></label>
+            <label>Fiscal code</label>
             <input type="text" name="fiscal_code" class="onb-input"
                    value="{{ old('fiscal_code', auth()->user()->fiscal_code) }}">
         </div>
 
         <div class="onb-field">
-            <label>REA Number <span class="req">*</span></label>
+            <label>REA Number</label>
             <input type="text" name="rea_number" class="onb-input"
                    value="{{ old('rea_number', auth()->user()->rea_number) }}">
         </div>

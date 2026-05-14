@@ -1,0 +1,3 @@
+truck_number,truck_license_number,capacity_tons,truck_type_category,type,status,license_plate_number,vin_number,first_registration_date,usage_type,vehicle_category,gvw_kg,payload_capacity_kg,number_of_axles,engine_class,fuel_type,next_inspection_date,insurance_policy_number,insurance_expiry_date,tachograph_calibration_expiry,bollo_expiry_date,current_km,estimate_km,driver_email
+TRK-1001,LIC-1001,20,Semi-Truck,Heavy,active,AB123CD,VIN123456789,2024-01-10,Owned,N3,18000,12000,4,Euro6,Diesel,2026-01-01,INS-123,2026-02-01,2026-03-01,2026-04-01,150000,160000,john@example.com
+TRK-1002,LIC-1002,15,Flatbed,Medium,idle,XY987ZT,VIN987654321,2023-06-15,Leased,N2,14000,9000,3,Euro5,Diesel,2026-05-01,INS-456,2026-06-01,2026-07-01,2026-08-01,90000,100000,mike@example.com

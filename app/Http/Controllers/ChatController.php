@@ -6,7 +6,7 @@ use App\Models\Chat;
 use App\Models\Driver;
 use App\Models\Message;
 use Illuminate\Http\Request;
-
+use App\Services\VoiceTranslationService;
 class ChatController extends Controller
 {
     /*
@@ -82,93 +82,90 @@ class ChatController extends Controller
     | SEND MESSAGE
     |-----------------------------------------
     */
+
+
     // public function sendMessage(Request $request)
     // {
-    //     $auth = $this->getAuthUser();
-
     //     $request->validate([
     //         'chat_id' => 'required|exists:chats,id',
     //         'message' => 'nullable|string',
     //         'file' => 'nullable|file|max:10240',
+    //         'voice' => 'nullable|file|max:10240',
+    //         'translate_to' => 'nullable|string',
     //     ]);
 
-    //     $chat = Chat::find($request->chat_id);
+    //     $auth = $this->getAuthUser();
+
+    //     $chat = Chat::findOrFail($request->chat_id);
 
     //     /*
-    //     |-----------------------------------------
-    //     | SECURITY CHECK
-    //     |-----------------------------------------
+    //     |--------------------------------------------------------------------------
+    //     | SECURITY
+    //     |--------------------------------------------------------------------------
     //     */
     //     if ($chat->admin_id != $auth['user']->id) {
 
     //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Unauthorized chat access'
-    //         ], 403);
+    //             'status' => false
+    //         ]);
     //     }
 
-    //     $data = [
-    //         'chat_id' => $request->chat_id,
-    //         'sender_type' => 'admin',
-    //         'sender_id' => $auth['user']->id,
-    //         'message' => $request->message,
-    //     ];
+    //     $filePath = null;
+    //     $fileType = null;
+    //     $fileName = null;
 
     //     /*
-    //     |-----------------------------------------
-    //     | FILE UPLOAD
-    //     |-----------------------------------------
+    //     |--------------------------------------------------------------------------
+    //     | UPLOAD FILE
+    //     |--------------------------------------------------------------------------
     //     */
     //     if ($request->hasFile('file')) {
 
     //         $file = $request->file('file');
 
-    //         $name = time() . '_' . $file->getClientOriginalName();
-
-    //         $file->move(public_path('uploads/chat'), $name);
-
-    //         $data['file'] = 'uploads/chat/' . $name;
+    //         $filePath = $file->store('chat-files', 'public');
 
     //         $mime = $file->getMimeType();
 
-    //         if (str_contains($mime, 'image')) {
+    //         $fileType = str_contains($mime, 'image')
+    //             ? 'image'
+    //             : 'file';
 
-    //             $data['file_type'] = 'image';
-
-    //         } elseif (str_contains($mime, 'video')) {
-
-    //             $data['file_type'] = 'video';
-
-    //         } else {
-
-    //             $data['file_type'] = 'document';
-    //         }
+    //         $fileName = $file->getClientOriginalName();
     //     }
 
-    //     $message = Message::create($data);
+
 
     //     /*
-    //     |-----------------------------------------
-    //     | UPDATE CHAT
-    //     |-----------------------------------------
+    //     |--------------------------------------------------------------------------
+    //     | CREATE MESSAGE
+    //     |--------------------------------------------------------------------------
     //     */
-    //     $chat->update([
-    //         'last_message' => $request->message ?? 'File',
-    //         'last_message_at' => now()
+    //     $message = Message::create([
+    //         'chat_id' => $chat->id,
+    //         'sender_type' => 'admin',
+    //         'sender_id' => $auth['user']->id,
+    //         'message' => $request->message,
+    //         'file' => $filePath
+    //             ? asset('storage/' . $filePath)
+    //             : null,
+    //         'file_type' => $fileType,
+    //         'file_name' => $fileName,
     //     ]);
 
     //     /*
-    //     |-----------------------------------------
-    //     | LOAD RELATIONS
-    //     |-----------------------------------------
+    //     |--------------------------------------------------------------------------
+    //     | UPDATE CHAT
+    //     |--------------------------------------------------------------------------
     //     */
-    //     $message->load('chat.driver');
+    //     $chat->update([
+    //         'last_message' => $request->message
+    //             ?: ($fileType === 'image'
+    //                 ? '📷 Image'
+    //                 : '📎 File'),
+    //         'last_message_at' => now()
+    //     ]);
 
-    //     /*
-    //     |-----------------------------------------
-    //     | WEBSOCKET EVENT
-    //     |-----------------------------------------
-    //     */
     //     event(new \App\Events\MessageSent($message));
 
     //     return response()->json([
@@ -177,13 +174,14 @@ class ChatController extends Controller
     //     ]);
     // }
 
-
     public function sendMessage(Request $request)
     {
         $request->validate([
             'chat_id' => 'required|exists:chats,id',
             'message' => 'nullable|string',
-            'file' => 'nullable|file|max:10240'
+            'file' => 'nullable|file|max:10240',
+            'voice' => 'nullable|file|max:10240',
+            'translate_to' => 'nullable|string',
         ]);
 
         $auth = $this->getAuthUser();
@@ -206,9 +204,18 @@ class ChatController extends Controller
         $fileType = null;
         $fileName = null;
 
+        $messageText = $request->message;
+
         /*
         |--------------------------------------------------------------------------
-        | UPLOAD FILE
+        | OPENAI CLIENT
+        |--------------------------------------------------------------------------
+        */
+        $openai = \OpenAI::client(env('OPENAI_API_KEY'));
+
+        /*
+        |--------------------------------------------------------------------------
+        | NORMAL FILE UPLOAD
         |--------------------------------------------------------------------------
         */
         if ($request->hasFile('file')) {
@@ -228,6 +235,65 @@ class ChatController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | VOICE MESSAGE
+        |--------------------------------------------------------------------------
+        */
+        if ($request->hasFile('voice')) {
+
+            $voice = $request->file('voice');
+
+            /*
+            |--------------------------------------------------------------------------
+            | STORE VOICE FILE
+            |--------------------------------------------------------------------------
+            */
+            $voicePath = $voice->store('chat-voice', 'public');
+
+            $filePath = $voicePath;
+            $fileType = 'voice';
+            $fileName = $voice->getClientOriginalName();
+
+            /*
+            |--------------------------------------------------------------------------
+            | SPEECH TO TEXT (WHISPER)
+            |--------------------------------------------------------------------------
+            */
+            $transcription = $openai->audio()->transcribe([
+                'model' => 'whisper-1',
+                'file' => fopen($voice->getRealPath(), 'r'),
+            ]);
+
+            $messageText = $transcription->text;
+
+            /*
+            |--------------------------------------------------------------------------
+            | TRANSLATE IF REQUESTED
+            |--------------------------------------------------------------------------
+            */
+            if ($request->translate_to) {
+
+                $translate = $openai->chat()->create([
+                    'model' => 'gpt-4.1-mini',
+                    'messages' => [
+                        [
+                            'role' => 'system',
+                            'content' => 'Translate the message only.'
+                        ],
+                        [
+                            'role' => 'user',
+                            'content' =>
+                                "Translate this into {$request->translate_to}: {$messageText}"
+                        ]
+                    ],
+                ]);
+
+                $messageText =
+                    $translate->choices[0]->message->content;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
         | CREATE MESSAGE
         |--------------------------------------------------------------------------
         */
@@ -235,13 +301,33 @@ class ChatController extends Controller
             'chat_id' => $chat->id,
             'sender_type' => 'admin',
             'sender_id' => $auth['user']->id,
-            'message' => $request->message,
+            'message' => $messageText,
+
             'file' => $filePath
                 ? asset('storage/' . $filePath)
                 : null,
+
             'file_type' => $fileType,
             'file_name' => $fileName,
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | LAST MESSAGE TEXT
+        |--------------------------------------------------------------------------
+        */
+        $lastMessage = $messageText;
+
+        if (!$lastMessage) {
+
+            if ($fileType === 'image') {
+                $lastMessage = '📷 Image';
+            } elseif ($fileType === 'voice') {
+                $lastMessage = '🎤 Voice Message';
+            } elseif ($fileType === 'file') {
+                $lastMessage = '📎 File';
+            }
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -249,13 +335,15 @@ class ChatController extends Controller
         |--------------------------------------------------------------------------
         */
         $chat->update([
-            'last_message' => $request->message
-                ?: ($fileType === 'image'
-                    ? '📷 Image'
-                    : '📎 File'),
+            'last_message' => $lastMessage,
             'last_message_at' => now()
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | BROADCAST
+        |--------------------------------------------------------------------------
+        */
         event(new \App\Events\MessageSent($message));
 
         return response()->json([

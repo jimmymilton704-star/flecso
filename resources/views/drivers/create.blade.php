@@ -48,6 +48,65 @@
             </div>
         </div>
 
+        {{-- CSV IMPORT --}}
+        <div class="card" style="margin-bottom:20px;">
+
+            <div class="card__head">
+                <h3>Import Drivers From CSV</h3>
+            </div>
+
+            <div class="card__body">
+
+                <form action="{{ route('drivers.import') }}" method="POST" enctype="multipart/form-data">
+
+                    @csrf
+
+                    <div class="form-grid">
+
+                        <div class="field full">
+
+                            <label>Upload CSV File</label>
+
+                            <label class="upload-box">
+
+                                <input type="file" name="csv_file" id="driverCsvUpload" accept=".csv" hidden required>
+
+                                <div class="upload-content">
+
+                                    <strong id="driverCsvText">
+                                        Click to upload CSV
+                                    </strong>
+
+                                    <span id="driverCsvSub">
+                                        CSV format only
+                                    </span>
+
+                                </div>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+
+                        <button type="submit" class="btn btn--primary">
+                            Import Drivers
+                        </button>
+
+                        <a href="{{ asset('samples/drivers-sample.csv') }}" class="btn btn--ghost" download>
+                            Download Sample CSV
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
         <form action="{{ route('drivers.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
@@ -70,12 +129,12 @@
                     <div class="form-grid">
                         <div class="field">
                             <label>Full Name*</label>
-                            <input class="input" type="text" name="full_name" required value="{{ old('full_name') }}">
+                            <input class="input" type="text" name="full_name" required value="{{ old('full_name') }}" required>
                         </div>
 
                         <div class="field">
                             <label>Email Address*</label>
-                            <input class="input" type="email" name="email" required value="{{ old('email') }}">
+                            <input class="input" type="email" name="email" required value="{{ old('email') }}" required>
                         </div>
 
                         <div class="field">
@@ -352,5 +411,20 @@
         }
 
         window.addEventListener('load', initAddressAutocomplete);
+    </script>
+
+    <script>
+        document.getElementById('driverCsvUpload').addEventListener('change', function () {
+
+            let fileName = this.files[0]?.name;
+
+            if (fileName) {
+
+                document.getElementById('driverCsvText').innerText = fileName;
+
+                document.getElementById('driverCsvSub').innerText =
+                    "CSV selected successfully";
+            }
+        });
     </script>
 @endsection
