@@ -695,13 +695,12 @@ class AuthController extends Controller
                 ], 403);
             }
 
-           if($driver->phone_verified_at == null)
-           {
-            return response()->json([
-                'status'  => false,
-                'message' => 'Phone number is not verified.'
-            ], 403);
-           }
+            $driver->update([
+                'phone'                => $phone,
+                'phone_otp'            => $request->phone_otp,
+                'phone_verified_at'    => now(),
+                'phone_otp_expires_at' => now()->addMinute(),
+            ]);
 
             $token = $driver->createToken('driver-token')->plainTextToken;
 
