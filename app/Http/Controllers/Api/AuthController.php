@@ -579,13 +579,11 @@ class AuthController extends Controller
         | If frontend verified phone OTP during login, update verification fields.
         |--------------------------------------------------------------------------
         */
-            if ($request->boolean('is_verified')) {
+            
                 $user->update([
-                    'phone_otp'            => $request->phone_otp,
-                    'phone_otp_expires_at' => now()->addMinute(),
                     'phone_verified_at'    => now(),
                 ]);
-            }
+            
 
             if (!$user->phone_verified_at) {
                 return response()->json([
