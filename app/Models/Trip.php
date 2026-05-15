@@ -30,6 +30,8 @@ class Trip extends Model
         'schedule_datetime',
         'payment_amount',
         'trip_status',
+        'truck_verified',
+        'container_verified',
 
         // Delivery Contact
         'delivery_name',
