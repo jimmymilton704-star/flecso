@@ -175,13 +175,13 @@ class ChatController extends Controller
     //     ]);
     // }
 
-    public function sendMessage(Request $request)
+    public function sendMessage(Request $request, VoiceTranslationService $voiceTranslationService)
     {
         $request->validate([
             'chat_id'      => 'required|exists:chats,id',
             'message'      => 'nullable|string',
-            'file'         => 'nullable|file|max:10240',
-            'voice'        => 'nullable|file|max:10240',
+            'file'         => 'nullable|file|max:20480',
+            'voice'        => 'nullable|file|max:20480',
             'translate_to' => 'nullable|string',
         ]);
 
@@ -196,8 +196,25 @@ class ChatController extends Controller
     */
         if ($chat->admin_id != $auth['user']->id) {
             return response()->json([
-                'status' => false
-            ]);
+                'status'  => false,
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | REQUIRE MESSAGE OR FILE OR VOICE
+    |--------------------------------------------------------------------------
+    */
+        if (
+            !$request->message &&
+            !$request->hasFile('file') &&
+            !$request->hasFile('voice')
+        ) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Message, file, or voice is required'
+            ], 422);
         }
 
         $fileUrl = null;
@@ -207,24 +224,46 @@ class ChatController extends Controller
 
         /*
     |--------------------------------------------------------------------------
-    | OPENAI CLIENT
+    | IMAGE / FILE UPLOAD DIRECTLY TO PUBLIC
     |--------------------------------------------------------------------------
     */
-        $openai = \OpenAI::client(env('OPENAI_API_KEY'));
-
         /*
-    |--------------------------------------------------------------------------
-    | NORMAL FILE UPLOAD TO PUBLIC
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| IMAGE / FILE UPLOAD DIRECTLY TO PUBLIC
+|--------------------------------------------------------------------------
+*/
         if ($request->hasFile('file')) {
 
             $file = $request->file('file');
 
+            if (!$file->isValid()) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Uploaded file is not valid'
+                ], 422);
+            }
+
+            /*
+    |--------------------------------------------------------------------------
+    | GET MIME BEFORE MOVE
+    |--------------------------------------------------------------------------
+    */
+            $mime = $file->getMimeType();
+
             $extension = strtolower($file->getClientOriginalExtension());
 
             if (!$extension) {
-                $extension = 'file';
+                if (str_contains($mime, 'jpeg')) {
+                    $extension = 'jpg';
+                } elseif (str_contains($mime, 'png')) {
+                    $extension = 'png';
+                } elseif (str_contains($mime, 'webp')) {
+                    $extension = 'webp';
+                } elseif (str_contains($mime, 'gif')) {
+                    $extension = 'gif';
+                } else {
+                    $extension = 'file';
+                }
             }
 
             $fileName = 'chat-file-' . time() . '-' . uniqid() . '.' . $extension;
@@ -235,96 +274,95 @@ class ChatController extends Controller
                 mkdir($uploadFolder, 0777, true);
             }
 
+            /*
+    |--------------------------------------------------------------------------
+    | MOVE FILE AFTER MIME CHECK
+    |--------------------------------------------------------------------------
+    */
             $file->move($uploadFolder, $fileName);
 
             $fileUrl = asset('uploads/chat-files/' . $fileName);
 
-            $mime = $file->getMimeType();
+            if (str_contains($mime, 'image')) {
+                $fileType = 'image';
+            } elseif (str_contains($mime, 'video')) {
+                $fileType = 'video';
+            } else {
+                $fileType = 'file';
+            }
 
-            $fileType = str_contains($mime, 'image')
-                ? 'image'
-                : 'file';
+            $messageText = null;
         }
-
         /*
     |--------------------------------------------------------------------------
-    | VOICE MESSAGE UPLOAD TO PUBLIC
+    | VOICE UPLOAD + TRANSLATED ITALIAN VOICE
     |--------------------------------------------------------------------------
     */
         if ($request->hasFile('voice')) {
 
-            $voice = $request->file('voice');
+            try {
 
-            /*
-        |--------------------------------------------------------------------------
-        | GET SAFE EXTENSION
-        |--------------------------------------------------------------------------
-        */
-            $extension = strtolower($voice->getClientOriginalExtension());
+                $voice = $request->file('voice');
 
-            if (!$extension) {
-                $mime = $voice->getMimeType();
+                if (!$voice->isValid()) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Uploaded voice is not valid'
+                    ], 422);
+                }
 
-                $extension = match ($mime) {
-                    'audio/webm', 'video/webm' => 'webm',
-                    'audio/mpeg', 'audio/mp3' => 'mp3',
-                    'audio/mp4', 'audio/m4a' => 'm4a',
-                    'audio/wav', 'audio/x-wav' => 'wav',
-                    'audio/ogg', 'application/ogg' => 'ogg',
-                    default => 'webm',
-                };
-            }
+                $extension = strtolower($voice->getClientOriginalExtension());
 
-            $voiceFileName = 'voice-' . time() . '-' . uniqid() . '.' . $extension;
+                if (!$extension) {
+                    $mime = $voice->getMimeType();
 
-            $voiceFolder = public_path('uploads/chat-voice');
+                    $extension = match ($mime) {
+                        'audio/webm', 'video/webm' => 'webm',
+                        'audio/mpeg', 'audio/mp3' => 'mp3',
+                        'audio/mp4', 'audio/m4a' => 'm4a',
+                        'audio/wav', 'audio/x-wav' => 'wav',
+                        'audio/ogg', 'application/ogg' => 'ogg',
+                        default => 'webm',
+                    };
+                }
 
-            if (!file_exists($voiceFolder)) {
-                mkdir($voiceFolder, 0777, true);
-            }
+                $originalVoiceName = 'original-voice-' . time() . '-' . uniqid() . '.' . $extension;
 
-            $voice->move($voiceFolder, $voiceFileName);
+                $voiceFolder = public_path('uploads/chat-voice/original');
 
-            $realAudioPath = public_path('uploads/chat-voice/' . $voiceFileName);
+                if (!file_exists($voiceFolder)) {
+                    mkdir($voiceFolder, 0777, true);
+                }
 
-            $fileUrl = asset('uploads/chat-voice/' . $voiceFileName);
-            $fileType = 'voice';
-            $fileName = $voiceFileName;
+                $voice->move($voiceFolder, $originalVoiceName);
 
-            /*
-        |--------------------------------------------------------------------------
-        | SPEECH TO TEXT
-        |--------------------------------------------------------------------------
-        */
-            $transcription = $openai->audio()->transcribe([
-                'model' => 'whisper-1',
-                'file'  => fopen($realAudioPath, 'r'),
-            ]);
+                $realAudioPath = public_path('uploads/chat-voice/original/' . $originalVoiceName);
 
-            $messageText = $transcription->text;
+                $targetLanguage = $request->translate_to ?: 'Italian';
 
-            /*
-        |--------------------------------------------------------------------------
-        | TRANSLATE IF REQUESTED
-        |--------------------------------------------------------------------------
-        */
-            if ($request->translate_to) {
+                if ($targetLanguage === 'it') {
+                    $targetLanguage = 'Italian';
+                }
 
-                $translate = $openai->chat()->create([
-                    'model' => 'gpt-4.1-mini',
-                    'messages' => [
-                        [
-                            'role' => 'system',
-                            'content' => 'Translate the message only. Do not add explanation.'
-                        ],
-                        [
-                            'role' => 'user',
-                            'content' => "Translate this into {$request->translate_to}: {$messageText}"
-                        ]
-                    ],
-                ]);
+                $voiceResult = $voiceTranslationService->process(
+                    $realAudioPath,
+                    $targetLanguage
+                );
 
-                $messageText = $translate->choices[0]->message->content;
+                $messageText = $voiceResult['translated_text'];
+                $fileUrl = $voiceResult['translated_voice'];
+                $fileType = 'voice';
+
+                $fileName = basename(
+                    parse_url($voiceResult['translated_voice'], PHP_URL_PATH)
+                );
+            } catch (\Throwable $e) {
+
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Voice translation failed',
+                    'error'   => $e->getMessage()
+                ], 500);
             }
         }
 
@@ -353,6 +391,8 @@ class ChatController extends Controller
         if (!$lastMessage) {
             if ($fileType === 'image') {
                 $lastMessage = '📷 Image';
+            } elseif ($fileType === 'video') {
+                $lastMessage = '🎥 Video';
             } elseif ($fileType === 'voice') {
                 $lastMessage = '🎤 Voice Message';
             } elseif ($fileType === 'file') {
@@ -372,14 +412,25 @@ class ChatController extends Controller
 
         /*
     |--------------------------------------------------------------------------
-    | BROADCAST
+    | BROADCAST EVENT
     |--------------------------------------------------------------------------
     */
         event(new \App\Events\MessageSent($message));
 
         return response()->json([
-            'status' => true,
-            'data'   => $message
+            'status'  => true,
+            'message' => 'Message sent successfully',
+            'data'    => [
+                'id'          => $message->id,
+                'chat_id'     => $message->chat_id,
+                'sender_type' => $message->sender_type,
+                'sender_id'   => $message->sender_id,
+                'message'     => $message->message,
+                'file'        => $message->file,
+                'file_type'   => $message->file_type,
+                'file_name'   => $message->file_name,
+                'created_at'  => $message->created_at,
+            ]
         ]);
     }
     /*

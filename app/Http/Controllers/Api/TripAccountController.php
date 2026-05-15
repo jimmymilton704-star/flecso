@@ -208,6 +208,12 @@ class TripAccountController extends Controller
     {
         $driver = auth('driver')->user();
         $adminId = $driver->admin_id;
+        if (!$driver) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized. user not found.',
+            ], 401);
+        }
 
         $request->validate([
             'trip_id' => 'required|exists:trips,id',
