@@ -1231,7 +1231,7 @@
             </div>
         @endforeach
 
-        <div class="pagination" style="margin-top:18px">
+        <div class="pagination">
             <div class="meta">
                 Showing {{ $trips->firstItem() ?? 0 }}–{{ $trips->lastItem() ?? 0 }} of {{ $trips->total() }} trips
             </div>

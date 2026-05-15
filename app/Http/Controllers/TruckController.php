@@ -24,8 +24,15 @@ class TruckController extends Controller
         $trucks = Truck::where('admin_id', $adminId)
             ->latest()
             ->paginate(10);
+        $tripStats = [
+            'active'     => Truck::where('status', 'active')->count(),
+            'pending'    => Truck::where('status', 'maintenance')->count(),
+            'completed'  => Truck::where('status', 'idle')->count(),
+            'cancelled'  => Truck::where('status', 'inactive')->count(),
+            'total'      => Truck::count(),
+        ];
 
-        return view('trucks.index', compact('trucks'));
+        return view('trucks.index', compact('trucks', 'tripStats'));
     }
 
     /*
@@ -262,7 +269,7 @@ class TruckController extends Controller
 
                 $data = array_combine($header, $row);
 
-                
+
                 /*
                 | DRIVER LOOKUP
                 */
@@ -329,7 +336,6 @@ class TruckController extends Controller
             DB::commit();
 
             return back()->with('success', 'Trucks imported successfully.');
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -337,6 +343,4 @@ class TruckController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
-
-
 }
