@@ -51,7 +51,7 @@ class ChatController extends Controller
     | SEND MESSAGE
     |-----------------------------------------
     */
-   
+    
 
     public function sendMessage(Request $request, VoiceTranslationService $voiceTranslationService)
 {
@@ -110,64 +110,82 @@ class ChatController extends Controller
     $fileName = null;
     $messageText = $request->message;
 
-    /*
-    |--------------------------------------------------------------------------
-    | FILE UPLOAD (FIXED - NO 500 ERRORS)
-    |--------------------------------------------------------------------------
-    */
+    
     if ($request->hasFile('file')) {
 
-        try {
+      try {
+          $file = $request->file('file');
 
-            $file = $request->file('file');
+          if (!$file || !$file->isValid()) {
+              return response()->json([
+                  'status'  => false,
+                  'message' => 'Invalid file upload',
+                  'error'   => $file ? $file->getErrorMessage() : 'No file found',
+              ], 422);
+          }
 
-            if (!$file || !$file->isValid()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Invalid file upload'
-                ], 422);
-            }
+          $extension = strtolower($file->getClientOriginalExtension());
 
-            $uploadPath = public_path('uploads/chat-files');
+          if (!$extension) {
+              $extension = 'file';
+          }
 
-            if (!file_exists($uploadPath)) {
-                mkdir($uploadPath, 0777, true);
-            }
+          $fileName = 'chat-file-' . time() . '-' . uniqid() . '.' . $extension;
 
-            $extension = strtolower($file->getClientOriginalExtension());
+          $uploadPath = public_path('uploads/chat-files');
 
-            if (!$extension) {
-                $extension = 'file';
-            }
+          if (!is_dir($uploadPath)) {
+              mkdir($uploadPath, 0775, true);
+          }
 
-            $fileName = 'chat-file-' . time() . '-' . uniqid() . '.' . $extension;
+          if (!is_writable($uploadPath)) {
+              return response()->json([
+                  'status'  => false,
+                  'message' => 'Upload folder is not writable',
+                  'path'    => $uploadPath,
+              ], 500);
+          }
 
-            $file->move($uploadPath, $fileName);
+          /*
+          |--------------------------------------------------------------------------
+          | Get mime type before moving file
+          |--------------------------------------------------------------------------
+          */
+          $mime = $file->getMimeType() ?? '';
 
-            $fileUrl = asset('uploads/chat-files/' . $fileName);
+          if (str_contains($mime, 'image')) {
+              $fileType = 'image';
+          } elseif (str_contains($mime, 'video')) {
+              $fileType = 'video';
+          } else {
+              $fileType = 'file';
+          }
 
-            $mime = $file->getMimeType() ?? '';
+          /*
+          |--------------------------------------------------------------------------
+          | Now move file
+          |--------------------------------------------------------------------------
+          */
+          $file->move($uploadPath, $fileName);
 
-            if (str_contains($mime, 'image')) {
-                $fileType = 'image';
-            } elseif (str_contains($mime, 'video')) {
-                $fileType = 'video';
-            } else {
-                $fileType = 'file';
-            }
+          $fileUrl = asset('uploads/chat-files/' . $fileName);
 
-        } catch (\Throwable $e) {
+      } catch (\Throwable $e) {
 
-            \Log::error('Chat file upload failed', [
-                'error' => $e->getMessage()
-            ]);
+          \Log::error('Chat file upload failed', [
+              'error' => $e->getMessage(),
+              'line'  => $e->getLine(),
+              'file'  => $e->getFile(),
+          ]);
 
-            return response()->json([
-                'status' => false,
-                'message' => 'File upload failed'
-            ], 500);
-        }
-    }
+          return response()->json([
+              'status'  => false,
+              'message' => 'File upload failed',
+              'error'   => $e->getMessage(),
+              'line'    => $e->getLine(),
+          ], 500);
+      }
+  }
 
     /*
     |--------------------------------------------------------------------------
@@ -277,7 +295,6 @@ class ChatController extends Controller
         'data'    => $message
     ]);
 }
-
     /*
     |-----------------------------------------
     | GET MESSAGES
