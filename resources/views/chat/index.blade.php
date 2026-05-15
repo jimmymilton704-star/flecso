@@ -105,11 +105,6 @@
             color: #777;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | WHATSAPP STYLE MESSAGE DESIGN
-        |--------------------------------------------------------------------------
-        */
         .chat-msg {
             max-width: 320px;
             width: fit-content;
@@ -150,11 +145,6 @@
             padding: 0 4px;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | IMAGE MESSAGE
-        |--------------------------------------------------------------------------
-        */
         .wa-image-wrap {
             width: 245px;
             max-width: 100%;
@@ -177,11 +167,6 @@
             transform: scale(1.02);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | FILE MESSAGE
-        |--------------------------------------------------------------------------
-        */
         .wa-file-card {
             min-width: 245px;
             display: flex;
@@ -229,11 +214,6 @@
             margin-top: 2px;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | WHATSAPP STYLE VOICE
-        |--------------------------------------------------------------------------
-        */
         .wa-voice {
             width: 275px;
             max-width: 100%;
@@ -310,11 +290,6 @@
             display: none;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | IMAGE LIGHTBOX
-        |--------------------------------------------------------------------------
-        */
         .image-lightbox {
             position: fixed;
             inset: 0;
@@ -352,6 +327,89 @@
             cursor: pointer;
         }
 
+        .chat-composer {
+            position: relative;
+        }
+
+        .chat-preview-box {
+            position: absolute;
+            left: 20px;
+            /* right: 140px; */
+            bottom: 121px;
+            /* background: #ffffff; */
+            border: 1px solid #eeeeee;
+            border-radius: 14px;
+            padding: 10px 12px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+            z-index: 30;
+        }
+
+        .chat-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-preview-thumb {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #f3f4f6;
+            flex-shrink: 0;
+        }
+
+        .chat-preview-file-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            background: #fff4ee;
+            color: #ff6b00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .chat-preview-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-preview-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-preview-sub {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+        .chat-preview-remove {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: #fee2e2;
+            color: #dc2626;
+            font-size: 17px;
+            line-height: 1;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .chat-preview-audio {
+            width: 100%;
+            margin-top: 7px;
+        }
+
         @media (max-width: 768px) {
             .chat-msg {
                 max-width: 82%;
@@ -364,6 +422,12 @@
             .wa-image-wrap {
                 width: 230px;
             }
+
+            .chat-preview-box {
+                left: 12px;
+                right: 12px;
+                bottom: 72px;
+            }
         }
     </style>
 
@@ -375,9 +439,7 @@
                     <h2>Inbox</h2>
 
                     <div style="display:flex;gap:8px">
-                        <button class="icon-btn" id="broadcastBtn" title="Broadcast Message">
-                            📢
-                        </button>
+                        <button class="icon-btn" id="broadcastBtn" title="Broadcast Message">📢</button>
 
                         <button class="icon-btn" id="newConv" aria-label="New conversation" title="New conversation">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
@@ -415,7 +477,7 @@
                 </div>
 
                 <footer class="chat-composer">
-                    <button class="chat-composer__attach" id="chatAttach" aria-label="Attach">
+                    <button class="chat-composer__attach" id="chatAttach" type="button" aria-label="Attach">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path
@@ -425,15 +487,14 @@
                     </button>
 
                     <input type="file" id="chatFileInput" hidden>
+                    <div id="chatPreviewBox" class="chat-preview-box" style="display:none;"></div>
 
                     <input id="chatInput" class="chat-composer__input" type="text" placeholder="Type a message…"
                         autocomplete="off">
 
-                    <button class="chat-mic" id="voiceRecordBtn">
-                        🎤
-                    </button>
+                    <button class="chat-mic" id="voiceRecordBtn" type="button">🎤</button>
 
-                    <button class="chat-send" id="chatSend" disabled>
+                    <button class="chat-send" id="chatSend" type="button" disabled>
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m22 2-7 20-4-9-9-4Z"></path>
@@ -451,16 +512,14 @@
             <div class="new-chat-box">
                 <div class="new-chat-header">
                     <h3>Select Driver</h3>
-                    <button onclick="closeNewChatModal()">✕</button>
+                    <button type="button" onclick="closeNewChatModal()">✕</button>
                 </div>
 
                 <div class="new-chat-search">
                     <input type="text" id="driverSearch" placeholder="Search driver...">
                 </div>
 
-                <div class="new-chat-list" id="driverList">
-                    Loading...
-                </div>
+                <div class="new-chat-list" id="driverList">Loading...</div>
             </div>
         </div>
 
@@ -468,41 +527,21 @@
             <div class="new-chat-box">
                 <div class="new-chat-header">
                     <h3>Broadcast Message</h3>
-                    <button onclick="closeBroadcastModal()">✕</button>
+                    <button type="button" onclick="closeBroadcastModal()">✕</button>
                 </div>
 
                 <div class="new-chat-search">
                     <input type="text" id="broadcastDriverSearch" placeholder="Search driver...">
                 </div>
 
-                <div class="new-chat-list" id="broadcastDriverList">
-                    Loading...
-                </div>
+                <div class="new-chat-list" id="broadcastDriverList">Loading...</div>
 
                 <div style="padding:15px;border-top:1px solid #eee">
                     <textarea id="broadcastMessage" placeholder="Type broadcast message..."
-                        style="
-                    width:100%;
-                    height:120px;
-                    border:1px solid #ddd;
-                    border-radius:12px;
-                    padding:12px;
-                    resize:none;
-                    outline:none;
-                "></textarea>
+                        style="width:100%;height:120px;border:1px solid #ddd;border-radius:12px;padding:12px;resize:none;outline:none;"></textarea>
 
-                    <button id="sendBroadcastBtn"
-                        style="
-                    width:100%;
-                    height:46px;
-                    margin-top:12px;
-                    border:none;
-                    border-radius:12px;
-                    background:#ff6b1a;
-                    color:#fff;
-                    font-weight:700;
-                    cursor:pointer;
-                ">
+                    <button id="sendBroadcastBtn" type="button"
+                        style="width:100%;height:46px;margin-top:12px;border:none;border-radius:12px;background:#ff6b1a;color:#fff;font-weight:700;cursor:pointer;">
                         Send Broadcast
                     </button>
                 </div>
@@ -511,23 +550,11 @@
     </section>
 
     <div id="toast"
-        style="
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    background:#1f2937;
-    color:#fff;
-    padding:12px 16px;
-    border-radius:12px;
-    font-size:14px;
-    display:none;
-    z-index:99999;
-    box-shadow:0 10px 25px rgba(0,0,0,.2);
-">
+        style="position:fixed;bottom:20px;right:20px;background:#1f2937;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;display:none;z-index:99999;box-shadow:0 10px 25px rgba(0,0,0,.2);">
     </div>
 
     <div id="imageLightbox" class="image-lightbox" onclick="closeImageLightbox()">
-        <button class="image-lightbox__close" onclick="closeImageLightbox()">×</button>
+        <button class="image-lightbox__close" type="button" onclick="closeImageLightbox()">×</button>
         <img id="imageLightboxImg" src="" alt="">
     </div>
 
@@ -547,15 +574,18 @@
             }, 2500);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | GLOBALS
-        |--------------------------------------------------------------------------
-        */
         Pusher.logToConsole = true;
 
         let activeChatId = null;
         let activeChannel = null;
+
+        let selectedFile = null;
+        let selectedVoiceBlob = null;
+        let selectedVoiceExtension = null;
+        let selectedPreviewUrl = null;
+
+        let mediaRecorder = null;
+        let audioChunks = [];
 
         window.Pusher = Pusher;
 
@@ -568,11 +598,6 @@
             withCredentials: true,
         });
 
-        /*
-        |--------------------------------------------------------------------------
-        | HELPERS
-        |--------------------------------------------------------------------------
-        */
         function escapeHtml(value) {
             if (value === null || value === undefined) {
                 return '';
@@ -608,6 +633,15 @@
             body.scrollTop = body.scrollHeight;
         }
 
+        function secondsToTime(seconds) {
+            seconds = Math.floor(seconds || 0);
+
+            let min = Math.floor(seconds / 60);
+            let sec = seconds % 60;
+
+            return min + ':' + String(sec).padStart(2, '0');
+        }
+
         function openImageLightbox(src) {
             document.getElementById('imageLightboxImg').src = src;
             document.getElementById('imageLightbox').classList.add('active');
@@ -618,11 +652,100 @@
             document.getElementById('imageLightboxImg').src = '';
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | LOAD CHAT LIST
-        |--------------------------------------------------------------------------
-        */
+        function updateSendButtonState() {
+            let text = document.getElementById('chatInput').value.trim();
+
+            document.getElementById('chatSend').disabled = !(
+                text ||
+                selectedFile ||
+                selectedVoiceBlob
+            );
+        }
+
+        function clearChatPreview() {
+            selectedFile = null;
+            selectedVoiceBlob = null;
+            selectedVoiceExtension = null;
+
+            if (selectedPreviewUrl) {
+                URL.revokeObjectURL(selectedPreviewUrl);
+                selectedPreviewUrl = null;
+            }
+
+            let previewBox = document.getElementById('chatPreviewBox');
+
+            previewBox.style.display = 'none';
+            previewBox.innerHTML = '';
+
+            document.getElementById('chatFileInput').value = '';
+
+            updateSendButtonState();
+        }
+
+        function showFilePreview(file) {
+            clearChatPreview();
+
+            selectedFile = file;
+            selectedPreviewUrl = URL.createObjectURL(file);
+
+            let isImage = file.type.startsWith('image/');
+
+            let previewHtml = `
+                    <div class="chat-preview-item">
+                        ${
+                            isImage
+                                ? `<img 
+                                            class="chat-preview-thumb" 
+                                            src="${selectedPreviewUrl}" 
+                                            alt="Preview"
+                                            onclick="openImageLightbox('${selectedPreviewUrl}')"
+                                            style="cursor:pointer;"
+                                    >`
+                                : `<div class="chat-preview-file-icon">📎</div>`
+                        }
+
+                        <div class="chat-preview-info">
+                            <div class="chat-preview-title">${escapeHtml(file.name)}</div>
+                            <div class="chat-preview-sub">${isImage ? 'Image selected - click image to preview' : 'File selected'} - Ready to send</div>
+                        </div>
+
+                        <button type="button" class="chat-preview-remove" onclick="clearChatPreview()">×</button>
+                    </div>
+                `;
+
+            document.getElementById('chatPreviewBox').innerHTML = previewHtml;
+            document.getElementById('chatPreviewBox').style.display = 'block';
+
+            updateSendButtonState();
+        }
+
+        function showVoicePreview(audioBlob, extension = 'webm') {
+            clearChatPreview();
+
+            selectedVoiceBlob = audioBlob;
+            selectedVoiceExtension = extension;
+            selectedPreviewUrl = URL.createObjectURL(audioBlob);
+
+            let previewHtml = `
+                <div class="chat-preview-item">
+                    <div class="chat-preview-file-icon">🎤</div>
+
+                    <div class="chat-preview-info">
+                        <div class="chat-preview-title">Voice message recorded</div>
+                        <div class="chat-preview-sub">Preview voice before sending</div>
+                        <audio class="chat-preview-audio" controls src="${selectedPreviewUrl}"></audio>
+                    </div>
+
+                    <button type="button" class="chat-preview-remove" onclick="clearChatPreview()">×</button>
+                </div>
+            `;
+
+            document.getElementById('chatPreviewBox').innerHTML = previewHtml;
+            document.getElementById('chatPreviewBox').style.display = 'block';
+
+            updateSendButtonState();
+        }
+
         function loadChats() {
             fetch("{{ route('chat.list') }}")
                 .then(res => res.json())
@@ -639,64 +762,57 @@
 
                         if (chat.unread_count > 0) {
                             unreadBadge = `
-                            <span class="unread-badge" style="
-                                background:#ff6b1a;
-                                color:#fff;
-                                min-width:20px;
-                                height:20px;
-                                border-radius:50%;
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                font-size:11px;
-                                font-weight:700;
-                                margin-top:6px;
-                            ">
-                                ${chat.unread_count}
-                            </span>
-                        `;
+                                <span class="unread-badge" style="
+                                    background:#ff6b1a;
+                                    color:#fff;
+                                    min-width:20px;
+                                    height:20px;
+                                    border-radius:50%;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    font-size:11px;
+                                    font-weight:700;
+                                    margin-top:6px;
+                                ">
+                                    ${chat.unread_count}
+                                </span>
+                            `;
                         }
 
                         let preview = chat.last_message ?? '';
 
                         html += `
-                        <div class="conv-item" id="chat-item-${chat.id}" onclick="openChat(${chat.id})">
-                            <div class="conv-avatar">
-                                <img src="${image}" alt="">
-                            </div>
-
-                            <div class="conv-info">
-                                <div class="conv-name">
-                                    ${escapeHtml(chat.driver?.full_name ?? 'Driver')}
+                            <div class="conv-item" id="chat-item-${chat.id}" onclick="openChat(${chat.id})">
+                                <div class="conv-avatar">
+                                    <img src="${image}" alt="">
                                 </div>
 
-                                <div class="conv-preview" id="chat-last-message-${chat.id}">
-                                    ${escapeHtml(preview)}
+                                <div class="conv-info">
+                                    <div class="conv-name">
+                                        ${escapeHtml(chat.driver?.full_name ?? 'Driver')}
+                                    </div>
+
+                                    <div class="conv-preview" id="chat-last-message-${chat.id}">
+                                        ${escapeHtml(preview)}
+                                    </div>
+                                </div>
+
+                                <div class="conv-meta">
+                                    <span class="conv-time">${formatTime(chat.last_message_at ?? '')}</span>
+                                    ${unreadBadge}
                                 </div>
                             </div>
-
-                            <div class="conv-meta">
-                                <span class="conv-time">
-                                    ${formatTime(chat.last_message_at ?? '')}
-                                </span>
-
-                                ${unreadBadge}
-                            </div>
-                        </div>
-                    `;
+                        `;
                     });
 
                     document.getElementById('convList').innerHTML = html;
                 });
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | OPEN CHAT
-        |--------------------------------------------------------------------------
-        */
         function openChat(chatId) {
             activeChatId = chatId;
+            clearChatPreview();
 
             document.querySelectorAll('.conv-item').forEach(item => {
                 item.classList.remove('active');
@@ -766,11 +882,6 @@
                 });
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | UPDATE CHAT DETAILS
-        |--------------------------------------------------------------------------
-        */
         function updateChatDetails(chat) {
             let driver = chat.driver || {};
             let truck = driver.truck || {};
@@ -780,125 +891,115 @@
                 'https://ui-avatars.com/api/?name=' + encodeURIComponent(driver?.full_name ?? 'Driver');
 
             document.getElementById('chatHead').innerHTML = `
-            <div class="chat-head__avatar">
-                <img src="${image}" alt="">
-            </div>
-
-            <div>
-                <div class="chat-head__name">
-                    ${escapeHtml(driver?.full_name ?? 'Driver')}
+                <div class="chat-head__avatar">
+                    <img src="${image}" alt="">
                 </div>
 
-                <div class="chat-head__status">
-                    Driver : ${escapeHtml(driver?.license_number ?? 'N/A')}
+                <div>
+                    <div class="chat-head__name">${escapeHtml(driver?.full_name ?? 'Driver')}</div>
+                    <div class="chat-head__status">Driver : ${escapeHtml(driver?.license_number ?? 'N/A')}</div>
                 </div>
-            </div>
 
-            <div class="chat-head__actions">
-                <a title="Call" href="tel:${escapeHtml(driver?.phone ?? '')}">
-                    <svg viewBox="0 0 24 24"
-                        width="18"
-                        height="18"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2
-                        19.8 19.8 0 0 1-8.63-3.07
-                        19.5 19.5 0 0 1-6-6
-                        19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3
-                        a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81
-                        a2 2 0 0 1-.45 2.11L8.09 9.91
-                        a16 16 0 0 0 6 6l1.27-1.27
-                        a2 2 0 0 1 2.11-.45c.91.35
-                        1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"></path>
-                    </svg>
-                </a>
-            </div>
-        `;
+                <div class="chat-head__actions">
+                    <a title="Call" href="tel:${escapeHtml(driver?.phone ?? '')}">
+                        <svg viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2
+                            19.8 19.8 0 0 1-8.63-3.07
+                            19.5 19.5 0 0 1-6-6
+                            19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3
+                            a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81
+                            a2 2 0 0 1-.45 2.11L8.09 9.91
+                            a16 16 0 0 0 6 6l1.27-1.27
+                            a2 2 0 0 1 2.11-.45c.91.35
+                            1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"></path>
+                        </svg>
+                    </a>
+                </div>
+            `;
 
             document.getElementById('chatDetails').innerHTML = `
-            <div class="chat-profile">
-                <img class="chat-profile__avatar" src="${image}" alt="">
-                <h3>${escapeHtml(driver?.full_name ?? 'Driver')}</h3>
-                <p>Driver: ${escapeHtml(driver?.license_number ?? 'N/A')}</p>
-            </div>
-
-            <div class="details-section">
-                <h4>Driver Info</h4>
-
-                <div class="details-row">
-                    <span class="k">Date of Birth</span>
-                    <span class="v">${escapeHtml(driver?.date_of_birth ?? 'N/A')}</span>
+                <div class="chat-profile">
+                    <img class="chat-profile__avatar" src="${image}" alt="">
+                    <h3>${escapeHtml(driver?.full_name ?? 'Driver')}</h3>
+                    <p>Driver: ${escapeHtml(driver?.license_number ?? 'N/A')}</p>
                 </div>
 
-                <div class="details-row">
-                    <span class="k">Phone</span>
-                    <span class="v">${escapeHtml(driver?.phone ?? 'N/A')}</span>
+                <div class="details-section">
+                    <h4>Driver Info</h4>
+
+                    <div class="details-row">
+                        <span class="k">Date of Birth</span>
+                        <span class="v">${escapeHtml(driver?.date_of_birth ?? 'N/A')}</span>
+                    </div>
+
+                    <div class="details-row">
+                        <span class="k">Phone</span>
+                        <span class="v">${escapeHtml(driver?.phone ?? 'N/A')}</span>
+                    </div>
+
+                    <div class="details-row">
+                        <span class="k">Email</span>
+                        <span class="v">${escapeHtml(driver?.email ?? 'N/A')}</span>
+                    </div>
+
+                    <div class="details-row">
+                        <span class="k">Status</span>
+                        <span class="v">${escapeHtml(driver?.status ?? 'Active')}</span>
+                    </div>
                 </div>
 
-                <div class="details-row">
-                    <span class="k">Email</span>
-                    <span class="v">${escapeHtml(driver?.email ?? 'N/A')}</span>
+                <div class="details-section">
+                    <h4>Truck Details</h4>
+
+                    <div class="details-row">
+                        <span class="k">Truck No</span>
+                        <span class="v">${escapeHtml(truck?.truck_number ?? 'N/A')}</span>
+                    </div>
+
+                    <div class="details-row">
+                        <span class="k">Plate</span>
+                        <span class="v">${escapeHtml(truck?.license_plate_number ?? 'N/A')}</span>
+                    </div>
+
+                    <div class="details-row">
+                        <span class="k">Type</span>
+                        <span class="v">${escapeHtml(truck?.truck_type_category ?? 'N/A')}</span>
+                    </div>
+
+                    <div class="details-row">
+                        <span class="k">Capacity(Tons)</span>
+                        <span class="v">${escapeHtml(truck?.capacity_tons ?? 'N/A')}</span>
+                    </div>
                 </div>
 
-                <div class="details-row">
-                    <span class="k">Status</span>
-                    <span class="v">${escapeHtml(driver?.status ?? 'Active')}</span>
+                <div class="details-section">
+                    <h4>Conversation</h4>
+
+                    <div class="details-row">
+                        <span class="k">Chat ID</span>
+                        <span class="v">#${chat.id}</span>
+                    </div>
+
+                    <div class="details-row">
+                        <span class="k">Last Message</span>
+                        <span class="v">${escapeHtml(chat.last_message ?? 'N/A')}</span>
+                    </div>
+
+                    <div class="details-row">
+                        <span class="k">Updated</span>
+                        <span class="v">${escapeHtml(chat.last_message_at ?? 'N/A')}</span>
+                    </div>
                 </div>
-            </div>
-
-            <div class="details-section">
-                <h4>Truck Details</h4>
-
-                <div class="details-row">
-                    <span class="k">Truck No</span>
-                    <span class="v">${escapeHtml(truck?.truck_number ?? 'N/A')}</span>
-                </div>
-
-                <div class="details-row">
-                    <span class="k">Plate</span>
-                    <span class="v">${escapeHtml(truck?.license_plate_number ?? 'N/A')}</span>
-                </div>
-
-                <div class="details-row">
-                    <span class="k">Type</span>
-                    <span class="v">${escapeHtml(truck?.truck_type_category ?? 'N/A')}</span>
-                </div>
-
-                <div class="details-row">
-                    <span class="k">Capacity(Tons)</span>
-                    <span class="v">${escapeHtml(truck?.capacity_tons ?? 'N/A')}</span>
-                </div>
-            </div>
-
-            <div class="details-section">
-                <h4>Conversation</h4>
-
-                <div class="details-row">
-                    <span class="k">Chat ID</span>
-                    <span class="v">#${chat.id}</span>
-                </div>
-
-                <div class="details-row">
-                    <span class="k">Last Message</span>
-                    <span class="v">${escapeHtml(chat.last_message ?? 'N/A')}</span>
-                </div>
-
-                <div class="details-row">
-                    <span class="k">Updated</span>
-                    <span class="v">${escapeHtml(chat.last_message_at ?? 'N/A')}</span>
-                </div>
-            </div>
-        `;
+            `;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | MESSAGE HTML
-        |--------------------------------------------------------------------------
-        */
         function messageHtml(msg) {
             let isMe = msg.sender_type === 'admin';
             let type = msg.file_type ?? null;
@@ -909,79 +1010,74 @@
 
             if (type === 'image' && file) {
                 contentHtml = `
-                <div class="wa-image-wrap" onclick="openImageLightbox('${file}')">
-                    <img src="${file}" alt="Image">
-                </div>
-            `;
+                    <div class="wa-image-wrap" onclick="openImageLightbox('${file}')">
+                        <img src="${file}" alt="Image">
+                    </div>
+                `;
             } else if (type === 'voice' && file) {
                 let voiceId = 'voice-' + Math.random().toString(36).substring(2, 12);
 
                 contentHtml = `
-                <div class="wa-voice" data-voice-id="${voiceId}">
-                    <button type="button" class="wa-voice-play" data-audio="${voiceId}">
-                        ▶
-                    </button>
+                    <div class="wa-voice" data-voice-id="${voiceId}">
+                        <button type="button" class="wa-voice-play" data-audio="${voiceId}">▶</button>
 
-                    <div class="wa-voice-wave" data-audio="${voiceId}">
-                        <span style="height:8px"></span>
-                        <span style="height:18px"></span>
-                        <span style="height:12px"></span>
-                        <span style="height:24px"></span>
-                        <span style="height:15px"></span>
-                        <span style="height:28px"></span>
-                        <span style="height:13px"></span>
-                        <span style="height:21px"></span>
-                        <span style="height:11px"></span>
-                        <span style="height:26px"></span>
-                        <span style="height:14px"></span>
-                        <span style="height:20px"></span>
-                        <span style="height:9px"></span>
-                        <span style="height:25px"></span>
-                        <span style="height:12px"></span>
-                        <span style="height:18px"></span>
-                        <span style="height:10px"></span>
-                        <span style="height:22px"></span>
+                        <div class="wa-voice-wave" data-audio="${voiceId}">
+                            <span style="height:8px"></span>
+                            <span style="height:18px"></span>
+                            <span style="height:12px"></span>
+                            <span style="height:24px"></span>
+                            <span style="height:15px"></span>
+                            <span style="height:28px"></span>
+                            <span style="height:13px"></span>
+                            <span style="height:21px"></span>
+                            <span style="height:11px"></span>
+                            <span style="height:26px"></span>
+                            <span style="height:14px"></span>
+                            <span style="height:20px"></span>
+                            <span style="height:9px"></span>
+                            <span style="height:25px"></span>
+                            <span style="height:12px"></span>
+                            <span style="height:18px"></span>
+                            <span style="height:10px"></span>
+                            <span style="height:22px"></span>
+                        </div>
+
+                        <div class="wa-voice-meta" id="${voiceId}-time">0:00</div>
+
+                        <audio id="${voiceId}" class="hidden-audio" preload="metadata">
+                            <source src="${file}" type="audio/webm">
+                            <source src="${file}" type="audio/mpeg">
+                            <source src="${file}" type="audio/mp4">
+                        </audio>
                     </div>
 
-                    <div class="wa-voice-meta" id="${voiceId}-time">
-                        0:00
-                    </div>
-
-                    <audio id="${voiceId}" class="hidden-audio" preload="metadata">
-                        <source src="${file}" type="audio/webm">
-                        <source src="${file}" type="audio/mpeg">
-                    </audio>
-                </div>
-
-                ${message ? `<div class="wa-voice-text">${escapeHtml(message)}</div>` : ''}
-            `;
+                    ${message ? `<div class="wa-voice-text">${escapeHtml(message)}</div>` : ''}
+                `;
             } else if (file) {
                 contentHtml = `
-                <a href="${file}" target="_blank" class="wa-file-card">
-                    <div class="wa-file-icon">📎</div>
-                    <div>
-                        <div class="wa-file-name">${escapeHtml(fileName)}</div>
-                        <div class="wa-file-sub">Download File</div>
-                    </div>
-                </a>
-            `;
+                    <a href="${file}" target="_blank" class="wa-file-card">
+                        <div class="wa-file-icon">📎</div>
+                        <div>
+                            <div class="wa-file-name">${escapeHtml(fileName)}</div>
+                            <div class="wa-file-sub">Download File</div>
+                        </div>
+                    </a>
+
+                    ${message ? `<div class="chat-msg__text">${escapeHtml(message)}</div>` : ''}
+                `;
             } else {
                 contentHtml = `
-                <div class="chat-msg__text">
-                    ${escapeHtml(message)}
-                </div>
-            `;
+                    <div class="chat-msg__text">${escapeHtml(message)}</div>
+                `;
             }
 
             return `
-            <div class="chat-msg ${isMe ? 'from-me' : 'from-driver'}">
-                ${contentHtml}
+                <div class="chat-msg ${isMe ? 'from-me' : 'from-driver'}">
+                    ${contentHtml}
 
-                <div class="chat-msg__time">
-                    ${formatTime(msg.created_at)}
+                    <div class="chat-msg__time">${formatTime(msg.created_at)}</div>
                 </div>
-            </div>
-        `;
+            `;
         }
 
         function appendMessage(msg) {
@@ -990,11 +1086,6 @@
             scrollChatBottom();
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | VOICE PLAYER
-        |--------------------------------------------------------------------------
-        */
         function initVoicePlayers() {
             document.querySelectorAll('.wa-voice-play:not([data-ready="1"])').forEach(button => {
                 button.dataset.ready = '1';
@@ -1034,7 +1125,6 @@
 
                 wave.addEventListener('click', function() {
                     let audioId = this.dataset.audio;
-                    let audio = document.getElementById(audioId);
                     let btn = document.querySelector(`.wa-voice-play[data-audio="${audioId}"]`);
 
                     if (btn) {
@@ -1101,25 +1191,43 @@
             });
         }
 
-        function secondsToTime(seconds) {
-            seconds = Math.floor(seconds || 0);
-
-            let min = Math.floor(seconds / 60);
-            let sec = seconds % 60;
-
-            return min + ':' + String(sec).padStart(2, '0');
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | SEND TEXT MESSAGE
-        |--------------------------------------------------------------------------
-        */
-        function sendMessage() {
+        async function sendMessage() {
             let input = document.getElementById('chatInput');
             let message = input.value.trim();
 
-            if (!message || !activeChatId) {
+            if (!activeChatId) {
+                showToast('Please open a chat first', 'error');
+                return;
+            }
+
+            if (!message && !selectedFile && !selectedVoiceBlob) {
+                return;
+            }
+
+            document.getElementById('chatSend').disabled = true;
+
+            if (selectedFile) {
+                let fileToSend = selectedFile;
+
+                input.value = '';
+                clearChatPreview();
+
+                await sendFileMessage(fileToSend, message);
+                updateSendButtonState();
+
+                return;
+            }
+
+            if (selectedVoiceBlob) {
+                let voiceToSend = selectedVoiceBlob;
+                let extensionToSend = selectedVoiceExtension || 'webm';
+
+                input.value = '';
+                clearChatPreview();
+
+                await sendVoiceMessage(voiceToSend, extensionToSend, message);
+                updateSendButtonState();
+
                 return;
             }
 
@@ -1138,7 +1246,7 @@
             }
 
             input.value = '';
-            document.getElementById('chatSend').disabled = true;
+            updateSendButtonState();
 
             fetch('/chat/send', {
                     method: 'POST',
@@ -1156,6 +1264,8 @@
                     if (!res.status) {
                         showToast('Message failed', 'error');
                     }
+
+                    loadChats();
                 })
                 .catch(err => {
                     console.log(err);
@@ -1163,8 +1273,300 @@
                 });
         }
 
+        async function sendFileMessage(file, message = '') {
+            let isImage = file.type.startsWith('image/');
+            let tempId = 'temp-file-' + Date.now();
+            let tempUrl = isImage ? URL.createObjectURL(file) : '#';
+
+            let tempMessage = {
+                sender_type: 'admin',
+                message: message,
+                created_at: new Date().toISOString(),
+                file: tempUrl,
+                file_type: isImage ? 'image' : 'file',
+                file_name: file.name,
+                temp_id: tempId
+            };
+
+            appendMessage(tempMessage);
+
+            let allMessages = document.querySelectorAll('#chatBody .chat-msg');
+            let lastMessage = allMessages[allMessages.length - 1];
+
+            if (lastMessage) {
+                lastMessage.setAttribute('id', tempId);
+                lastMessage.style.opacity = '0.65';
+            }
+
+            let preview = document.getElementById('chat-last-message-' + activeChatId);
+
+            if (preview) {
+                preview.innerText = isImage ? '📷 Sending image...' : '📎 Sending file...';
+            }
+
+            let formData = new FormData();
+
+            formData.append('chat_id', activeChatId);
+            formData.append('file', file);
+
+            if (message) {
+                formData.append('message', message);
+            }
+
+            try {
+                let response = await fetch('/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                let text = await response.text();
+                let data;
+
+                try {
+                    data = JSON.parse(text);
+                } catch (error) {
+                    console.log('Non JSON response:', text);
+                    throw new Error('Server returned HTML error. Check Laravel log or Network tab.');
+                }
+
+                if (!response.ok || !data.status) {
+                    throw new Error(data.message || 'Upload failed');
+                }
+
+                let tempEl = document.getElementById(tempId);
+
+                if (tempEl) {
+                    tempEl.remove();
+                }
+
+                appendMessage(data.data);
+
+                if (preview) {
+                    preview.innerText = data.data.file_type === 'image' ?
+                        '📷 Image' :
+                        '📎 ' + (data.data.file_name ?? 'File');
+                }
+
+                if (isImage && tempUrl !== '#') {
+                    URL.revokeObjectURL(tempUrl);
+                }
+
+                loadChats();
+
+            } catch (err) {
+                console.log('File upload error:', err);
+
+                let tempEl = document.getElementById(tempId);
+
+                if (tempEl) {
+                    tempEl.style.opacity = '1';
+                    tempEl.style.border = '1px solid #dc2626';
+
+                    let errorBox = document.createElement('div');
+                    errorBox.style.fontSize = '11px';
+                    errorBox.style.marginTop = '6px';
+                    errorBox.style.color = '#fff';
+                    errorBox.innerText = 'Upload failed';
+
+                    tempEl.appendChild(errorBox);
+                }
+
+                if (preview) {
+                    preview.innerText = 'Upload failed';
+                }
+
+                showToast(err.message || 'File upload failed', 'error');
+            }
+        }
+
+        async function sendVoiceMessage(audioBlob, extension = 'webm', message = '') {
+            let tempVoiceUrl = URL.createObjectURL(audioBlob);
+            let tempId = 'temp-voice-' + Date.now();
+
+            let tempMessage = {
+                sender_type: 'admin',
+                message: message,
+                created_at: new Date().toISOString(),
+                file: tempVoiceUrl,
+                file_type: 'voice',
+                file_name: 'voice-message.' + extension,
+                temp_id: tempId
+            };
+
+            appendMessage(tempMessage);
+
+            let allMessages = document.querySelectorAll('#chatBody .chat-msg');
+            let lastMessage = allMessages[allMessages.length - 1];
+
+            if (lastMessage) {
+                lastMessage.setAttribute('id', tempId);
+                lastMessage.style.opacity = '0.65';
+            }
+
+            let preview = document.getElementById('chat-last-message-' + activeChatId);
+
+            if (preview) {
+                preview.innerText = '🎤 Sending voice...';
+            }
+
+            let formData = new FormData();
+
+            formData.append('chat_id', activeChatId);
+            formData.append('voice', audioBlob, 'voice-message.' + extension);
+            formData.append('translate_to', 'it');
+
+            if (message) {
+                formData.append('message', message);
+            }
+
+            try {
+                let res = await fetch('/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                let data = await res.json();
+
+                if (!res.ok || !data.status) {
+                    throw new Error(data.message || 'Voice message failed');
+                }
+
+                let tempEl = document.getElementById(tempId);
+
+                if (tempEl) {
+                    tempEl.remove();
+                }
+
+                appendMessage(data.data);
+
+                if (preview) {
+                    preview.innerText = '🎤 Voice message';
+                }
+
+                URL.revokeObjectURL(tempVoiceUrl);
+                loadChats();
+
+            } catch (error) {
+                console.log(error);
+
+                let tempEl = document.getElementById(tempId);
+
+                if (tempEl) {
+                    tempEl.style.opacity = '1';
+                    tempEl.style.border = '1px solid #dc2626';
+
+                    let errorBox = document.createElement('div');
+                    errorBox.style.fontSize = '11px';
+                    errorBox.style.marginTop = '6px';
+                    errorBox.style.color = '#fff';
+                    errorBox.innerText = 'Voice upload failed';
+
+                    tempEl.appendChild(errorBox);
+                }
+
+                if (preview) {
+                    preview.innerText = 'Voice upload failed';
+                }
+
+                showToast(error.message || 'Voice message failed', 'error');
+            }
+        }
+
+        document.getElementById('chatAttach').addEventListener('click', function() {
+            if (!activeChatId) {
+                showToast('Please open a chat first', 'error');
+                return;
+            }
+
+            document.getElementById('chatFileInput').click();
+        });
+
+        document.getElementById('chatFileInput').addEventListener('change', function() {
+            let file = this.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            if (!activeChatId) {
+                showToast('Please open a chat first', 'error');
+                this.value = '';
+                return;
+            }
+
+            showFilePreview(file);
+        });
+
+        document.getElementById('voiceRecordBtn').addEventListener('click', async function() {
+            if (!activeChatId) {
+                showToast('Please open a chat first', 'error');
+                return;
+            }
+
+            try {
+                if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                    let stream = await navigator.mediaDevices.getUserMedia({
+                        audio: true
+                    });
+
+                    let options = {};
+
+                    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+                        options.mimeType = 'audio/webm;codecs=opus';
+                    } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+                        options.mimeType = 'audio/webm';
+                    } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                        options.mimeType = 'audio/mp4';
+                    }
+
+                    mediaRecorder = new MediaRecorder(stream, options);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = e => {
+                        if (e.data.size > 0) {
+                            audioChunks.push(e.data);
+                        }
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        let mimeType = mediaRecorder.mimeType || 'audio/webm';
+                        let extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+
+                        let audioBlob = new Blob(audioChunks, {
+                            type: mimeType
+                        });
+
+                        showVoicePreview(audioBlob, extension);
+
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    this.innerHTML = '⏹️';
+
+                    return;
+                }
+
+                mediaRecorder.stop();
+                this.innerHTML = '🎤';
+
+            } catch (error) {
+                console.log(error);
+                showToast('Microphone access failed', 'error');
+                this.innerHTML = '🎤';
+            }
+        });
+
         document.getElementById('chatInput').addEventListener('input', function() {
-            document.getElementById('chatSend').disabled = this.value.trim() === '';
+            updateSendButtonState();
         });
 
         document.getElementById('chatInput').addEventListener('keypress', function(e) {
@@ -1179,7 +1581,7 @@
         document.querySelectorAll('.chat-quick button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.getElementById('chatInput').value = this.dataset.quick;
-                document.getElementById('chatSend').disabled = false;
+                updateSendButtonState();
             });
         });
 
@@ -1192,11 +1594,6 @@
             });
         });
 
-        /*
-        |--------------------------------------------------------------------------
-        | NEW CHAT
-        |--------------------------------------------------------------------------
-        */
         document.getElementById('newConv').addEventListener('click', openNewChatModal);
 
         function openNewChatModal() {
@@ -1220,20 +1617,15 @@
                             'https://ui-avatars.com/api/?name=' + encodeURIComponent(driver.full_name);
 
                         html += `
-                        <div class="driver-item" onclick="selectDriver(${driver.id})">
-                            <img src="${image}" alt="">
+                            <div class="driver-item" onclick="selectDriver(${driver.id})">
+                                <img src="${image}" alt="">
 
-                            <div>
-                                <div class="driver-item-name">
-                                    ${escapeHtml(driver.full_name)}
-                                </div>
-
-                                <div class="driver-item-license">
-                                    ${escapeHtml(driver.license_number ?? 'N/A')}
+                                <div>
+                                    <div class="driver-item-name">${escapeHtml(driver.full_name)}</div>
+                                    <div class="driver-item-license">${escapeHtml(driver.license_number ?? 'N/A')}</div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
                     });
 
                     document.getElementById('driverList').innerHTML = html;
@@ -1243,7 +1635,7 @@
         document.getElementById('driverSearch').addEventListener('keyup', function() {
             let value = this.value.toLowerCase();
 
-            document.querySelectorAll('.driver-item').forEach(item => {
+            document.querySelectorAll('#driverList .driver-item').forEach(item => {
                 item.style.display = item.innerText.toLowerCase().includes(value) ? 'flex' : 'none';
             });
         });
@@ -1274,175 +1666,6 @@
                 });
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | SEND FILE MESSAGE
-        |--------------------------------------------------------------------------
-        */
-        document.getElementById('chatAttach').addEventListener('click', function() {
-            document.getElementById('chatFileInput').click();
-        });
-
-        document.getElementById('chatFileInput').addEventListener('change', function() {
-            let file = this.files[0];
-
-            if (!file || !activeChatId) {
-                return;
-            }
-
-            sendFileMessage(file);
-            this.value = '';
-        });
-
-        function sendFileMessage(file) {
-            let isImage = file.type.startsWith('image/');
-
-            /*
-            |--------------------------------------------------------------------------
-            | TEMP MESSAGE ID
-            |--------------------------------------------------------------------------
-            */
-            let tempId = 'temp-file-' + Date.now();
-
-            let tempMessage = {
-                sender_type: 'admin',
-                message: '',
-                created_at: new Date().toISOString(),
-                file: isImage ? URL.createObjectURL(file) : '#',
-                file_type: isImage ? 'image' : 'file',
-                file_name: file.name,
-                temp_id: tempId
-            };
-
-            /*
-            |--------------------------------------------------------------------------
-            | SHOW TEMP PREVIEW
-            |--------------------------------------------------------------------------
-            */
-            appendMessage(tempMessage);
-
-            /*
-            |--------------------------------------------------------------------------
-            | ADD TEMP ID TO LAST MESSAGE DIV
-            |--------------------------------------------------------------------------
-            */
-            let allMessages = document.querySelectorAll('#chatBody .chat-msg');
-            let lastMessage = allMessages[allMessages.length - 1];
-
-            if (lastMessage) {
-                lastMessage.setAttribute('id', tempId);
-                lastMessage.style.opacity = '0.65';
-            }
-
-            let preview = document.getElementById('chat-last-message-' + activeChatId);
-
-            if (preview) {
-                preview.innerText = isImage ? '📷 Sending image...' : '📎 Sending file...';
-            }
-
-            let formData = new FormData();
-
-            formData.append('chat_id', activeChatId);
-            formData.append('file', file);
-
-            fetch('/chat/send', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                })
-                .then(async response => {
-
-                    let text = await response.text();
-
-                    let data;
-
-                    try {
-                        data = JSON.parse(text);
-                    } catch (error) {
-                        console.log('Non JSON response:', text);
-
-                        throw new Error('Server returned HTML error. Check Laravel log or Network tab.');
-                    }
-
-                    if (!response.ok) {
-                        throw new Error(data.message || 'Upload failed');
-                    }
-
-                    return data;
-                })
-                .then(res => {
-
-                    console.log('File upload response:', res);
-
-                    if (!res.status) {
-                        throw new Error(res.message || 'File upload failed');
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | REMOVE TEMP BLOB PREVIEW
-                    |--------------------------------------------------------------------------
-                    */
-                    let tempEl = document.getElementById(tempId);
-
-                    if (tempEl) {
-                        tempEl.remove();
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | APPEND REAL SERVER MESSAGE
-                    |--------------------------------------------------------------------------
-                    */
-                    appendMessage(res.data);
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | UPDATE CHAT PREVIEW
-                    |--------------------------------------------------------------------------
-                    */
-                    if (preview) {
-                        preview.innerText = res.data.file_type === 'image' ?
-                            '📷 Image' :
-                            '📎 ' + (res.data.file_name ?? 'File');
-                    }
-
-                    loadChats();
-                })
-                .catch(err => {
-
-                    console.log('File upload error:', err);
-
-                    let tempEl = document.getElementById(tempId);
-
-                    if (tempEl) {
-                        tempEl.style.opacity = '1';
-                        tempEl.style.border = '1px solid #dc2626';
-
-                        let errorBox = document.createElement('div');
-                        errorBox.style.fontSize = '11px';
-                        errorBox.style.marginTop = '6px';
-                        errorBox.style.color = '#fff';
-                        errorBox.innerText = 'Upload failed';
-
-                        tempEl.appendChild(errorBox);
-                    }
-
-                    if (preview) {
-                        preview.innerText = 'Upload failed';
-                    }
-
-                    showToast(err.message || 'File upload failed', 'error');
-                });
-        }
-        /*
-        |--------------------------------------------------------------------------
-        | BROADCAST
-        |--------------------------------------------------------------------------
-        */
         document.getElementById('broadcastBtn').addEventListener('click', openBroadcastModal);
 
         function openBroadcastModal() {
@@ -1467,22 +1690,17 @@
                             'https://ui-avatars.com/api/?name=' + encodeURIComponent(driver.full_name);
 
                         html += `
-                        <label class="driver-item">
-                            <input type="checkbox" value="${driver.id}" class="broadcast-driver-checkbox">
+                            <label class="driver-item">
+                                <input type="checkbox" value="${driver.id}" class="broadcast-driver-checkbox">
 
-                            <img src="${image}" alt="">
+                                <img src="${image}" alt="">
 
-                            <div>
-                                <div class="driver-item-name">
-                                    ${escapeHtml(driver.full_name)}
+                                <div>
+                                    <div class="driver-item-name">${escapeHtml(driver.full_name)}</div>
+                                    <div class="driver-item-license">${escapeHtml(driver.license_number ?? 'N/A')}</div>
                                 </div>
-
-                                <div class="driver-item-license">
-                                    ${escapeHtml(driver.license_number ?? 'N/A')}
-                                </div>
-                            </div>
-                        </label>
-                    `;
+                            </label>
+                        `;
                     });
 
                     document.getElementById('broadcastDriverList').innerHTML = html;
@@ -1546,114 +1764,6 @@
                 });
         });
 
-        /*
-        |--------------------------------------------------------------------------
-        | VOICE RECORDING
-        |--------------------------------------------------------------------------
-        */
-        let mediaRecorder;
-        let audioChunks = [];
-
-        document.getElementById('voiceRecordBtn').addEventListener('click', async function() {
-            if (!activeChatId) {
-                showToast('Please open a chat first', 'error');
-                return;
-            }
-
-            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
-                let stream = await navigator.mediaDevices.getUserMedia({
-                    audio: true
-                });
-
-                let options = {};
-
-                if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-                    options.mimeType = 'audio/webm;codecs=opus';
-                } else if (MediaRecorder.isTypeSupported('audio/webm')) {
-                    options.mimeType = 'audio/webm';
-                } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-                    options.mimeType = 'audio/mp4';
-                }
-
-                mediaRecorder = new MediaRecorder(stream, options);
-                audioChunks = [];
-
-                mediaRecorder.ondataavailable = e => {
-                    if (e.data.size > 0) {
-                        audioChunks.push(e.data);
-                    }
-                };
-
-                mediaRecorder.onstop = async () => {
-                    let mimeType = mediaRecorder.mimeType || 'audio/webm';
-                    let extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
-
-                    let audioBlob = new Blob(audioChunks, {
-                        type: mimeType
-                    });
-
-                    sendVoiceMessage(audioBlob, extension);
-
-                    stream.getTracks().forEach(track => track.stop());
-                };
-
-                mediaRecorder.start();
-                this.innerHTML = '⏹️';
-
-                return;
-            }
-
-            mediaRecorder.stop();
-            this.innerHTML = '🎤';
-        });
-
-        async function sendVoiceMessage(audioBlob, extension = 'webm') {
-            let formData = new FormData();
-
-            formData.append('chat_id', activeChatId);
-
-            formData.append(
-                'voice',
-                audioBlob,
-                'voice-message.' + extension
-            );
-
-            formData.append('translate_to', 'it');
-
-            try {
-                let res = await fetch('/chat/send', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: formData
-                });
-
-                let data = await res.json();
-
-                if (data.status) {
-                    appendMessage(data.data);
-
-                    let preview = document.getElementById('chat-last-message-' + activeChatId);
-
-                    if (preview) {
-                        preview.innerText = '🎤 Voice message';
-                    }
-                } else {
-                    showToast('Voice message failed', 'error');
-                }
-
-            } catch (error) {
-                console.log(error);
-                showToast('Voice message failed', 'error');
-            }
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | INIT
-        |--------------------------------------------------------------------------
-        */
         loadChats();
     </script>
 
