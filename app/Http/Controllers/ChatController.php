@@ -136,11 +136,6 @@ class ChatController extends Controller
     | IMAGE / FILE UPLOAD DIRECTLY TO PUBLIC
     |--------------------------------------------------------------------------
     */
-        /*
-|--------------------------------------------------------------------------
-| IMAGE / FILE UPLOAD DIRECTLY TO PUBLIC
-|--------------------------------------------------------------------------
-*/
         if ($request->hasFile('file')) {
 
             $file = $request->file('file');
