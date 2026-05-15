@@ -133,7 +133,7 @@
                                 <td>
                                     <div class="cell-asset">
                                         <img class="asset-thumb"
-                                            src="{{ asset($driver->driver_photo ?? 'https://via.placeholder.com/40') }}"
+                                            src="{{ asset($driver->driver_photo ?: 'https://i.pravatar.cc/40') }}"
                                             alt="">
                                         <div>
                                             <div class="asset-name">{{ $driver->full_name }}</div>

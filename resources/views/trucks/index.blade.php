@@ -156,7 +156,7 @@
                                 data-search="{{ strtolower($truck->license_plate_number . ' ' . $truck->truck_license_number . ' ' . optional($truck->driver)->name . ' ' . $truck->truck_type_category) }}">
                                 <td>
                                     <div class="cell-asset">
-                                        <img class="asset-thumb" src="{{ $truck->image }}" alt="">
+                                        <img class="asset-thumb" src="{{ $truck->image ? asset($truck->image) : 'https://i.pravatar.cc/30'}}" alt="">
                                         <div>
                                             <div class="asset-name">{{ $truck->license_plate_number }}</div>
                                             <div class="asset-sub">{{ $truck->truck_license_number }}</div>
@@ -250,6 +250,7 @@
                 </table>
             </div>
 
+            @if($trucks->hasPages())
             <div class="pagination">
                 <div class="meta">
                     Showing {{ $trucks->firstItem() ?? 0 }}–{{ $trucks->lastItem() ?? 0 }} of {{ $trucks->total() }}
@@ -260,6 +261,7 @@
                     {{ $trucks->onEachSide(1)->links() }}
                 </div>
             </div>
+            @endif
         </div>
     </section>
 
