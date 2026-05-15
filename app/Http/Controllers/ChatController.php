@@ -7,6 +7,7 @@ use App\Models\Driver;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Services\VoiceTranslationService;
+
 class ChatController extends Controller
 {
     /*
@@ -244,32 +245,65 @@ class ChatController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | STORE VOICE FILE
+            | GET SAFE EXTENSION
             |--------------------------------------------------------------------------
             */
-            $voicePath = $voice->store('chat-voice', 'public');
+            $extension = strtolower($voice->getClientOriginalExtension());
+
+            if (!$extension) {
+                $mime = $voice->getMimeType();
+
+                $extension = match ($mime) {
+                    'audio/webm', 'video/webm' => 'webm',
+                    'audio/mpeg', 'audio/mp3' => 'mp3',
+                    'audio/mp4', 'audio/m4a' => 'm4a',
+                    'audio/wav', 'audio/x-wav' => 'wav',
+                    'audio/ogg', 'application/ogg' => 'ogg',
+                    default => 'webm',
+                };
+            }
+
+            /*
+    |--------------------------------------------------------------------------
+    | STORE VOICE FILE WITH REAL EXTENSION
+    |--------------------------------------------------------------------------
+    */
+            $voiceFileName = 'voice-' . time() . '-' . uniqid() . '.' . $extension;
+
+            $voicePath = $voice->storeAs(
+                'chat-voice',
+                $voiceFileName,
+                'public'
+            );
 
             $filePath = $voicePath;
             $fileType = 'voice';
-            $fileName = $voice->getClientOriginalName();
+            $fileName = $voiceFileName;
 
             /*
-            |--------------------------------------------------------------------------
-            | SPEECH TO TEXT (WHISPER)
-            |--------------------------------------------------------------------------
-            */
+    |--------------------------------------------------------------------------
+    | MAKE REAL PATH WITH SUPPORTED EXTENSION FOR OPENAI
+    |--------------------------------------------------------------------------
+    */
+            $realAudioPath = storage_path('app/public/' . $voicePath);
+
+            /*
+    |--------------------------------------------------------------------------
+    | SPEECH TO TEXT
+    |--------------------------------------------------------------------------
+    */
             $transcription = $openai->audio()->transcribe([
                 'model' => 'whisper-1',
-                'file' => fopen($voice->getRealPath(), 'r'),
+                'file' => fopen($realAudioPath, 'r'),
             ]);
 
             $messageText = $transcription->text;
 
             /*
-            |--------------------------------------------------------------------------
-            | TRANSLATE IF REQUESTED
-            |--------------------------------------------------------------------------
-            */
+    |--------------------------------------------------------------------------
+    | TRANSLATE IF REQUESTED
+    |--------------------------------------------------------------------------
+    */
             if ($request->translate_to) {
 
                 $translate = $openai->chat()->create([
@@ -277,18 +311,16 @@ class ChatController extends Controller
                     'messages' => [
                         [
                             'role' => 'system',
-                            'content' => 'Translate the message only.'
+                            'content' => 'Translate the message only. Do not add explanation.'
                         ],
                         [
                             'role' => 'user',
-                            'content' =>
-                                "Translate this into {$request->translate_to}: {$messageText}"
+                            'content' => "Translate this into {$request->translate_to}: {$messageText}"
                         ]
                     ],
                 ]);
 
-                $messageText =
-                    $translate->choices[0]->message->content;
+                $messageText = $translate->choices[0]->message->content;
             }
         }
 

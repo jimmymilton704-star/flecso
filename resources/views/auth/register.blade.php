@@ -7,15 +7,22 @@
     <title>Create account — Flecso</title>
     <meta name="description" content="Create your Flecso logistics management account." />
     <meta name="theme-color" content="#FF6B1A" />
+
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/app_icon.png') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}" />
 
     {{-- SweetAlert2 --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+
+    {{-- Country picker --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/css/intlTelInput.css">
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -85,7 +92,6 @@
             text-decoration: underline;
         }
 
-        /* Swal custom button */
         .swal2-confirm.swal-btn-orange {
             background: #FF6B1A !important;
             border-radius: 10px !important;
@@ -93,7 +99,7 @@
             font-weight: 600 !important;
             font-size: 15px !important;
             padding: 12px 32px !important;
-            box-shadow: 0 4px 14px rgba(255,107,26,.35) !important;
+            box-shadow: 0 4px 14px rgba(255, 107, 26, .35) !important;
         }
 
         .swal2-cancel.swal-btn-outline {
@@ -107,7 +113,6 @@
             padding: 12px 24px !important;
         }
 
-        /* countdown timer ring */
         .otp-timer {
             display: inline-flex;
             align-items: center;
@@ -124,7 +129,6 @@
             display: inline-block;
         }
 
-        /* sendOtp button loading state */
         #sendOtp.loading .label::after {
             content: '';
             display: inline-block;
@@ -138,9 +142,79 @@
             vertical-align: middle;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-        #sendOtp:disabled { opacity: .65; cursor: not-allowed; }
+        #sendOtp:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+        }
+
+        /* ── Country picker phone input ───────────────────────────── */
+        .auth-input.phone-picker-input {
+            position: relative;
+            overflow: visible;
+            padding-left: 14px;
+        }
+
+        .phone-picker-wrap {
+            width: 100%;
+        }
+
+        .phone-picker-wrap .iti {
+            width: 100%;
+            display: block;
+        }
+
+        .phone-picker-wrap input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: #1a202c;
+        }
+
+        .phone-picker-wrap input::placeholder {
+            color: #a0aec0;
+        }
+
+        .phone-picker-wrap .iti__selected-country {
+            padding-left: 0;
+        }
+
+        .phone-picker-wrap .iti__country-container {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .phone-picker-wrap .iti__dropdown-content {
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+            z-index: 99999;
+        }
+
+        .phone-picker-wrap .iti__search-input {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin: 8px;
+            width: calc(100% - 16px);
+        }
+
+        .phone-picker-wrap .iti__country {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            padding: 8px 10px;
+        }
+
+        .phone-picker-wrap .iti__dial-code {
+            color: #718096;
+        }
     </style>
 </head>
 
@@ -165,25 +239,33 @@
             <div class="auth-features">
                 <div class="auth-feature">
                     <div class="auth-feature__icon">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5"/>
+                        </svg>
                     </div>
                     <div>
                         <h4>Set up in under 10 minutes</h4>
                         <p>Import your fleet via CSV or connect existing TMS.</p>
                     </div>
                 </div>
+
                 <div class="auth-feature">
                     <div class="auth-feature__icon">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5"/>
+                        </svg>
                     </div>
                     <div>
                         <h4>Unlimited users on every plan</h4>
                         <p>Invite your whole team — no per-seat fees, ever.</p>
                     </div>
                 </div>
+
                 <div class="auth-feature">
                     <div class="auth-feature__icon">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5"/>
+                        </svg>
                     </div>
                     <div>
                         <h4>ISO 6346 · EORI · Tachograph ready</h4>
@@ -217,7 +299,9 @@
             {{-- SUCCESS --}}
             @if (session('success'))
                 <div class="auth-alert auth-alert--success">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6 9 17l-5-5"/>
+                    </svg>
                     <span>{{ session('success') }}</span>
                 </div>
             @endif
@@ -225,7 +309,9 @@
             {{-- ERROR --}}
             @if ($errors->any())
                 <div class="auth-alert auth-alert--error">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12"/>
+                    </svg>
                     <div>
                         @foreach ($errors->all() as $error)
                             <div>{{ $error }}</div>
@@ -241,8 +327,11 @@
                 <div class="auth-field">
                     <label for="name">Full name</label>
                     <div class="auth-input">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
-                        <input type="text" name="name" value="{{ old('name') }}" placeholder="Enter your full name" required />
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>
+                        </svg>
+                        <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Enter your full name" required />
                     </div>
                 </div>
 
@@ -250,8 +339,11 @@
                 <div class="auth-field">
                     <label for="email">Work email</label>
                     <div class="auth-input">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
-                        <input type="email" name="email" value="{{ old('email') }}" placeholder="you@company.com" required />
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="m22 6-10 7L2 6"/>
+                        </svg>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="you@company.com" required />
                     </div>
                 </div>
 
@@ -261,17 +353,19 @@
                         Phone
                         <span style="font-size:11px;color:#a0aec0;font-weight:400;margin-left:4px;">(optional · OTP verification)</span>
                     </label>
-                    <div class="auth-input" style="position:relative;">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 3.1 5.18 2 2 0 0 1 5.11 3h3a2 2 0 0 1 2 1.72c.12.86.32 1.7.59 2.5a2 2 0 0 1-.45 2.11L9 10a16 16 0 0 0 6 6l.67-.25a2 2 0 0 1 2.11-.45c.8.27 1.64.47 2.5.59A2 2 0 0 1 22 16.92z"/></svg>
-                        <input type="text" id="phone" name="phone" value="{{ old('phone') }}" placeholder="03001234567 or +923001234567" />
-                        {{-- verified badge --}}
-                        <span id="phoneVerifiedBadge" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);background:#dcfce7;color:#16a34a;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid #bbf7d0;">
+
+                    <div class="auth-input phone-picker-input">
+                        <div class="phone-picker-wrap">
+                            <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder="Enter phone number" />
+                        </div>
+
+                        <span id="phoneVerifiedBadge" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);background:#dcfce7;color:#16a34a;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid #bbf7d0;z-index:2;">
                             ✓ Verified
                         </span>
                     </div>
                 </div>
 
-                {{-- Send OTP button (standalone, outside submit row) --}}
+                {{-- Send OTP button --}}
                 <div style="margin: -4px 0 14px;">
                     <button type="button" id="sendOtp"
                         style="background:none;border:1.5px solid #FF6B1A;color:#FF6B1A;font-size:13px;font-weight:600;padding:7px 18px;border-radius:8px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:background .2s,color .2s;"
@@ -285,7 +379,10 @@
                 <div class="auth-field">
                     <label for="password">Password</label>
                     <div class="auth-input">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
                         <input type="password" name="password" id="password" placeholder="Min. 8 characters" required />
                     </div>
                 </div>
@@ -294,7 +391,10 @@
                 <div class="auth-field">
                     <label for="password_confirmation">Confirm password</label>
                     <div class="auth-input">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
                         <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Repeat password" required />
                     </div>
                 </div>
@@ -302,21 +402,22 @@
                 {{-- Hidden firebase token --}}
                 <input type="hidden" name="firebase_id_token" id="firebase_id_token">
 
-                {{-- reCAPTCHA (invisible — rendered off-screen) --}}
+                {{-- reCAPTCHA --}}
                 <div id="recaptcha-container" style="margin:0;"></div>
-
-                {{-- Submit --}}
-                <button type="submit" class="auth-submit" id="submitBtn">
-                    <span class="label">Create Account</span>
-                </button>
-
-                <label class="checkbox" style="font-size:13px;margin-top:14px">
+                 <label class="checkbox" style="font-size:13px;margin-top:14px">
                     <input type="checkbox" name="agree" required />
                     I agree to the
                     <a href="https://flecso.com/terms-of-service/" style="color:var(--orange-600);font-weight:600;margin:0 3px">Terms</a>
                     and
                     <a href="https://flecso.com/privacy-policy/" style="color:var(--orange-600);font-weight:600;margin-left:3px">Privacy Policy</a>.
                 </label>
+
+                {{-- Submit --}}
+                <button type="submit" class="auth-submit" id="submitBtn">
+                    <span class="label">Create Account</span>
+                </button>
+
+               
             </form>
         </div>
     </main>
@@ -324,11 +425,14 @@
 
 <div class="toast" id="toast" aria-live="polite"></div>
 
+{{-- Country picker JS --}}
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js"></script>
+
 {{-- ═══ FIREBASE + OTP LOGIC ═══════════════════════════════════════════════ --}}
 <script type="module">
-    import { initializeApp }            from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber }
-                                        from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey:            "AIzaSyAfmsqySwBOGh8LYbsBWrKWiYZRcjn73hU",
@@ -347,30 +451,80 @@
     let confirmationResult = null;
     let countdownInterval  = null;
 
-    // ── Normalize phone ──────────────────────────────────────────────────────
-    function normalizePhone(raw) {
-        let p = raw.trim().replace(/\s+/g, '');
-        if (!p) return '';
-        if (/^0\d/.test(p))          return '+92' + p.slice(1);  // 03xx → +923xx
-        if (/^[1-9]\d{9}$/.test(p)) return '+92' + p;           // 3xx (10 digits)
-        return p;                                                  // already +xx
-    }
-
     const phoneInput = document.getElementById('phone');
+    const registerForm = document.getElementById('registerForm');
 
-    // Format on blur
-    phoneInput.addEventListener('blur', () => {
-        const f = normalizePhone(phoneInput.value);
-        if (f) phoneInput.value = f;
+    const phoneIti = window.intlTelInput(phoneInput, {
+        initialCountry: 'pk',
+        separateDialCode: true,
+        nationalMode: false,
+        formatOnDisplay: true,
+        autoPlaceholder: 'aggressive',
+        preferredCountries: ['pk', 'ae', 'sa', 'gb', 'us'],
+        utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js',
     });
 
-    // ── reCAPTCHA (invisible) ────────────────────────────────────────────────
+    /*
+    |--------------------------------------------------------------------------
+    | Format phone according to selected country
+    | Same input name="phone" will receive final value like +923001234567
+    |--------------------------------------------------------------------------
+    */
+    function getFormattedPhone() {
+        let rawPhone = phoneInput.value.trim().replace(/\s+/g, '');
+
+        if (!rawPhone) {
+            return '';
+        }
+
+        if (rawPhone.startsWith('+')) {
+            return rawPhone;
+        }
+
+        if (rawPhone.startsWith('00')) {
+            return '+' + rawPhone.substring(2);
+        }
+
+        const selectedCountry = phoneIti.getSelectedCountryData();
+        const dialCode = selectedCountry.dialCode;
+
+        rawPhone = rawPhone.replace(/[^\d]/g, '');
+
+        if (rawPhone.startsWith('0')) {
+            rawPhone = rawPhone.substring(1);
+        }
+
+        return '+' + dialCode + rawPhone;
+    }
+
+    function isValidInternationalPhone(phone) {
+        return /^\+[1-9]\d{7,14}$/.test(phone);
+    }
+
+    phoneInput.addEventListener('blur', () => {
+        const formattedPhone = getFormattedPhone();
+
+        if (formattedPhone) {
+            phoneInput.value = formattedPhone;
+        }
+    });
+
+    registerForm.addEventListener('submit', function () {
+        const formattedPhone = getFormattedPhone();
+
+        if (formattedPhone) {
+            phoneInput.value = formattedPhone;
+        }
+    });
+
+    // ── reCAPTCHA invisible ────────────────────────────────────────────────
     const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
         size: 'invisible',
     });
+
     await recaptchaVerifier.render();
 
-    // ── Build OTP modal HTML ─────────────────────────────────────────────────
+    // ── Build OTP modal HTML ───────────────────────────────────────────────
     function buildOtpHtml(phone) {
         return `
             <p style="color:#718096;font-size:14px;margin:0 0 6px;">Code sent to</p>
@@ -380,6 +534,7 @@
                 </svg>
                 ${phone}
             </div>
+
             <div class="otp-wrapper">
                 <input class="otp-box" id="otp0" maxlength="1" inputmode="numeric" pattern="[0-9]" />
                 <input class="otp-box" id="otp1" maxlength="1" inputmode="numeric" pattern="[0-9]" />
@@ -388,39 +543,54 @@
                 <input class="otp-box" id="otp4" maxlength="1" inputmode="numeric" pattern="[0-9]" />
                 <input class="otp-box" id="otp5" maxlength="1" inputmode="numeric" pattern="[0-9]" />
             </div>
+
             <div class="otp-timer">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                </svg>
                 Code expires in <span id="otpCountdown">02:00</span>
             </div>
+
             <div class="swal-resend-row">
                 Didn't receive it? <a id="resendLink">Resend code</a>
             </div>
         `;
     }
 
-    // ── Countdown timer ──────────────────────────────────────────────────────
+    // ── Countdown timer ────────────────────────────────────────────────────
     function startCountdown(seconds = 120) {
         clearInterval(countdownInterval);
+
         const el = document.getElementById('otpCountdown');
-        if (!el) return;
+
+        if (!el) {
+            return;
+        }
 
         countdownInterval = setInterval(() => {
-            if (!document.getElementById('otpCountdown')) {
+            const countdownEl = document.getElementById('otpCountdown');
+
+            if (!countdownEl) {
                 clearInterval(countdownInterval);
                 return;
             }
+
             const m = String(Math.floor(seconds / 60)).padStart(2, '0');
             const s = String(seconds % 60).padStart(2, '0');
-            document.getElementById('otpCountdown').textContent = `${m}:${s}`;
+
+            countdownEl.textContent = `${m}:${s}`;
+
             if (seconds <= 0) {
                 clearInterval(countdownInterval);
-                document.getElementById('otpCountdown').textContent = 'Expired';
+                countdownEl.textContent = 'Expired';
             }
+
             seconds--;
         }, 1000);
     }
 
-    // ── Wire up OTP box navigation ───────────────────────────────────────────
+    // ── Wire up OTP box navigation ─────────────────────────────────────────
     function wireOtpBoxes() {
         const boxes = document.querySelectorAll('.otp-box');
 
@@ -428,9 +598,13 @@
             box.addEventListener('input', e => {
                 const val = e.target.value.replace(/\D/g, '');
                 e.target.value = val;
+
                 if (val) {
                     e.target.classList.add('filled');
-                    if (i < boxes.length - 1) boxes[i + 1].focus();
+
+                    if (i < boxes.length - 1) {
+                        boxes[i + 1].focus();
+                    }
                 } else {
                     e.target.classList.remove('filled');
                 }
@@ -442,29 +616,36 @@
                 }
             });
 
-            // Allow paste of full 6-digit code
             box.addEventListener('paste', e => {
                 e.preventDefault();
+
                 const pasted = (e.clipboardData || window.clipboardData)
-                    .getData('text').replace(/\D/g, '').slice(0, 6);
+                    .getData('text')
+                    .replace(/\D/g, '')
+                    .slice(0, 6);
+
                 [...pasted].forEach((ch, idx) => {
                     if (boxes[idx]) {
                         boxes[idx].value = ch;
                         boxes[idx].classList.add('filled');
                     }
                 });
-                if (boxes[pasted.length - 1]) boxes[pasted.length - 1].focus();
+
+                if (boxes[pasted.length - 1]) {
+                    boxes[pasted.length - 1].focus();
+                }
             });
         });
     }
 
-    // ── Get OTP value from boxes ─────────────────────────────────────────────
+    // ── Get OTP value ──────────────────────────────────────────────────────
     function getOtpValue() {
         return [...document.querySelectorAll('.otp-box')]
-            .map(b => b.value).join('');
+            .map(b => b.value)
+            .join('');
     }
 
-    // ── Open OTP modal ───────────────────────────────────────────────────────
+    // ── Open OTP modal ─────────────────────────────────────────────────────
     async function openOtpModal(phoneNumber) {
         const result = await Swal.fire({
             title: 'Verify your phone',
@@ -479,37 +660,44 @@
             buttonsStyling: false,
             focusConfirm: false,
             allowOutsideClick: false,
+
             didOpen: () => {
                 wireOtpBoxes();
                 startCountdown(120);
 
-                // Auto-focus first box
                 setTimeout(() => {
                     const first = document.getElementById('otp0');
-                    if (first) first.focus();
+
+                    if (first) {
+                        first.focus();
+                    }
                 }, 100);
 
-                // Resend link
                 document.getElementById('resendLink').addEventListener('click', async () => {
                     try {
                         confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
                         startCountdown(120);
-                        // Reset boxes
+
                         document.querySelectorAll('.otp-box').forEach(b => {
                             b.value = '';
                             b.classList.remove('filled');
                         });
+
                         document.getElementById('otp0').focus();
+
                         Swal.showValidationMessage('✓ New code sent!');
+
                         setTimeout(() => Swal.resetValidationMessage(), 2000);
                     } catch (err) {
                         Swal.showValidationMessage('Failed to resend: ' + (err.message || 'Try again'));
                     }
                 });
             },
+
             willClose: () => {
                 clearInterval(countdownInterval);
             },
+
             preConfirm: async () => {
                 const code = getOtpValue();
 
@@ -525,7 +713,8 @@
 
                 try {
                     const credential = await confirmationResult.confirm(code);
-                    const token      = await credential.user.getIdToken(true);
+                    const token = await credential.user.getIdToken(true);
+
                     return token;
                 } catch (err) {
                     Swal.showValidationMessage(
@@ -533,15 +722,16 @@
                             ? 'Incorrect code. Please try again.'
                             : (err.message || 'Verification failed.')
                     );
+
                     return false;
                 }
             },
         });
 
-        return result; // { isConfirmed, value: token }
+        return result;
     }
 
-    // ── Send OTP click ───────────────────────────────────────────────────────
+    // ── Send OTP click ─────────────────────────────────────────────────────
     document.getElementById('sendOtp').addEventListener('click', async () => {
         const raw = phoneInput.value.trim();
 
@@ -551,17 +741,35 @@
                 title: 'No phone number',
                 text: 'Phone is optional. Leave it blank or enter a number to verify.',
                 confirmButtonText: 'Got it',
-                customClass: { confirmButton: 'swal-btn-orange' },
+                customClass: {
+                    confirmButton: 'swal-btn-orange'
+                },
                 buttonsStyling: false,
             });
+
             return;
         }
 
-        const phoneNumber = normalizePhone(raw);
-        phoneInput.value  = phoneNumber;
+        const phoneNumber = getFormattedPhone();
+        phoneInput.value = phoneNumber;
 
-        // Loading state
+        if (!isValidInternationalPhone(phoneNumber)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid phone number',
+                text: 'Please select the correct country and enter a valid phone number.',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'swal-btn-orange'
+                },
+                buttonsStyling: false,
+            });
+
+            return;
+        }
+
         const btn = document.getElementById('sendOtp');
+
         btn.disabled = true;
         btn.classList.add('loading');
         btn.querySelector('.label').textContent = 'Sending…';
@@ -578,9 +786,12 @@
                 title: 'Could not send OTP',
                 text: err.message || 'Please check the phone number and try again.',
                 confirmButtonText: 'OK',
-                customClass: { confirmButton: 'swal-btn-orange' },
+                customClass: {
+                    confirmButton: 'swal-btn-orange'
+                },
                 buttonsStyling: false,
             });
+
             return;
         }
 
@@ -588,14 +799,14 @@
         btn.classList.remove('loading');
         btn.querySelector('.label').textContent = 'Resend OTP';
 
-        // ── Auto-open OTP modal ──────────────────────────────────────────────
         const modalResult = await openOtpModal(phoneNumber);
 
         if (modalResult.isConfirmed && modalResult.value) {
-            // Token received — mark phone as verified
             document.getElementById('firebase_id_token').value = modalResult.value;
             document.getElementById('phoneVerifiedBadge').style.display = 'inline-flex';
+
             phoneInput.readOnly = true;
+
             btn.querySelector('.label').textContent = '✓ Verified';
             btn.disabled = true;
             btn.style.borderColor = '#16a34a';

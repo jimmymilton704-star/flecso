@@ -10,12 +10,19 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/app_icon.png') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet" />
+
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}" />
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+
+    {{-- Country picker CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/css/intlTelInput.css">
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -87,7 +94,7 @@
             background: #e2e8f0;
         }
 
-        /* ── OTP boxes (same as register) ───────────────────────────────── */
+        /* ── OTP boxes ───────────────────────────────── */
         .otp-wrapper {
             display: flex;
             gap: 10px;
@@ -260,6 +267,81 @@
             border: 1px solid #bbf7d0;
             color: #15803d;
         }
+
+        /* ── Country picker phone input ─────────────────────────────────── */
+        .phone-country-field {
+            width: 100%;
+            position: relative;
+        }
+
+        .phone-country-field .iti {
+            width: 100%;
+            display: block;
+        }
+
+        .phone-country-field input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: #1a202c;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .phone-country-field input::placeholder {
+            color: #a0aec0;
+        }
+
+        .phone-country-field .iti__selected-country {
+            padding-left: 8px;
+        }
+
+        .phone-country-field .iti__country-container {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .phone-country-field .iti__dropdown-content {
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+            z-index: 99999;
+        }
+
+        .phone-country-field .iti__search-input {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin: 8px;
+            width: calc(100% - 16px);
+        }
+
+        .phone-country-field .iti__country {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            padding: 8px 10px;
+        }
+
+        .phone-country-field .iti__dial-code {
+            color: #718096;
+        }
+
+        .auth-input.phone-auth-input {
+            padding-left: 0;
+            overflow: visible;
+        }
+
+        .auth-input.phone-auth-input>svg {
+            margin-left: 14px;
+            flex-shrink: 0;
+        }
+
+        .phone-country-field #loginPhone.iti__tel-input {
+            padding-left: 87px !important;
+        }
     </style>
 </head>
 
@@ -297,6 +379,7 @@
                             <p>Every truck on one map, updated every 15 seconds.</p>
                         </div>
                     </div>
+
                     <div class="auth-feature">
                         <div class="auth-feature__icon">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
@@ -310,6 +393,7 @@
                             <p>Routes that beat traffic before it happens.</p>
                         </div>
                     </div>
+
                     <div class="auth-feature">
                         <div class="auth-feature__icon">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
@@ -369,6 +453,7 @@
                             @if (session('error'))
                                 <div>{{ session('error') }}</div>
                             @endif
+
                             @foreach ($errors->all() as $error)
                                 <div>{{ $error }}</div>
                             @endforeach
@@ -378,7 +463,7 @@
 
                 {{-- ── TABS ───────────────────────────────────────────────── --}}
                 <div class="login-tabs">
-                    <button class="login-tab active" id="tabEmail" onclick="switchTab('email')">
+                    <button class="login-tab active" id="tabEmail" type="button" onclick="switchTab('email')">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <rect x="2" y="4" width="20" height="16" rx="2" />
@@ -386,7 +471,8 @@
                         </svg>
                         Email & Password
                     </button>
-                    <button class="login-tab" id="tabPhone" onclick="switchTab('phone')">
+
+                    <button class="login-tab" id="tabPhone" type="button" onclick="switchTab('phone')">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path
@@ -409,13 +495,13 @@
                                     <rect x="2" y="4" width="20" height="16" rx="2" />
                                     <path d="m22 6-10 7L2 6" />
                                 </svg>
-                                <input type="email" name="email" value="{{ old('email') }}"
+                                <input type="email" id="email" name="email" value="{{ old('email') }}"
                                     autocomplete="email" placeholder="you@company.com" required />
                             </div>
                         </div>
 
                         <div class="auth-field">
-                            <label for="password">Password</label>
+                            <label for="emailPassword">Password</label>
                             <div class="auth-input with-button">
                                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
                                     stroke="currentColor" stroke-width="2">
@@ -443,22 +529,25 @@
                     </form>
                 </div>
 
-                {{-- ── TAB 2 : PHONE + PASSWORD ──────────────────────────────────── --}}
+                {{-- ── TAB 2 : PHONE + PASSWORD ───────────────────────────── --}}
                 <div class="tab-panel" id="panelPhone">
-                    <form class="auth-form" method="POST" action="{{ url('/login/phone') }}">
+                    <form class="auth-form" method="POST" action="{{ url('/login/phone') }}" id="phoneLoginForm">
                         @csrf
 
                         <div class="auth-field">
                             <label for="loginPhone">Phone number</label>
-                            <div class="auth-input">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+
+                            <div class="auth-input phone-auth-input">
+                                {{-- <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
                                     stroke="currentColor" stroke-width="2">
                                     <path
                                         d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 3.1 5.18 2 2 0 0 1 5.11 3h3a2 2 0 0 1 2 1.72c.12.86.32 1.7.59 2.5a2 2 0 0 1-.45 2.11L9 10a16 16 0 0 0 6 6l.67-.25a2 2 0 0 1 2.11-.45c.8.27 1.64.47 2.5.59A2 2 0 0 1 22 16.92z" />
-                                </svg>
-                                <input type="text" id="loginPhone" name="phone"
-                                    placeholder="03001234567 or +923001234567"
-                                    onblur="this.value = normalizePhone(this.value)" required />
+                                </svg> --}}
+
+                                <div class="phone-country-field">
+                                    <input type="tel" id="loginPhone" name="phone"
+                                        value="{{ old('phone') }}" autocomplete="tel" required />
+                                </div>
                             </div>
                         </div>
 
@@ -471,7 +560,7 @@
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                 </svg>
                                 <input type="password" id="phonePassword" name="password"
-                                    placeholder="Enter your password" required />
+                                    placeholder="Enter your password" autocomplete="current-password" required />
                                 <button type="button" class="auth-input__btn"
                                     onclick="togglePw('phonePassword', this)">👁</button>
                             </div>
@@ -491,14 +580,20 @@
                     </form>
                 </div>
 
-            </div>{{-- auth-card --}}
+            </div>
         </main>
     </div>
 
     <div class="toast" id="toast" aria-live="polite"></div>
 
+    {{-- Country picker JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js"></script>
+
     {{-- ═══ SCRIPTS ════════════════════════════════════════════════════════════ --}}
     <script>
+        let loginPhoneIti = null;
+
         function switchTab(tab) {
             document.getElementById('panelEmail').classList.toggle('active', tab === 'email');
             document.getElementById('panelPhone').classList.toggle('active', tab === 'phone');
@@ -508,17 +603,68 @@
 
         function togglePw(inputId) {
             const inp = document.getElementById(inputId);
+
+            if (!inp) {
+                return;
+            }
+
             inp.type = inp.type === 'password' ? 'text' : 'password';
         }
 
-        // normalize on blur
-        function normalizePhone(raw) {
-            let p = raw.trim().replace(/\s+/g, '');
-            if (!p) return '';
-            if (/^0\d/.test(p)) return '+92' + p.slice(1);
-            if (/^[1-9]\d{9}$/.test(p)) return '+92' + p;
-            return p;
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.querySelector('#loginPhone');
+            const phoneForm = document.querySelector('#phoneLoginForm');
+
+            if (phoneInput && window.intlTelInput) {
+                loginPhoneIti = window.intlTelInput(phoneInput, {
+                    initialCountry: 'pk',
+                    separateDialCode: true,
+                    nationalMode: false,
+                    formatOnDisplay: true,
+                    autoPlaceholder: 'aggressive',
+                    preferredCountries: ['pk', 'ae', 'sa', 'gb', 'us'],
+                    utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js',
+                });
+            }
+
+            if (phoneForm && phoneInput) {
+                phoneForm.addEventListener('submit', function(e) {
+                    if (!loginPhoneIti) {
+                        return true;
+                    }
+
+                    let rawPhone = phoneInput.value.trim().replace(/\s+/g, '');
+
+                    const selectedCountry = loginPhoneIti.getSelectedCountryData();
+                    const dialCode = selectedCountry.dialCode;
+
+                    if (rawPhone.startsWith('0')) {
+                        rawPhone = rawPhone.substring(1);
+                    }
+
+                    let fullPhone = rawPhone.startsWith('+') ?
+                        rawPhone :
+                        '+' + dialCode + rawPhone;
+
+                    phoneInput.value = fullPhone;
+
+                    if (!/^\+[1-9]\d{7,14}$/.test(fullPhone)) {
+                        e.preventDefault();
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Invalid phone number',
+                            text: 'Please enter a valid phone number.',
+                            confirmButtonColor: '#FF6B1A'
+                        });
+
+                        return false;
+                    }
+
+                    return true;
+                });
+            }
+        });
     </script>
 
 </body>

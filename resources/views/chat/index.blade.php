@@ -125,8 +125,8 @@
                 </header>
 
                 <div class="inbox-search">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="7"></circle>
                         <path d="m20 20-3-3"></path>
                     </svg>
@@ -154,8 +154,8 @@
                 </div>
                 <footer class="chat-composer">
                     <button class="chat-composer__attach" id="chatAttach" aria-label="Attach">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path
                                 d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
                             </path>
@@ -168,8 +168,8 @@
                         🎤
                     </button>
                     <button class="chat-send" id="chatSend" disabled="">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m22 2-7 20-4-9-9-4Z"></path>
                             <path d="M22 2 11 13"></path>
                         </svg>
@@ -231,7 +231,8 @@
 
                 <div style="padding:15px;border-top:1px solid #eee">
 
-                    <textarea id="broadcastMessage" placeholder="Type broadcast message..." style="
+                    <textarea id="broadcastMessage" placeholder="Type broadcast message..."
+                        style="
                                                     width:100%;
                                                     height:120px;
                                                     border:1px solid #ddd;
@@ -241,7 +242,8 @@
                                                     outline:none;
                                                   "></textarea>
 
-                    <button id="sendBroadcastBtn" style="
+                    <button id="sendBroadcastBtn"
+                        style="
                                                     width:100%;
                                                     height:46px;
                                                     margin-top:12px;
@@ -261,7 +263,8 @@
 
         </div>
     </section>
-    <div id="toast" style="
+    <div id="toast"
+        style="
                             position:fixed;
                             bottom:20px;
                             right:20px;
@@ -280,7 +283,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.15.0/echo.iife.js"></script>
 
     <script>
-
         function showToast(message, type = 'success') {
 
             let toast = document.getElementById('toast');
@@ -309,8 +311,8 @@
 
         window.Echo = new Echo({
             broadcaster: 'pusher',
-            key: '{{ env("PUSHER_APP_KEY") }}',
-            cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
+            key: '{{ env('PUSHER_APP_KEY') }}',
+            cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
             forceTLS: true,
             authEndpoint: '/broadcasting/auth',
             withCredentials: true,
@@ -333,8 +335,9 @@
 
                         let image =
                             chat.driver?.driver_photo ?
-                                `/${chat.driver.driver_photo}` :
-                                'https://ui-avatars.com/api/?name=' + encodeURIComponent(chat.driver?.full_name ?? 'Driver');
+                            `/${chat.driver.driver_photo}` :
+                            'https://ui-avatars.com/api/?name=' + encodeURIComponent(chat.driver?.full_name ??
+                                'Driver');
 
                         let unreadBadge = '';
 
@@ -541,10 +544,10 @@
             let container = driver.container || {};
 
             let image =
-                driver?.driver_photo
-                    ? `/${driver.driver_photo}`
-                    : 'https://ui-avatars.com/api/?name=' +
-                    encodeURIComponent(driver?.full_name ?? 'Driver');
+                driver?.driver_photo ?
+                `/${driver.driver_photo}` :
+                'https://ui-avatars.com/api/?name=' +
+                encodeURIComponent(driver?.full_name ?? 'Driver');
 
             /*
             |--------------------------------------------------------------------------
@@ -762,19 +765,15 @@
                 }
             }
 
-            if (msg.is_voice) {
+            if (msg.file_type === 'voice') {
 
                 fileHtml += `
                     <div style="margin-top:10px">
-
-                        <audio controls
-                            src="${msg.translated_voice}">
-                        </audio>
+                        <audio controls src="${msg.file}"></audio>
 
                         <div style="margin-top:8px">
-                            ${msg.translated_message ?? ''}
+                            ${msg.message ?? ''}
                         </div>
-
                     </div>
                 `;
             }
@@ -867,16 +866,16 @@
             |--------------------------------------------------------------------------
             */
             fetch('/chat/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    chat_id: activeChatId,
-                    message: message
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        chat_id: activeChatId,
+                        message: message
+                    })
                 })
-            })
                 .then(res => res.json())
                 .then(res => {
 
@@ -928,7 +927,7 @@
         |--------------------------------------------------------------------------
         */
         document.getElementById('chatInput')
-            .addEventListener('input', function () {
+            .addEventListener('input', function() {
 
                 document.getElementById('chatSend').disabled =
                     this.value.trim() === '';
@@ -940,7 +939,7 @@
         |--------------------------------------------------------------------------
         */
         document.getElementById('chatInput')
-            .addEventListener('keypress', function (e) {
+            .addEventListener('keypress', function(e) {
 
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -964,7 +963,7 @@
         document.querySelectorAll('.chat-quick button')
             .forEach(btn => {
 
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function() {
 
                     document.getElementById('chatInput').value =
                         this.dataset.quick;
@@ -979,7 +978,7 @@
         |--------------------------------------------------------------------------
         */
         document.getElementById('convSearch')
-            .addEventListener('keyup', function () {
+            .addEventListener('keyup', function() {
 
                 let value = this.value.toLowerCase();
 
@@ -1046,10 +1045,10 @@
                     res.data.forEach(driver => {
 
                         let image =
-                            driver.driver_photo
-                                ? `/${driver.driver_photo}`
-                                : 'https://ui-avatars.com/api/?name=' +
-                                encodeURIComponent(driver.full_name);
+                            driver.driver_photo ?
+                            `/${driver.driver_photo}` :
+                            'https://ui-avatars.com/api/?name=' +
+                            encodeURIComponent(driver.full_name);
 
                         html += `
                                                                     <div class="driver-item"
@@ -1081,7 +1080,7 @@
         |--------------------------------------------------------------------------
         */
         document.getElementById('driverSearch')
-            .addEventListener('keyup', function () {
+            .addEventListener('keyup', function() {
 
                 let value = this.value.toLowerCase();
 
@@ -1089,9 +1088,9 @@
                     .forEach(item => {
 
                         item.style.display =
-                            item.innerText.toLowerCase().includes(value)
-                                ? 'flex'
-                                : 'none';
+                            item.innerText.toLowerCase().includes(value) ?
+                            'flex' :
+                            'none';
                     });
             });
 
@@ -1103,15 +1102,15 @@
         function selectDriver(driverId) {
 
             fetch("{{ route('chat.create_or_get') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    driver_id: driverId
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        driver_id: driverId
+                    })
                 })
-            })
                 .then(res => res.json())
                 .then(res => {
 
@@ -1140,12 +1139,12 @@
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | OPEN FILE PICKER
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | OPEN FILE PICKER
+        |--------------------------------------------------------------------------
+        */
         document.getElementById('chatAttach')
-            .addEventListener('click', function () {
+            .addEventListener('click', function() {
 
                 document.getElementById('chatFileInput').click();
             });
@@ -1156,7 +1155,7 @@
         |--------------------------------------------------------------------------
         */
         document.getElementById('chatFileInput')
-            .addEventListener('change', function () {
+            .addEventListener('change', function() {
 
                 let file = this.files[0];
 
@@ -1192,9 +1191,8 @@
                 sender_type: 'admin',
                 message: '',
                 created_at: new Date().toISOString(),
-                file: isImage
-                    ? URL.createObjectURL(file)
-                    : '#',
+                file: isImage ?
+                    URL.createObjectURL(file) : '#',
                 file_type: isImage ? 'image' : 'file',
                 file_name: file.name
             };
@@ -1216,9 +1214,9 @@
             );
 
             if (preview) {
-                preview.innerText = isImage
-                    ? '📷 Image'
-                    : '📎 ' + file.name;
+                preview.innerText = isImage ?
+                    '📷 Image' :
+                    '📎 ' + file.name;
             }
 
             /*
@@ -1237,12 +1235,12 @@
             |--------------------------------------------------------------------------
             */
             fetch('/chat/send', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
-            })
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                })
                 .then(res => res.json())
                 .then(res => {
 
@@ -1256,10 +1254,10 @@
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | BROADCAST SELECTED DRIVERS
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | BROADCAST SELECTED DRIVERS
+        |--------------------------------------------------------------------------
+        */
         let selectedBroadcastDrivers = [];
 
         /*
@@ -1307,10 +1305,10 @@
                     res.data.forEach(driver => {
 
                         let image =
-                            driver.driver_photo
-                                ? `/${driver.driver_photo}`
-                                : 'https://ui-avatars.com/api/?name=' +
-                                encodeURIComponent(driver.full_name);
+                            driver.driver_photo ?
+                            `/${driver.driver_photo}` :
+                            'https://ui-avatars.com/api/?name=' +
+                            encodeURIComponent(driver.full_name);
 
                         html += `
                                             <label class="driver-item">
@@ -1346,7 +1344,7 @@
         |--------------------------------------------------------------------------
         */
         document.getElementById('broadcastDriverSearch')
-            .addEventListener('keyup', function () {
+            .addEventListener('keyup', function() {
 
                 let value = this.value.toLowerCase();
 
@@ -1354,9 +1352,9 @@
                     .forEach(item => {
 
                         item.style.display =
-                            item.innerText.toLowerCase().includes(value)
-                                ? 'flex'
-                                : 'none';
+                            item.innerText.toLowerCase().includes(value) ?
+                            'flex' :
+                            'none';
                     });
             });
 
@@ -1366,7 +1364,7 @@
         |--------------------------------------------------------------------------
         */
         document.getElementById('sendBroadcastBtn')
-            .addEventListener('click', function () {
+            .addEventListener('click', function() {
 
                 let message = document.getElementById('broadcastMessage')
                     .value
@@ -1391,19 +1389,19 @@
 
                 fetch("{{ route('chat.broadcast') }}", {
 
-                    method: 'POST',
+                        method: 'POST',
 
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
 
-                    body: JSON.stringify({
-                        driver_ids: driverIds,
-                        message: message
+                        body: JSON.stringify({
+                            driver_ids: driverIds,
+                            message: message
+                        })
+
                     })
-
-                })
                     .then(res => res.json())
                     .then(res => {
 
@@ -1446,7 +1444,12 @@
         let audioChunks = [];
 
         document.getElementById('voiceRecordBtn')
-            .addEventListener('click', async function () {
+            .addEventListener('click', async function() {
+
+                if (!activeChatId) {
+                    showToast('Please open a chat first', 'error');
+                    return;
+                }
 
                 /*
                 |------------------------------------------------------------
@@ -1459,21 +1462,35 @@
                         audio: true
                     });
 
-                    mediaRecorder = new MediaRecorder(stream);
+                    let options = {};
+
+                    if (MediaRecorder.isTypeSupported('audio/webm')) {
+                        options.mimeType = 'audio/webm';
+                    } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                        options.mimeType = 'audio/mp4';
+                    }
+
+                    mediaRecorder = new MediaRecorder(stream, options);
 
                     audioChunks = [];
 
                     mediaRecorder.ondataavailable = e => {
-                        audioChunks.push(e.data);
+                        if (e.data.size > 0) {
+                            audioChunks.push(e.data);
+                        }
                     };
 
                     mediaRecorder.onstop = async () => {
 
+                        let mimeType = mediaRecorder.mimeType || 'audio/webm';
+
+                        let extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+
                         let audioBlob = new Blob(audioChunks, {
-                            type: 'audio/webm'
+                            type: mimeType
                         });
 
-                        sendVoiceMessage(audioBlob);
+                        sendVoiceMessage(audioBlob, extension);
                     };
 
                     mediaRecorder.start();
@@ -1494,7 +1511,8 @@
             });
 
 
-        async function sendVoiceMessage(audioBlob) {
+        async function sendVoiceMessage(audioBlob, extension = 'webm') {
+
             let formData = new FormData();
 
             formData.append('chat_id', activeChatId);
@@ -1502,32 +1520,31 @@
             formData.append(
                 'voice',
                 audioBlob,
-                'voice-message.webm'
+                'voice-message.' + extension
             );
 
-            /*
-            |------------------------------------------------------------
-            | TARGET LANGUAGE
-            |------------------------------------------------------------
-            */
             formData.append('translate_to', 'it');
 
-            let res = await fetch('/chat/send', {
+            try {
+                let res = await fetch('/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                });
 
-                method: 'POST',
+                let data = await res.json();
 
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
+                if (data.status) {
+                    appendMessage(data.data);
+                } else {
+                    showToast('Voice message failed', 'error');
+                }
 
-                body: formData
-            });
-
-            let data = await res.json();
-
-            if (data.status) {
-
-                appendMessage(data.data);
+            } catch (error) {
+                console.log(error);
+                showToast('Voice message failed', 'error');
             }
         }
     </script>
