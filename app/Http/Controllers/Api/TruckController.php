@@ -252,62 +252,66 @@ class TruckController extends Controller
             'csv_file' => 'required|mimes:csv,txt'
         ]);
 
-        $driver = auth('driver')->user();
-
         /*
-        |--------------------------------------------------------------------------
-        | GET ADMIN ID
-        |--------------------------------------------------------------------------
+        |--------------------------------------------
+        | ADMIN AUTH ONLY
+        |--------------------------------------------
         */
-        $adminId = $driver->admin_id ?? $driver->id;
+        $admin = auth()->user();
+
+        if (!$admin) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated'
+            ], 401);
+        }
 
         $file = fopen($request->file('csv_file')->getRealPath(), 'r');
 
         $header = fgetcsv($file);
 
+        $count = 0;
+
         DB::beginTransaction();
 
         try {
-
-            $count = 0;
 
             while (($row = fgetcsv($file)) !== false) {
 
                 $data = array_combine($header, $row);
 
                 /*
-                |--------------------------------------------------------------------------
-                | DRIVER LOOKUP
-                |--------------------------------------------------------------------------
+                |--------------------------------------------
+                | DRIVER LOOKUP (optional assignment)
+                |--------------------------------------------
                 */
                 $driverId = null;
 
                 if (!empty($data['driver_email'])) {
 
-                    $driverData = Driver::where('admin_id', $adminId)
+                    $driver = Driver::where('admin_id', $admin->id)
                         ->where('email', $data['driver_email'])
                         ->first();
 
-                    if ($driverData) {
-                        $driverId = $driverData->id;
+                    if ($driver) {
+                        $driverId = $driver->id;
                     }
                 }
 
                 /*
-                |--------------------------------------------------------------------------
+                |--------------------------------------------
                 | CREATE TRUCK
-                |--------------------------------------------------------------------------
+                |--------------------------------------------
                 */
                 $truck = Truck::create([
-
-                    'admin_id' => $adminId,
+                    'admin_id' => $admin->id,
 
                     'truck_number' => $data['truck_number'] ?? null,
                     'truck_license_number' => $data['truck_license_number'] ?? null,
                     'capacity_tons' => $data['capacity_tons'] ?? null,
                     'truck_type_category' => $data['truck_type_category'] ?? null,
                     'type' => $data['type'] ?? null,
-                    'status' => $data['status'] ?? 'active',
+                    'status' => $data['status'] ?? null,
 
                     'license_plate_number' => $data['license_plate_number'] ?? null,
                     'vin_number' => $data['vin_number'] ?? null,
@@ -331,14 +335,14 @@ class TruckController extends Controller
                 ]);
 
                 /*
-                |--------------------------------------------------------------------------
+                |--------------------------------------------
                 | MAINTENANCE RECORD
-                |--------------------------------------------------------------------------
+                |--------------------------------------------
                 */
                 TruckMaintenance::create([
                     'truck_id' => $truck->id,
-                    'next_due_km' => $data['estimate_km'] ?? 0,
-                    'last_service_km' => $data['current_km'] ?? 0,
+                    'next_due_km' => $data['estimate_km'] ?? null,
+                    'last_service_km' => $data['current_km'] ?? null,
                     'type' => 'general',
                 ]);
 
@@ -351,7 +355,8 @@ class TruckController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => $count . ' trucks imported successfully.'
+                'message' => 'Trucks imported successfully',
+                'imported' => $count
             ]);
 
         } catch (\Exception $e) {
