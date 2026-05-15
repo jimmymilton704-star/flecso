@@ -25,11 +25,11 @@ class TruckController extends Controller
             ->latest()
             ->paginate(10);
         $tripStats = [
-            'active'     => Truck::where('status', 'active')->count(),
-            'pending'    => Truck::where('status', 'maintenance')->count(),
-            'completed'  => Truck::where('status', 'idle')->count(),
-            'cancelled'  => Truck::where('status', 'inactive')->count(),
-            'total'      => Truck::count(),
+            'active'     => Truck::where('admin_id', $adminId)->where('status', 'active')->count(),
+            'pending'    => Truck::where('admin_id', $adminId)->where('status', 'maintenance')->count(),
+            'completed'  => Truck::where('admin_id', $adminId)->where('status', 'idle')->count(),
+            'cancelled'  => Truck::where('admin_id', $adminId)->where('status', 'inactive')->count(),
+            'total'      => Truck::where('admin_id', $adminId)->count(),
         ];
 
         return view('trucks.index', compact('trucks', 'tripStats'));
