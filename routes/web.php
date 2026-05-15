@@ -23,6 +23,14 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
+Route::get('/delete_account_form', [UserController::class, 'DeleteShow'])
+    ->name('delete.account.form');
+
+Route::post('/delete_account_request', [UserController::class, 'requestDeletion'])
+    ->name('delete.account.request');
+Route::get('/delete_account_confirm', [UserController::class, 'confirmDeletion'])
+    ->name('delete.account.confirm')
+    ->middleware('signed');
 /*
 |--------------------------------------------------------------------------
 | AUTH ROUTES (GUEST ONLY)

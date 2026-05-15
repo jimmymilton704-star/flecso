@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use App\Mail\DeleteAccountRequestMail;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -109,5 +112,63 @@ class UserController extends Controller
 
         return redirect()->route('setting')->withFragment('personal')
             ->with('success', 'Profile updated successfully.');
+    }
+
+    public function DeleteShow()
+    {
+        return view('delete_account_form');
+    }
+    public function requestDeletion(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|max:255',
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONFIRMATION URL
+        |--------------------------------------------------------------------------
+        */
+        $confirmationUrl = URL::temporarySignedRoute(
+            'delete.account.confirm',
+            now()->addHours(48),
+            [
+                'email' => $request->email,
+            ]
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | SEND EMAIL
+        |--------------------------------------------------------------------------
+        */
+        Mail::to($request->email)->send(
+            new DeleteAccountRequestMail(
+                $request->email,
+                $confirmationUrl
+            )
+        );
+
+        return back()->with(
+            'success',
+            'Your account deletion request has been received. Please check your email for confirmation.'
+        );
+    }
+
+    public function confirmDeletion(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|max:255',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('error', 'User not found.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('login')->with('success', 'Your account has been deleted.');
     }
 }
