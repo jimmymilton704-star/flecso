@@ -176,214 +176,212 @@ class ChatController extends Controller
     // }
 
     public function sendMessage(Request $request)
-    {
-        $request->validate([
-            'chat_id' => 'required|exists:chats,id',
-            'message' => 'nullable|string',
-            'file' => 'nullable|file|max:10240',
-            'voice' => 'nullable|file|max:10240',
-            'translate_to' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'chat_id'      => 'required|exists:chats,id',
+        'message'      => 'nullable|string',
+        'file'         => 'nullable|file|max:10240',
+        'voice'        => 'nullable|file|max:10240',
+        'translate_to' => 'nullable|string',
+    ]);
 
-        $auth = $this->getAuthUser();
+    $auth = $this->getAuthUser();
 
-        $chat = Chat::findOrFail($request->chat_id);
+    $chat = Chat::findOrFail($request->chat_id);
 
-        /*
-        |--------------------------------------------------------------------------
-        | SECURITY
-        |--------------------------------------------------------------------------
-        */
-        if ($chat->admin_id != $auth['user']->id) {
-
-            return response()->json([
-                'status' => false
-            ]);
-        }
-
-        $filePath = null;
-        $fileType = null;
-        $fileName = null;
-
-        $messageText = $request->message;
-
-        /*
-        |--------------------------------------------------------------------------
-        | OPENAI CLIENT
-        |--------------------------------------------------------------------------
-        */
-        $openai = \OpenAI::client(env('OPENAI_API_KEY'));
-
-        /*
-        |--------------------------------------------------------------------------
-        | NORMAL FILE UPLOAD
-        |--------------------------------------------------------------------------
-        */
-        if ($request->hasFile('file')) {
-
-            $file = $request->file('file');
-
-            $filePath = $file->store('chat-files', 'public');
-
-            $mime = $file->getMimeType();
-
-            $fileType = str_contains($mime, 'image')
-                ? 'image'
-                : 'file';
-
-            $fileName = $file->getClientOriginalName();
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | VOICE MESSAGE
-        |--------------------------------------------------------------------------
-        */
-        if ($request->hasFile('voice')) {
-
-            $voice = $request->file('voice');
-
-            /*
-            |--------------------------------------------------------------------------
-            | GET SAFE EXTENSION
-            |--------------------------------------------------------------------------
-            */
-            $extension = strtolower($voice->getClientOriginalExtension());
-
-            if (!$extension) {
-                $mime = $voice->getMimeType();
-
-                $extension = match ($mime) {
-                    'audio/webm', 'video/webm' => 'webm',
-                    'audio/mpeg', 'audio/mp3' => 'mp3',
-                    'audio/mp4', 'audio/m4a' => 'm4a',
-                    'audio/wav', 'audio/x-wav' => 'wav',
-                    'audio/ogg', 'application/ogg' => 'ogg',
-                    default => 'webm',
-                };
-            }
-
-            /*
+    /*
     |--------------------------------------------------------------------------
-    | STORE VOICE FILE WITH REAL EXTENSION
+    | SECURITY
     |--------------------------------------------------------------------------
     */
-            $voiceFileName = 'voice-' . time() . '-' . uniqid() . '.' . $extension;
-
-            $voicePath = $voice->storeAs(
-                'chat-voice',
-                $voiceFileName,
-                'public'
-            );
-
-            $filePath = $voicePath;
-            $fileType = 'voice';
-            $fileName = $voiceFileName;
-
-            /*
-    |--------------------------------------------------------------------------
-    | MAKE REAL PATH WITH SUPPORTED EXTENSION FOR OPENAI
-    |--------------------------------------------------------------------------
-    */
-            $realAudioPath = storage_path('app/public/' . $voicePath);
-
-            /*
-    |--------------------------------------------------------------------------
-    | SPEECH TO TEXT
-    |--------------------------------------------------------------------------
-    */
-            $transcription = $openai->audio()->transcribe([
-                'model' => 'whisper-1',
-                'file' => fopen($realAudioPath, 'r'),
-            ]);
-
-            $messageText = $transcription->text;
-
-            /*
-    |--------------------------------------------------------------------------
-    | TRANSLATE IF REQUESTED
-    |--------------------------------------------------------------------------
-    */
-            if ($request->translate_to) {
-
-                $translate = $openai->chat()->create([
-                    'model' => 'gpt-4.1-mini',
-                    'messages' => [
-                        [
-                            'role' => 'system',
-                            'content' => 'Translate the message only. Do not add explanation.'
-                        ],
-                        [
-                            'role' => 'user',
-                            'content' => "Translate this into {$request->translate_to}: {$messageText}"
-                        ]
-                    ],
-                ]);
-
-                $messageText = $translate->choices[0]->message->content;
-            }
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | CREATE MESSAGE
-        |--------------------------------------------------------------------------
-        */
-        $message = Message::create([
-            'chat_id' => $chat->id,
-            'sender_type' => 'admin',
-            'sender_id' => $auth['user']->id,
-            'message' => $messageText,
-
-            'file' => $filePath
-                ? asset('storage/' . $filePath)
-                : null,
-
-            'file_type' => $fileType,
-            'file_name' => $fileName,
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | LAST MESSAGE TEXT
-        |--------------------------------------------------------------------------
-        */
-        $lastMessage = $messageText;
-
-        if (!$lastMessage) {
-
-            if ($fileType === 'image') {
-                $lastMessage = '📷 Image';
-            } elseif ($fileType === 'voice') {
-                $lastMessage = '🎤 Voice Message';
-            } elseif ($fileType === 'file') {
-                $lastMessage = '📎 File';
-            }
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | UPDATE CHAT
-        |--------------------------------------------------------------------------
-        */
-        $chat->update([
-            'last_message' => $lastMessage,
-            'last_message_at' => now()
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | BROADCAST
-        |--------------------------------------------------------------------------
-        */
-        event(new \App\Events\MessageSent($message));
-
+    if ($chat->admin_id != $auth['user']->id) {
         return response()->json([
-            'status' => true,
-            'data' => $message
+            'status' => false
         ]);
     }
 
+    $fileUrl = null;
+    $fileType = null;
+    $fileName = null;
+    $messageText = $request->message;
+
+    /*
+    |--------------------------------------------------------------------------
+    | OPENAI CLIENT
+    |--------------------------------------------------------------------------
+    */
+    $openai = \OpenAI::client(env('OPENAI_API_KEY'));
+
+    /*
+    |--------------------------------------------------------------------------
+    | NORMAL FILE UPLOAD TO PUBLIC
+    |--------------------------------------------------------------------------
+    */
+    if ($request->hasFile('file')) {
+
+        $file = $request->file('file');
+
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if (!$extension) {
+            $extension = 'file';
+        }
+
+        $fileName = 'chat-file-' . time() . '-' . uniqid() . '.' . $extension;
+
+        $uploadFolder = public_path('uploads/chat-files');
+
+        if (!file_exists($uploadFolder)) {
+            mkdir($uploadFolder, 0777, true);
+        }
+
+        $file->move($uploadFolder, $fileName);
+
+        $fileUrl = asset('uploads/chat-files/' . $fileName);
+
+        $mime = $file->getMimeType();
+
+        $fileType = str_contains($mime, 'image')
+            ? 'image'
+            : 'file';
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VOICE MESSAGE UPLOAD TO PUBLIC
+    |--------------------------------------------------------------------------
+    */
+    if ($request->hasFile('voice')) {
+
+        $voice = $request->file('voice');
+
+        /*
+        |--------------------------------------------------------------------------
+        | GET SAFE EXTENSION
+        |--------------------------------------------------------------------------
+        */
+        $extension = strtolower($voice->getClientOriginalExtension());
+
+        if (!$extension) {
+            $mime = $voice->getMimeType();
+
+            $extension = match ($mime) {
+                'audio/webm', 'video/webm' => 'webm',
+                'audio/mpeg', 'audio/mp3' => 'mp3',
+                'audio/mp4', 'audio/m4a' => 'm4a',
+                'audio/wav', 'audio/x-wav' => 'wav',
+                'audio/ogg', 'application/ogg' => 'ogg',
+                default => 'webm',
+            };
+        }
+
+        $voiceFileName = 'voice-' . time() . '-' . uniqid() . '.' . $extension;
+
+        $voiceFolder = public_path('uploads/chat-voice');
+
+        if (!file_exists($voiceFolder)) {
+            mkdir($voiceFolder, 0777, true);
+        }
+
+        $voice->move($voiceFolder, $voiceFileName);
+
+        $realAudioPath = public_path('uploads/chat-voice/' . $voiceFileName);
+
+        $fileUrl = asset('uploads/chat-voice/' . $voiceFileName);
+        $fileType = 'voice';
+        $fileName = $voiceFileName;
+
+        /*
+        |--------------------------------------------------------------------------
+        | SPEECH TO TEXT
+        |--------------------------------------------------------------------------
+        */
+        $transcription = $openai->audio()->transcribe([
+            'model' => 'whisper-1',
+            'file'  => fopen($realAudioPath, 'r'),
+        ]);
+
+        $messageText = $transcription->text;
+
+        /*
+        |--------------------------------------------------------------------------
+        | TRANSLATE IF REQUESTED
+        |--------------------------------------------------------------------------
+        */
+        if ($request->translate_to) {
+
+            $translate = $openai->chat()->create([
+                'model' => 'gpt-4.1-mini',
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => 'Translate the message only. Do not add explanation.'
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => "Translate this into {$request->translate_to}: {$messageText}"
+                    ]
+                ],
+            ]);
+
+            $messageText = $translate->choices[0]->message->content;
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CREATE MESSAGE
+    |--------------------------------------------------------------------------
+    */
+    $message = Message::create([
+        'chat_id'     => $chat->id,
+        'sender_type' => 'admin',
+        'sender_id'   => $auth['user']->id,
+        'message'     => $messageText,
+        'file'        => $fileUrl,
+        'file_type'   => $fileType,
+        'file_name'   => $fileName,
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | LAST MESSAGE TEXT
+    |--------------------------------------------------------------------------
+    */
+    $lastMessage = $messageText;
+
+    if (!$lastMessage) {
+        if ($fileType === 'image') {
+            $lastMessage = '📷 Image';
+        } elseif ($fileType === 'voice') {
+            $lastMessage = '🎤 Voice Message';
+        } elseif ($fileType === 'file') {
+            $lastMessage = '📎 File';
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE CHAT
+    |--------------------------------------------------------------------------
+    */
+    $chat->update([
+        'last_message'    => $lastMessage,
+        'last_message_at' => now()
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | BROADCAST
+    |--------------------------------------------------------------------------
+    */
+    event(new \App\Events\MessageSent($message));
+
+    return response()->json([
+        'status' => true,
+        'data'   => $message
+    ]);
+}
     /*
     |-----------------------------------------
     | GET MESSAGES
