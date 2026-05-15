@@ -105,8 +105,9 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
         Route::post('/update/{id}', [TripController::class, 'update']);
         Route::delete('/delete/{id}', [TripController::class, 'destroy']);
         Route::get('/show/{id}', [TripController::class, 'show']);
+        Route::get('/payment-suggestion', [TripController::class, 'paymentSuggestion']);
     });
-
+    
     // Subscription
     Route::get('/plans', [PlanController::class, 'index']);
     Route::get('/subscription', [SubscriptionController::class, 'index']);

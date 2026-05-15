@@ -4,112 +4,7 @@
 @section('body-class', 'page-dashboard')
 
 @section('content')
-<style>
-/* Pagination Fix */
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 18px 20px;
-    border-top: 1px solid #f0f0f0;
-    background: #ffffff;
-}
 
-.pagination .meta {
-    font-size: 13px;
-    color: #6b7280;
-    white-space: nowrap;
-}
-
-.pagination .pager {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.pagination .pager nav {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.pagination .pager > nav > div:first-child {
-    display: none;
-}
-
-.pagination .pager > nav > div:last-child {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.pagination .pager span,
-.pagination .pager a {
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    border: 1px solid #e5e7eb;
-    background: #ffffff;
-    color: #111827;
-    font-size: 13px;
-    font-weight: 500;
-    text-decoration: none;
-    line-height: 1;
-    transition: all 0.2s ease;
-}
-
-.pagination .pager a:hover {
-    background: #fff4ee;
-    border-color: #f15e2e;
-    color: #f15e2e;
-}
-
-.pagination .pager span[aria-current="page"] span {
-    background: #f15e2e !important;
-    border-color: #f15e2e !important;
-    color: #ffffff !important;
-}
-
-.pagination .pager svg {
-    width: 16px !important;
-    height: 16px !important;
-    max-width: 16px !important;
-    max-height: 16px !important;
-    display: block;
-}
-
-.pagination .pager p {
-    display: none;
-}
-
-/* Disabled Previous / Next */
-.pagination .pager span[aria-disabled="true"] span {
-    color: #9ca3af;
-    background: #f9fafb;
-    border-color: #e5e7eb;
-    cursor: not-allowed;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .pagination {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .pagination .pager {
-        width: 100%;
-        justify-content: flex-start;
-        overflow-x: auto;
-        padding-bottom: 4px;
-    }
-}
-</style>
 
     <section class="page">
         <div class="page-head">
@@ -149,7 +44,7 @@
                     </svg>
                 </div>
                 <div class="stat__label">Active</div>
-                <div class="stat__value">{{ $trucks->where('status', 'active')->count() }}</div>
+                <div class="stat__value">{{ $tripStats['active'] ?? 0 }}</div>
                 {{-- <div class="stat__trend trend-up">▲ 3.2% vs last month</div> --}}
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#FF6B1A" stroke-width="2"
@@ -165,7 +60,7 @@
                     </svg>
                 </div>
                 <div class="stat__label">Maintenance</div>
-                <div class="stat__value"> {{ $trucks->where('status', 'maintenance')->count() }}</div>
+                <div class="stat__value"> {{ $tripStats['pending'] ?? 0 }}</div>
                 {{-- <div class="stat__trend trend-down">▼ 1.5% vs last month</div> --}}
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#111114" stroke-width="2"
@@ -184,7 +79,7 @@
                     </svg>
                 </div>
                 <div class="stat__label">Idle</div>
-                <div class="stat__value">{{ $trucks->where('status', 'idle')->count() }}</div>
+                <div class="stat__value">{{ $tripStats['completed'] ?? 0 }}</div>
                 {{-- <div class="stat__trend trend-up">▲ 0.8% vs last month</div> --}}
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#3B82F6" stroke-width="2"
@@ -203,7 +98,7 @@
                     </svg>
                 </div>
                 <div class="stat__label">Inactive</div>
-                <div class="stat__value">{{ $trucks->where('status', 'inactive')->count() }}</div>
+                <div class="stat__value">{{ $tripStats['cancelled'] ?? 0 }}</div>
                 {{-- <div class="stat__trend trend-down">▼ 0.4% vs last month</div> --}}
                 <svg class="stat__spark" width="90" height="34" viewBox="0 0 90 34">
                     <path d="M0 24 L12 18 L24 22 L36 14 L48 18 L60 8 L72 12 L90 4" stroke="#10B981" stroke-width="2"

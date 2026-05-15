@@ -7,6 +7,115 @@
 <html lang="en">
 
 <head>
+    <style>
+        /* Pagination Fix */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px 20px;
+            border-top: 1px solid #f0f0f0;
+            background: #ffffff;
+            
+        }
+
+        .pagination .meta {
+            font-size: 13px;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        .pagination .pager {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-right: 200px !important;
+        }
+
+        .pagination .pager nav {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .pagination .pager>nav>div:first-child {
+            display: none;
+        }
+
+        .pagination .pager>nav>div:last-child {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pagination .pager span,
+        .pagination .pager a {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            color: #111827;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            line-height: 1;
+            transition: all 0.2s ease;
+            gap: 4px;
+        }
+
+        .pagination .pager a:hover {
+            background: #fff4ee;
+            border-color: #f15e2e;
+            color: #f15e2e;
+        }
+
+        .pagination .pager span[aria-current="page"] span {
+            background: #f15e2e !important;
+            border-color: #f15e2e !important;
+            color: #ffffff !important;
+        }
+
+        .pagination .pager svg {
+            width: 16px !important;
+            height: 16px !important;
+            max-width: 16px !important;
+            max-height: 16px !important;
+            display: block;
+        }
+
+        .pagination .pager p {
+            display: none;
+        }
+
+        /* Disabled Previous / Next */
+        .pagination .pager span[aria-disabled="true"] span {
+            color: #9ca3af;
+            background: #f9fafb;
+            border-color: #e5e7eb;
+            cursor: not-allowed;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .pagination {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pagination .pager {
+                width: 100%;
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+        }
+    </style>
     @include('partials.head')
 </head>
 
