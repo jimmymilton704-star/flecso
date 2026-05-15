@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Truck;
 use Illuminate\Http\Request;
-
+use App\Models\Driver;
+use App\Models\TruckHealthLog;
+use App\Models\TruckMaintenance;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 class TruckController extends Controller
 {
     /*
@@ -38,33 +42,33 @@ class TruckController extends Controller
         $adminId = auth()->id();
 
         $request->validate([
-            'truck_number'         => 'required|string',
+            'truck_number' => 'required|string',
             'truck_license_number' => 'required|string',
-            'capacity_tons'        => 'required|numeric',
-            'truck_type_category'  => 'required|string',
-            'type'                 => 'required|string',
-            'status'              => 'required|string',
+            'capacity_tons' => 'required|numeric',
+            'truck_type_category' => 'required|string',
+            'type' => 'required|string',
+            'status' => 'required|string',
 
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
-            'license_plate_number'   => 'required|string',
-            'vin_number'             => 'nullable|string',
-            'first_registration_date'=> 'nullable|date',
-            'usage_type'             => 'nullable|string',
-            'documento_unico'        => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'license_plate_number' => 'required|string',
+            'vin_number' => 'nullable|string',
+            'first_registration_date' => 'nullable|date',
+            'usage_type' => 'nullable|string',
+            'documento_unico' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
 
-            'vehicle_category'    => 'nullable|string',
-            'gvw_kg'              => 'nullable|numeric',
+            'vehicle_category' => 'nullable|string',
+            'gvw_kg' => 'nullable|numeric',
             'payload_capacity_kg' => 'nullable|numeric',
-            'number_of_axles'     => 'nullable|integer',
-            'engine_class'        => 'nullable|string',
-            'fuel_type'           => 'nullable|string',
+            'number_of_axles' => 'nullable|integer',
+            'engine_class' => 'nullable|string',
+            'fuel_type' => 'nullable|string',
 
-            'next_inspection_date'   => 'nullable|date',
-            'insurance_policy_number'=> 'nullable|string',
-            'insurance_expiry_date'  => 'nullable|date',
+            'next_inspection_date' => 'nullable|date',
+            'insurance_policy_number' => 'nullable|string',
+            'insurance_expiry_date' => 'nullable|date',
             'tachograph_calibration_expiry' => 'nullable|date',
-            'bollo_expiry_date'      => 'nullable|date',
+            'bollo_expiry_date' => 'nullable|date',
         ]);
 
         $data = $request->all();
@@ -75,13 +79,14 @@ class TruckController extends Controller
         */
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $path = public_path('uploads/trucks');
-            if (!file_exists($path)) mkdir($path, 0755, true);
+            if (!file_exists($path))
+                mkdir($path, 0755, true);
 
             $file->move($path, $fileName);
-            $data['image'] = 'uploads/trucks/'.$fileName;
+            $data['image'] = 'uploads/trucks/' . $fileName;
         }
 
         /*
@@ -89,13 +94,14 @@ class TruckController extends Controller
         */
         if ($request->hasFile('documento_unico')) {
             $file = $request->file('documento_unico');
-            $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $path = public_path('uploads/trucks/docs');
-            if (!file_exists($path)) mkdir($path, 0755, true);
+            if (!file_exists($path))
+                mkdir($path, 0755, true);
 
             $file->move($path, $fileName);
-            $data['documento_unico'] = 'uploads/trucks/docs/'.$fileName;
+            $data['documento_unico'] = 'uploads/trucks/docs/' . $fileName;
         }
 
         $truck = Truck::create($data);
@@ -128,13 +134,14 @@ class TruckController extends Controller
             }
 
             $file = $request->file('image');
-            $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $path = public_path('uploads/trucks');
-            if (!file_exists($path)) mkdir($path, 0755, true);
+            if (!file_exists($path))
+                mkdir($path, 0755, true);
 
             $file->move($path, $fileName);
-            $data['image'] = 'uploads/trucks/'.$fileName;
+            $data['image'] = 'uploads/trucks/' . $fileName;
         }
 
         if ($request->hasFile('documento_unico')) {
@@ -143,13 +150,14 @@ class TruckController extends Controller
             }
 
             $file = $request->file('documento_unico');
-            $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $path = public_path('uploads/trucks/docs');
-            if (!file_exists($path)) mkdir($path, 0755, true);
+            if (!file_exists($path))
+                mkdir($path, 0755, true);
 
             $file->move($path, $fileName);
-            $data['documento_unico'] = 'uploads/trucks/docs/'.$fileName;
+            $data['documento_unico'] = 'uploads/trucks/docs/' . $fileName;
         }
 
         $truck->update($data);
@@ -201,7 +209,7 @@ class TruckController extends Controller
         $request->validate([
             'admin_id' => 'required|exists:users,id',
             'truck_id' => 'required|exists:trucks,id',
-          'driver_id'=> 'required|exists:drivers,id',
+            'driver_id' => 'required|exists:drivers,id',
         ]);
 
         $truck = Truck::where('id', $request->truck_id)
@@ -236,5 +244,124 @@ class TruckController extends Controller
             'message' => 'Truck detail fetched',
             'data' => $truck
         ]);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|mimes:csv,txt'
+        ]);
+
+        $driver = auth('driver')->user();
+
+        /*
+        |--------------------------------------------------------------------------
+        | GET ADMIN ID
+        |--------------------------------------------------------------------------
+        */
+        $adminId = $driver->admin_id ?? $driver->id;
+
+        $file = fopen($request->file('csv_file')->getRealPath(), 'r');
+
+        $header = fgetcsv($file);
+
+        DB::beginTransaction();
+
+        try {
+
+            $count = 0;
+
+            while (($row = fgetcsv($file)) !== false) {
+
+                $data = array_combine($header, $row);
+
+                /*
+                |--------------------------------------------------------------------------
+                | DRIVER LOOKUP
+                |--------------------------------------------------------------------------
+                */
+                $driverId = null;
+
+                if (!empty($data['driver_email'])) {
+
+                    $driverData = Driver::where('admin_id', $adminId)
+                        ->where('email', $data['driver_email'])
+                        ->first();
+
+                    if ($driverData) {
+                        $driverId = $driverData->id;
+                    }
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | CREATE TRUCK
+                |--------------------------------------------------------------------------
+                */
+                $truck = Truck::create([
+
+                    'admin_id' => $adminId,
+
+                    'truck_number' => $data['truck_number'] ?? null,
+                    'truck_license_number' => $data['truck_license_number'] ?? null,
+                    'capacity_tons' => $data['capacity_tons'] ?? null,
+                    'truck_type_category' => $data['truck_type_category'] ?? null,
+                    'type' => $data['type'] ?? null,
+                    'status' => $data['status'] ?? 'active',
+
+                    'license_plate_number' => $data['license_plate_number'] ?? null,
+                    'vin_number' => $data['vin_number'] ?? null,
+                    'first_registration_date' => $data['first_registration_date'] ?? null,
+                    'usage_type' => $data['usage_type'] ?? null,
+
+                    'vehicle_category' => $data['vehicle_category'] ?? null,
+                    'gvw_kg' => $data['gvw_kg'] ?? null,
+                    'payload_capacity_kg' => $data['payload_capacity_kg'] ?? null,
+                    'number_of_axles' => $data['number_of_axles'] ?? null,
+                    'engine_class' => $data['engine_class'] ?? null,
+                    'fuel_type' => $data['fuel_type'] ?? null,
+
+                    'next_inspection_date' => $data['next_inspection_date'] ?? null,
+                    'insurance_policy_number' => $data['insurance_policy_number'] ?? null,
+                    'insurance_expiry_date' => $data['insurance_expiry_date'] ?? null,
+                    'tachograph_calibration_expiry' => $data['tachograph_calibration_expiry'] ?? null,
+                    'bollo_expiry_date' => $data['bollo_expiry_date'] ?? null,
+
+                    'driver_id' => $driverId,
+                ]);
+
+                /*
+                |--------------------------------------------------------------------------
+                | MAINTENANCE RECORD
+                |--------------------------------------------------------------------------
+                */
+                TruckMaintenance::create([
+                    'truck_id' => $truck->id,
+                    'next_due_km' => $data['estimate_km'] ?? 0,
+                    'last_service_km' => $data['current_km'] ?? 0,
+                    'type' => 'general',
+                ]);
+
+                $count++;
+            }
+
+            fclose($file);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => $count . ' trucks imported successfully.'
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

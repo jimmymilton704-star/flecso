@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
         Route::delete('/delete/{id}', [DriverController::class, 'destroy']);
         Route::get('/show/{id}', [DriverController::class, 'show']);
         Route::post('/update-status', [DriverController::class, 'updateStatus']);
+        Route::post('/import', [DriverController::class, 'import']);
     });
 
     // Trucks
@@ -87,6 +88,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
         Route::delete('/delete/{id}', [TruckController::class, 'destroy']);
         Route::post('/assign-driver', [TruckController::class, 'assignDriver']);
         Route::get('/show/{id}', [TruckController::class, 'show']);
+        Route::post('/import', [TruckController::class, 'import']);
     });
 
     // Containers
@@ -96,6 +98,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
         Route::post('/update/{id}', [ContainerController::class, 'update']);
         Route::delete('/delete/{id}', [ContainerController::class, 'destroy']);
         Route::get('/show/{id}', [ContainerController::class, 'show']);
+        Route::post('/import', [ContainerController::class, 'import']);
     });
 
     // Trips
