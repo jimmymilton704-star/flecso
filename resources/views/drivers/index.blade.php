@@ -165,6 +165,7 @@
 
                                 <td>
                                     <div class="row-actions">
+                                        @can('driver_view')
 
                                         {{-- VIEW --}}
                                         <a href="{{ route('drivers.show', $driver->id) }}" class="mini-btn">
@@ -174,6 +175,8 @@
                                                 <circle cx="12" cy="12" r="3" />
                                             </svg>
                                         </a>
+                                        @endcan
+                                        @can('driver_update')
 
                                         {{-- EDIT --}}
                                         <a href="{{ route('drivers.edit', $driver->id) }}" class="mini-btn">
@@ -183,6 +186,9 @@
                                                 <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
                                             </svg>
                                         </a>
+                                        @endcan
+                                        @can('driver_delete')
+
 
                                         {{-- DELETE --}}
                                         <form action="{{ route('drivers.delete', $driver->id) }}" method="POST">
@@ -196,6 +202,7 @@
                                                 </svg>
                                             </button>
                                         </form>
+                                        @endcan
 
                                     </div>
                                 </td>

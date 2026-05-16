@@ -12,6 +12,7 @@
                 <h1>Containers</h1>
                 <div class="page-head__sub">Track ISO 6346 compliant containers across all depots and shipments.</div>
             </div>
+            @can('container_create')
             <div class="page-head__actions">
                 <a href="{{ route('containers.create') }}" class="btn btn--primary">
                     <svg viewBox="0 0 24 24" width="16" height="16">
@@ -20,6 +21,7 @@
                     Add New Container
                 </a>
             </div>
+            @endcan
         </div>
 
         {{-- STATS --}}
@@ -151,6 +153,7 @@
                                     <div class="row-actions">
 
                                         {{-- QR BUTTON (we will implement later) --}}
+                                        @can('container_qr')
 
 
                                         <button class="mini-btn mini-btn--qr" title="QR Code"
@@ -167,6 +170,8 @@
                                             </svg>
 
                                         </button>
+                                        @endcan
+                                        @can('container_show')
 
                                         <a class="mini-btn" title="View" href="{{ route('containers.show', $container->id) }}">
                                             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
@@ -175,6 +180,10 @@
                                                 <circle cx="12" cy="12" r="3"></circle>
                                             </svg>
                                         </a>
+                                        @endcan
+
+                                        @can('container_edit')
+
 
                                         {{-- EDIT --}}
                                         <a href="{{ route('containers.edit', $container->id) }}" class="mini-btn">
@@ -184,6 +193,11 @@
                                                 <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" />
                                             </svg>
                                         </a>
+                                        @endcan
+
+                                        @can('container_delete')
+
+
 
                                         {{-- DELETE --}}
                                         <form action="{{ route('containers.destroy', $container->id) }}" method="POST"
@@ -200,7 +214,7 @@
                                                 </svg>
                                             </button>
                                         </form>
-
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

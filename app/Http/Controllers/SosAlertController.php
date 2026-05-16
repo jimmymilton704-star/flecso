@@ -26,7 +26,7 @@ class SosAlertController extends Controller
     */
     public function index(Request $request)
     {
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
         $source = $request->alert_source; // Get the filter value
 
         /*

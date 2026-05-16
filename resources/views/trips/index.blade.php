@@ -671,6 +671,7 @@
                     Export CSV
                 </button>
 
+                @can('trip_create')
                 <a href="{{ route('trips.create') }}" class="btn btn--primary">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                         stroke-width="2">
@@ -678,6 +679,7 @@
                     </svg>
                     Add New Trip
                 </a>
+                @endcan
             </div>
         </div>
 
@@ -919,6 +921,7 @@
 
                         <div class="trip-card__actions">
                             <div class="action-left">
+                                @can('trip_view')
                                 <a href="{{ route('trips.show', $trip->id) }}" class="mini-btn" title="View Trip">
                                     <svg viewBox="0 0 24 24" width="15" height="15" fill="none"
                                         stroke="currentColor" stroke-width="2">
@@ -926,6 +929,8 @@
                                         <circle cx="12" cy="12" r="3" />
                                     </svg>
                                 </a>
+                                @endcan
+                                @can('trip_update')
 
                                 <a href="{{ route('trips.edit', $trip->id) }}" class="mini-btn" title="Edit Trip">
                                     <svg viewBox="0 0 24 24" width="15" height="15" fill="none"
@@ -934,6 +939,9 @@
                                         <path d="M18.5 2.5l3 3L12 15l-4 1 1-4z" />
                                     </svg>
                                 </a>
+                                @endcan
+
+                                @can('trip_account_show')
 
                                 <button type="button" class="mini-btn mini-btn--primary open-modal"
                                     data-modal="accountModal{{ $trip->id }}" title="Account Detail">
@@ -943,7 +951,10 @@
                                         <path d="M7 8h10M7 12h10M7 16h6" />
                                     </svg>
                                 </button>
+                                @endcan
 
+
+                                @can('trip_transactions_show')
                                 <button type="button" class="mini-btn mini-btn--success open-modal"
                                     data-modal="transactionModal{{ $trip->id }}" title="Transactions">
                                     <svg viewBox="0 0 24 24" width="15" height="15" fill="none"
@@ -954,6 +965,9 @@
                                         <path d="M6 17a7 7 0 0 1 1-10" />
                                     </svg>
                                 </button>
+                                @endcan
+
+                                @can('trip_track')
 
                                 <button class="mini-btn mini-btn--copy copyTrackingBtn" data-link="{{ $trackingUrl }}"
                                     type="button" title="Copy Tracking Link">
@@ -963,9 +977,11 @@
                                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                                     </svg>
                                 </button>
+                                @endcan
                             </div>
 
                             <div class="action-right">
+                                @can('trip_delete')
                                 <form action="{{ route('trips.destroy', $trip->id) }}" method="POST"
                                     onsubmit="return confirm('Are you sure you want to delete this trip?');">
                                     @csrf
@@ -978,6 +994,7 @@
                                         </svg>
                                     </button>
                                 </form>
+                                @endcan
                             </div>
                         </div>
 

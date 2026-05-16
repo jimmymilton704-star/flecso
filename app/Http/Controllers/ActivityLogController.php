@@ -2,42 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\ActivityLog;
+use Illuminate\Http\Request;
 
 class ActivityLogController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ActivityLog::where('user_id', auth()->id())
-            ->with('user')->latest();
+        $authUser = auth()->user();
 
-        // 🔍 Search (action, route, model, user name)
+        $parentId = $authUser->parent_id ?: $authUser->id;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Get parent admin + all child users IDs
+        |--------------------------------------------------------------------------
+        */
+        $userIds = User::where('parent_id', $parentId)
+            ->pluck('id')
+            ->toArray();
+
+        $userIds[] = $parentId;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Fetch logs by user_id only
+        |--------------------------------------------------------------------------
+        */
+        $query = ActivityLog::with('user')
+            ->whereIn('user_id', $userIds);
+
         if ($request->filled('search')) {
-            $search = $request->search;
-
-            $query->where(function ($q) use ($search) {
-                $q->where('action', 'like', "%$search%")
-                    ->orWhere('route', 'like', "%$search%")
-                    ->orWhere('model', 'like', "%$search%")
-                    ->orWhereHas('user', function ($uq) use ($search) {
-                        $uq->where('name', 'like', "%$search%");
-                    });
+            $query->where(function ($q) use ($request) {
+                $q->where('action', 'like', '%' . $request->search . '%')
+                    ->orWhere('route', 'like', '%' . $request->search . '%')
+                    ->orWhere('method', 'like', '%' . $request->search . '%')
+                    ->orWhere('model', 'like', '%' . $request->search . '%');
             });
         }
 
-        // ✅ Filter by action (since UI now uses action, not method)
-        if ($request->filled('action')) {
-            $query->where('action', $request->action);
+        if ($request->filled('method')) {
+            $query->where('method', $request->method);
         }
 
-        // 📅 Filter by date
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
-        }
-
-        // 📄 Pagination
-        $logs = $query->paginate(10)->withQueryString();
+        $logs = $query->latest()->paginate(20)->withQueryString();
 
         return view('activity-logs.index', compact('logs'));
     }

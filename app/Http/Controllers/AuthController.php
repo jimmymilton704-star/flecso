@@ -273,16 +273,16 @@ class AuthController extends Controller
                 );
         }
 
-        if ($user->role !== 'admin') {
+        // if ($user->role !== 'admin') {
 
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with(
-                    'error',
-                    'Unauthorized access'
-                );
-        }
+        //     return redirect()
+        //         ->back()
+        //         ->withInput()
+        //         ->with(
+        //             'error',
+        //             'Unauthorized access'
+        //         );
+        // }
 
         if (!$user->email_verified_at) {
             return back()->with('error', 'Please verify your email first');

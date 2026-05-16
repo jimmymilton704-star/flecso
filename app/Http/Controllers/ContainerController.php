@@ -14,7 +14,7 @@ class ContainerController extends Controller
     */
     public function index()
     {
-        $containers = Container::where('admin_id', auth()->id())
+        $containers = Container::where('admin_id', auth()->user()->parent_id ?: auth()->id())
             ->latest()
             ->get();
 
@@ -72,7 +72,7 @@ class ContainerController extends Controller
         // dd($validation);
         $data = $request->all();
 
-        $data['admin_id'] = auth()->id();
+        $data['admin_id'] = auth()->user()->parent_id ?: auth()->id();
 
         /*
         | IMAGE UPLOAD
@@ -104,7 +104,7 @@ class ContainerController extends Controller
     public function edit($id)
     {
         $container = Container::where('id', $id)
-            ->where('admin_id', auth()->id())
+            ->where('admin_id', auth()->user()->parent_id ?: auth()->id())
             ->firstOrFail();
 
         return view('containers.edit', compact('container'));
@@ -118,7 +118,7 @@ class ContainerController extends Controller
     public function update(Request $request, $id)
     {
         $container = Container::where('id', $id)
-            ->where('admin_id', auth()->id())
+            ->where('admin_id', auth()->user()->parent_id ?: auth()->id())
             ->firstOrFail();
 
         $data = $request->all();
@@ -157,7 +157,7 @@ class ContainerController extends Controller
     public function destroy($id)
     {
         $container = Container::where('id', $id)
-            ->where('admin_id', auth()->id())
+            ->where('admin_id', auth()->user()->parent_id ?: auth()->id())
             ->firstOrFail();
 
         if ($container->image && file_exists(public_path($container->image))) {
@@ -178,7 +178,7 @@ class ContainerController extends Controller
     public function show($id)
     {
         $container = Container::where('id', $id)
-            ->where('admin_id', auth()->id())
+            ->where('admin_id', auth()->user()->parent_id ?: auth()->id())
             ->firstOrFail();
 
         return view('containers.show', compact('container'));
@@ -199,7 +199,7 @@ class ContainerController extends Controller
 
         $header = fgetcsv($file);
 
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
 
         $count = 0;
 

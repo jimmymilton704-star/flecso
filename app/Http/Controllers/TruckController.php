@@ -19,7 +19,8 @@ class TruckController extends Controller
     */
     public function index()
     {
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
+
  
         $trucks = Truck::where('admin_id', $adminId)
             ->latest()
@@ -54,7 +55,8 @@ class TruckController extends Controller
     */
     public function store(Request $request)
     {
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
+;
 
         $request->validate([
             'truck_number' => 'required',
@@ -131,8 +133,8 @@ class TruckController extends Controller
     */
     public function show($id)
     {
-        $truck = Truck::where('admin_id', auth()->id())->findOrFail($id);
-        $driver = Driver::where('admin_id', auth()->id())->get();
+        $truck = Truck::where('admin_id', auth()->user()->parent_id ?: auth()->id())->findOrFail($id);
+        $driver = Driver::where('admin_id', auth()->user()->parent_id ?: auth()->id())->get();
 
 
         return view('trucks.show', compact('truck', 'driver'));
@@ -145,8 +147,8 @@ class TruckController extends Controller
     */
     public function edit($id)
     {
-        $truck = Truck::where('admin_id', auth()->id())->findOrFail($id);
-        $drivers = Driver::where('admin_id', auth()->id())->get();
+        $truck = Truck::where('admin_id', auth()->user()->parent_id ?: auth()->id())->findOrFail($id);
+        $drivers = Driver::where('admin_id', auth()->user()->parent_id ?: auth()->id())->get();
 
         return view('trucks.edit', compact('truck', 'drivers'));
     }
@@ -159,7 +161,7 @@ class TruckController extends Controller
     public function update(Request $request, $id)
     {
         // dd($request->all());
-        $truck = Truck::where('admin_id', auth()->id())->findOrFail($id);
+        $truck = Truck::where('admin_id', auth()->user()->parent_id ?: auth()->id())->findOrFail($id);
 
         $data = $request->except(['current_km', 'estimate_km',]);
 
@@ -207,7 +209,7 @@ class TruckController extends Controller
     */
     public function destroy($id)
     {
-        $truck = Truck::where('admin_id', auth()->id())->findOrFail($id);
+        $truck = Truck::where('admin_id', auth()->user()->parent_id ?:  auth()->id())->findOrFail($id);
 
         if ($truck->image && file_exists(public_path($truck->image))) {
             unlink(public_path($truck->image));
@@ -235,7 +237,7 @@ class TruckController extends Controller
         ]);
 
         $truck = Truck::where('id', $request->truck_id)
-            ->where('admin_id', auth()->id())
+            ->where('admin_id', auth()->user()->parent_id ?: auth()->id())
             ->firstOrFail();
 
         $truck->driver_id = $request->driver_id;
