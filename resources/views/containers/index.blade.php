@@ -17,7 +17,7 @@
                     <svg viewBox="0 0 24 24" width="16" height="16">
                         <path d="M12 5v14M5 12h14"></path>
                     </svg>
-                    Add New Container
+                   + Add New Container
                 </a>
             </div>
         </div>
