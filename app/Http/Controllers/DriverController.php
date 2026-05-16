@@ -16,11 +16,13 @@ class DriverController extends Controller
 {
     private function getActiveSubscription($adminId)
     {
+        $adminId = auth()->user()->parent_id ?: auth()->id();
         return Subscription::where('user_id', $adminId)->latest()->first();
     }
 
     private function checkDriverLimit($adminId)
     {
+        $adminId = auth()->user()->parent_id ?: auth()->id();
         $subscription = $this->getActiveSubscription($adminId);
 
         if (!$subscription) {
@@ -54,7 +56,7 @@ class DriverController extends Controller
     /* LIST */
     public function index()
     {
-        $drivers = Driver::where('admin_id', auth()->id())->latest()->paginate(10);
+        $drivers = Driver::where('admin_id', auth()->user()->parent_id ?: auth()->id())->latest()->paginate(10);
         ;
         return view('drivers.index', compact('drivers'));
     }
@@ -68,7 +70,7 @@ class DriverController extends Controller
     /* STORE */
     public function store(Request $request)
     {
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
 
         $request->validate([
             'full_name' => 'required',
@@ -123,14 +125,16 @@ class DriverController extends Controller
     /* EDIT */
     public function edit($id)
     {
-        $driver = Driver::where('admin_id', auth()->id())->findOrFail($id);
+        $adminId = auth()->user()->parent_id ?: auth()->id();
+        $driver = Driver::where('admin_id', $adminId)->findOrFail($id);
         return view('drivers.edit', compact('driver'));
     }
 
     /* UPDATE */
     public function update(Request $request, $id)
     {
-        $driver = Driver::where('admin_id', auth()->id())->findOrFail($id);
+        $adminId = auth()->user()->parent_id ?: auth()->id();
+        $driver = Driver::where('admin_id', $adminId)->findOrFail($id);
 
         $data = $request->all();
 
@@ -168,7 +172,8 @@ class DriverController extends Controller
     /* DELETE */
     public function destroy($id)
     {
-        $driver = Driver::where('admin_id', auth()->id())->findOrFail($id);
+        $adminId = auth()->user()->parent_id ?: auth()->id();
+        $driver = Driver::where('admin_id', $adminId)->findOrFail($id);
 
         foreach ([
             'driver_photo',
@@ -192,7 +197,8 @@ class DriverController extends Controller
     /* SHOW */
     public function show($id)
     {
-        $driver = Driver::where('admin_id', auth()->id())->findOrFail($id);
+        $adminId = auth()->user()->parent_id ?: auth()->id();
+        $driver = Driver::where('admin_id', $adminId)->findOrFail($id);
         $truck = Truck::where('driver_id', $driver->id)->first();
         return view('drivers.show', compact('driver', 'truck'));
     }
@@ -209,7 +215,7 @@ class DriverController extends Controller
             'csv_file' => 'required|mimes:csv,txt',
         ]);
 
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?:  auth()->id();
 
         $file = fopen($request->file('csv_file')->getRealPath(), 'r');
 

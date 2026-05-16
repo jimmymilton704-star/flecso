@@ -186,6 +186,7 @@
 
                                 <td>
                                     <div class="row-actions">
+                                        @can('truck_qr')
 
                                         <button class="mini-btn mini-btn--qr" title="QR Code"
                                             onclick="showQR('Truck {{ $truck->license_plate_number }}', '{{ $truck->id }}')">
@@ -201,6 +202,8 @@
                                             </svg>
 
                                         </button>
+                                        @endcan
+                                        @can('truck_view')
 
                                         <button class="mini-btn" title="View">
                                             <a href="{{ route('trucks.show', $truck->id) }}">
@@ -212,6 +215,8 @@
                                                 </svg>
                                             </a>
                                         </button>
+                                        @endcan
+                                        @can('truck_update')
 
                                         <button class="mini-btn" title="Edit">
                                             <a href="{{ route('trucks.edit', $truck->id) }}">
@@ -223,6 +228,9 @@
                                                 </svg>
                                             </a>
                                         </button>
+                                        @endcan
+                                        @can('truck_delete')
+
 
                                         <form action="{{ route('trucks.destroy', $truck->id) }}"
                                             method="POST"style="display:inline;">
@@ -238,6 +246,7 @@
                                             </button>
                                         </form>
 
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

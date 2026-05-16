@@ -20,7 +20,7 @@ class TripController extends Controller
     */
     public function index()
     {
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
 
         $trips = Trip::with([
             'driver:id,full_name',
@@ -110,7 +110,7 @@ class TripController extends Controller
         ]);
 
         TripAccount::create([
-            'admin_id' => auth()->id(),
+            'admin_id' => auth()->user()->parent_id ?: auth()->id(),
             'trip_id' => $trip->id,
             'driver_id' => $request->driver_id,
             'truck_id' => $request->truck_id,
@@ -132,7 +132,7 @@ class TripController extends Controller
     */
     public function show($id)
     {
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
 
         $trip = Trip::with([
             'driver.location',
@@ -156,7 +156,7 @@ class TripController extends Controller
     */
     public function edit($id)
     {
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
 
         $trip = Trip::where('id', $id)
             ->where('admin_id', $adminId)
@@ -178,7 +178,7 @@ class TripController extends Controller
     public function update(Request $request, $id)
     {
         // dd($request->all());
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
 
         $trip = Trip::where('id', $id)
             ->where('admin_id', $adminId)
@@ -226,7 +226,7 @@ class TripController extends Controller
     */
     public function destroy($id)
     {
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
 
         $trip = Trip::where('id', $id)
             ->where('admin_id', $adminId)
@@ -242,7 +242,7 @@ class TripController extends Controller
 
     public function paymentSuggestion(Request $request)
     {
-        $adminId = auth()->id();
+        $adminId = auth()->user()->parent_id ?: auth()->id();
 
         $request->validate([
             'pickup_lat' => 'required|numeric',
